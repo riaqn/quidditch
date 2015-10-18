@@ -1,19 +1,52 @@
 #include <vector>
+#include <map>
+#include <utility>
 #include "Ball.hpp"
 #include <glm/glm.hpp>
 
-void Ball::evolve(std::vector<glm::vec3> &v, std::vector<glm::uvec3> &i, const unsigned year) {
+void Ball::evolve(std::vector<glm::vec3> &v, std::vector<glm::uvec3> &i) {
+  std::map<std::pair<unsigned, unsigned>, unsigned> MPcache;
+  
+  auto getMP = [&MPcache, &v](unsigned a, unsigned b) -> unsigned {
+    auto MP = [](const glm::vec3 &a, const glm::vec3 &b) -> glm::vec3 {
+      glm::vec3 c((a.x + b.x) / 2,
+                  (a.y + b.y) / 2,
+                  (a.z + b.z) / 2);
+      return glm::normalize(c);
+    };
+      
+    if (a > b)
+      std::swap(a, b);
+    std::map<std::pair<unsigned, unsigned>, unsigned>::iterator iter = MPcache.find(std::make_pair(a, b));
+    unsigned c;
+    if (iter == MPcache.end()) {
+      //not in cache, generate a new middle point
+      glm::vec3 mp = MP(v[a], v[b]);
+      v.push_back(mp);
+      c = v.size() - 1;
+      MPcache.insert({std::make_pair(a, b), c});
+    } else {
+      c = iter->second;
+    }
+    return c;
+  };
+
+  unsigned size = i.size();
+  for (unsigned iter = 0; iter < size; ++iter) {
+    unsigned a = i[iter].x, b = i[iter].y, c = i[iter].z;
+    unsigned ab = getMP(a, b);
+    unsigned bc = getMP(b, c);
+    unsigned ca = getMP(c, a);
+
+    i[iter] = glm::uvec3(ab, bc, ca);
+
+    i.push_back(glm::uvec3(a, ab, ca));
+    i.push_back(glm::uvec3(b, bc, ab));
+    i.push_back(glm::uvec3(c, ca, bc));
+  }
 }
 
 void Ball::normalize(std::vector<glm::vec3> &v) {
-  for (auto i = v.begin(); i != v.end(); ++i) {
-    float x = (*i)[0];
-    float y = (*i)[1];
-    float z = (*i)[2];
-    
-    float l = sqrt(x * x + y * y + z * z);
-    (*i) = glm::vec3(x / l, y / l, z / l);
-  }
 }
 
 Ball::Ball() {
@@ -64,9 +97,14 @@ Ball::Ball() {
 
   std::vector<glm::uvec3> i_(i, i + 20);
 
-  normalize(v_);
-  
-  evolve(v_, i_, 3);
+  for (auto i = v_.begin(); i != v_.end(); ++i) {
+    *i = glm::normalize(*i);
+  }
+
+  for (int j = 0; j < 2; ++j)
+    evolve(v_, i_);
+
+  count_ = i_.size() * 3;
 
   glGenBuffers(1, &VBO_);
   glBindBuffer(GL_ARRAY_BUFFER, VBO_);
@@ -86,7 +124,7 @@ void Ball::render(const GLuint WVP, const glm::mat4 &VP) {
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO_);
   
-  glDrawElements(GL_TRIANGLES, 60, GL_UNSIGNED_INT, 0);
+  glDrawElements(GL_TRIANGLES, count_, GL_UNSIGNED_INT, 0);
     
   glDisableVertexAttribArray(0);
 }
