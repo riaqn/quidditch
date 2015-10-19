@@ -10,6 +10,11 @@
 #include "Scale.hpp"
 #include "Scene.hpp"
 
+#include "Translate.hpp"
+
+#include "Arena.hpp"
+#include "Ball.hpp"
+
 int main(int argc, char *argv[]) {
   Magick::InitializeMagick(argv[0]);
   
@@ -40,6 +45,12 @@ int main(int argc, char *argv[]) {
   glGenVertexArrays(1, &VertexArrayID);
   glBindVertexArray(VertexArrayID);
 
+  Arena arena;
+  Ball ball = { 0.05, 0.1, glm::vec3(0, 0, 0), glm::vec3(0, 0, -0.5) };
+  arena.attach(&ball);
+
+  Ball ball0 = {0.05, 0.1, glm::vec3(1, 0, -1), glm::vec3(-0.5, 0, 0) };
+  arena.attach(&ball0);
 
   View view(glm::vec3(0, 2, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
   Projection projection(45, 4.0f/3, 0.1, 100);
@@ -51,7 +62,13 @@ int main(int argc, char *argv[]) {
   Texture texRed(GL_TEXTURE_2D, "res/red.jpg");
   Sphere sphere(texRed);
   Scale scale(sphere, glm::vec3(0.1, 0.1, 0.1));
-  scene.attach(&scale);
+  Translate translate(scale, ball.pos);
+  scene.attach(&translate);
+
+  Sphere sphere0(texRed);
+  Scale scale0(sphere, glm::vec3(0.1, 0.1, 0.1));
+  Translate translate0(scale, ball0.pos);
+  scene.attach(&translate0);
   
   bool running = true;
   while (running) {
@@ -63,6 +80,7 @@ int main(int argc, char *argv[]) {
         glViewport(0, 0, event.size.width, event.size.height);
       }
     }
+    arena.deduce(1.0/60);
     scene.render();
 
     window.display();
