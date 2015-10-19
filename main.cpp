@@ -13,7 +13,8 @@
 #include "Translate.hpp"
 
 #include "Arena.hpp"
-#include "Ball.hpp"
+#include "GhostBall.hpp"
+#include "WanderBall.hpp"
 
 int main(int argc, char *argv[]) {
   Magick::InitializeMagick(argv[0]);
@@ -46,11 +47,13 @@ int main(int argc, char *argv[]) {
   glBindVertexArray(VertexArrayID);
 
   Arena arena;
-  Ball ball = { 0.05, 0.1, glm::vec3(0, 0, 0), glm::vec3(0, 0, -0.5) };
+  GhostBall ball(0.05f, 0.1f, glm::vec3(0, 0, 0), glm::vec3(0, 0, -0.5));
   arena.attach(&ball);
 
-  Ball ball0 = {0.05, 0.1, glm::vec3(1, 0, -1), glm::vec3(-0.5, 0, 0) };
+  WanderBall ball0(0.05, 0.1, glm::vec3(1, 0, -1), glm::vec3(-0.1, 0, 0),
+                   1, 0.5);
   arena.attach(&ball0);
+
 
   View view(glm::vec3(0, 2, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
   Projection projection(45, 4.0f/3, 0.1, 100);
