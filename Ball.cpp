@@ -31,14 +31,15 @@ void Ball::evolve(std::vector<glm::vec3> &v, std::vector<glm::uvec3> &i) {
     return c;
   };
 
-  unsigned size = i.size();
-  for (unsigned iter = 0; iter < size; ++iter) {
-    unsigned a = i[iter].x, b = i[iter].y, c = i[iter].z;
+  i.reserve(i.size() * 4);
+  auto end = i.end();
+  for (auto iter = i.begin(); iter != end; ++iter) {
+    unsigned a = iter->x, b = iter->y, c = iter->z;
     unsigned ab = getMP(a, b);
     unsigned bc = getMP(b, c);
     unsigned ca = getMP(c, a);
 
-    i[iter] = glm::uvec3(ab, bc, ca);
+    *iter = glm::uvec3(ab, bc, ca);
 
     i.push_back(glm::uvec3(a, ab, ca));
     i.push_back(glm::uvec3(b, bc, ab));

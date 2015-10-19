@@ -3,8 +3,10 @@
 
 class Table : public Renderable {
 private:
-  GLuint VBO_;
-  GLuint IBO_;
+  GLuint vertex_;
+  GLuint uv_;
+  GLuint index_;
+  GLuint texture_;
 public:
   Table();
   void render(const GLuint WVP, const glm::mat4 &VP);

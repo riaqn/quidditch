@@ -2,12 +2,16 @@
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window.hpp>
 
+#include <Magick++.h>
+
 #include "Table.hpp"
 #include "Ball.hpp"
-#include "ModelWrapper.hpp"
+#include "Scale.hpp"
 #include "Scene.hpp"
 
-int main() {
+int main(int argc, char *argv[]) {
+  Magick::InitializeMagick(argv[0]);
+  
   sf::ContextSettings settings;
   settings.depthBits = 24;
   settings.stencilBits = 8;
@@ -27,8 +31,6 @@ int main() {
     return EXIT_FAILURE;
   }
 
-  glClearColor(0, 0, 0.4, 0);
-
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
@@ -38,7 +40,7 @@ int main() {
   glBindVertexArray(VertexArrayID);
 
 
-  View view(glm::vec3(0, 10, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
+  View view(glm::vec3(0, 3, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
   Projection projection(45, 4.0f/3, 0.1, 100);
   Scene scene(view, projection);
   
@@ -46,8 +48,8 @@ int main() {
   scene.attach(&table);
 
   Ball ball;
-  ModelWrapper wrapper(glm::vec3(0, 0, -3), &ball);
-  scene.attach(&wrapper);
+  Scale scale(&ball, glm::vec3(0.1, 0.1, 0.1));
+  scene.attach(&scale);
   
   bool running = true;
   while (running) {
