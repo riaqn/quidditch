@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-class Ball : public Renderable {
+class Sphere : public Renderable {
 private:
   GLuint VBO_, IBO_, UV_;
   const Texture &texture_;
@@ -11,6 +11,6 @@ private:
   static void normalize(std::vector<glm::vec3> &v);
   size_t count_;
 public:
-  Ball(const Texture &texture);
+  Sphere(const Texture &texture);
   void render(const GLuint WVP, const glm::mat4 &VP) const ;
 };

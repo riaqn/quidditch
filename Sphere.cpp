@@ -1,10 +1,10 @@
 #include <vector>
 #include <map>
 #include <utility>
-#include "Ball.hpp"
+#include "Sphere.hpp"
 #include <glm/glm.hpp>
 
-void Ball::evolve(std::vector<glm::vec3> &v, std::vector<glm::uvec3> &i, std::vector<glm::vec2> &uv) {
+void Sphere::evolve(std::vector<glm::vec3> &v, std::vector<glm::uvec3> &i, std::vector<glm::vec2> &uv) {
   std::map<std::pair<unsigned, unsigned>, unsigned> MPcache;
   
   auto getMP = [&MPcache, &v, &uv](unsigned a, unsigned b) -> unsigned {
@@ -43,7 +43,7 @@ void Ball::evolve(std::vector<glm::vec3> &v, std::vector<glm::uvec3> &i, std::ve
   }
 }
 
-Ball::Ball(const Texture &texture)
+Sphere::Sphere(const Texture &texture)
   :texture_(texture) {
   float phi = 1 / sqrt(2);
   glm::vec3 v[] = {
@@ -89,7 +89,7 @@ Ball::Ball(const Texture &texture)
   glBufferData(GL_ARRAY_BUFFER, uv_.size() * sizeof(uv_[0]), uv_.data(), GL_STATIC_DRAW);
 }
 
-void Ball::render(const GLuint WVP, const glm::mat4 &VP) const {
+void Sphere::render(const GLuint WVP, const glm::mat4 &VP) const {
   glUniformMatrix4fv(WVP, 1, GL_FALSE, &VP[0][0]);
 
   glEnableVertexAttribArray(0);

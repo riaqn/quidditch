@@ -6,7 +6,7 @@
 
 #include "Texture.hpp"
 #include "Table.hpp"
-#include "Ball.hpp"
+#include "Sphere.hpp"
 #include "Scale.hpp"
 #include "Scene.hpp"
 
@@ -49,8 +49,8 @@ int main(int argc, char *argv[]) {
   scene.attach(&table);
 
   Texture texRed(GL_TEXTURE_2D, "res/red.jpg");
-  Ball ball(texRed);
-  Scale scale(ball, glm::vec3(0.1, 0.1, 0.1));
+  Sphere sphere(texRed);
+  Scale scale(sphere, glm::vec3(0.1, 0.1, 0.1));
   scene.attach(&scale);
   
   bool running = true;
