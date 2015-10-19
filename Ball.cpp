@@ -50,8 +50,8 @@ void Ball::evolve(std::vector<glm::vec3> &v, std::vector<glm::uvec3> &i) {
 void Ball::normalize(std::vector<glm::vec3> &v) {
 }
 
-Ball::Ball() {
-  
+Ball::Ball(const Texture &texture)
+  :texture_(texture) {
   float phi = (1 + sqrt(5)) / 2;
   glm::vec3 v[12] = {
     glm::vec3(-1, phi, 0),
@@ -124,6 +124,8 @@ void Ball::render(const GLuint WVP, const glm::mat4 &VP) const {
   glBindBuffer(GL_ARRAY_BUFFER, VBO_);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO_);
+
+  texture_.bind(0);
   
   glDrawElements(GL_TRIANGLES, count_, GL_UNSIGNED_INT, 0);
     

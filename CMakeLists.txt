@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.3)
 project (Quidditch)
-add_executable(quidditch main.cpp loadShader.cpp Table.cpp Projection.cpp View.cpp Scene.cpp Ball.cpp Translate.cpp Scale.cpp Log.cpp)
+add_executable(quidditch main.cpp loadShader.cpp Table.cpp Projection.cpp View.cpp Scene.cpp Ball.cpp Translate.cpp Scale.cpp Texture.cpp Log.cpp)
 
 execute_process(
   COMMAND "GraphicsMagick++-config" "--cppflags" "--cxxflags"

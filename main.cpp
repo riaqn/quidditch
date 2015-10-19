@@ -4,6 +4,7 @@
 
 #include <Magick++.h>
 
+#include "Texture.hpp"
 #include "Table.hpp"
 #include "Ball.hpp"
 #include "Scale.hpp"
@@ -43,11 +44,12 @@ int main(int argc, char *argv[]) {
   View view(glm::vec3(0, 3, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
   Projection projection(45, 4.0f/3, 0.1, 100);
   Scene scene(view, projection);
-  
+
   Table table;
   scene.attach(&table);
 
-  Ball ball;
+  Texture texRed(GL_TEXTURE_2D, "res/red.jpg");
+  Ball ball(texRed);
   Scale scale(ball, glm::vec3(0.1, 0.1, 0.1));
   scene.attach(&scale);
   
