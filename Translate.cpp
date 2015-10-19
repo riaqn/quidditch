@@ -6,5 +6,5 @@ Translate::Translate(const glm::vec3 &&v, Renderable *r)
 }
 
 void Translate::render(const GLuint WVP, const glm::mat4 &mat) {
-  r_->render(WVP, mat * glm::translate(glm::mat4(), v_));
+  r_->render(WVP, glm::translate(mat, v_));
 }

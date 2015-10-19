@@ -9,4 +9,4 @@
 /GTAGS
 *.o
 /quidditch
-
+/compile_commands.json

@@ -6,7 +6,7 @@
 
 class Renderable {
 public:
-  virtual void render(const GLuint WVP, const glm::mat4 &mat) = 0;
+  virtual void render(const GLuint WVP, const glm::mat4 &mat) const = 0;
 };
 
 #endif

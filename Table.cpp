@@ -49,7 +49,6 @@ Table::Table() {
   glGenTextures(1, &texture_);
   glBindTexture(GL_TEXTURE_2D, texture_);
 
-  debug << image.columns() << " " << image.rows() << "\n";
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.columns(), image.rows(), 0, GL_RGBA, GL_UNSIGNED_BYTE, blob.data());
 
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -57,7 +56,7 @@ Table::Table() {
 
 }
   
-void Table::render(const GLuint WVP, const glm::mat4 &VP) {
+void Table::render(const GLuint WVP, const glm::mat4 &VP) const {
   glUniformMatrix4fv(WVP, 1, GL_FALSE, &VP[0][0]);
   
   glEnableVertexAttribArray(0);

@@ -9,5 +9,5 @@ private:
   GLuint texture_;
 public:
   Table();
-  void render(const GLuint WVP, const glm::mat4 &VP);
+  void render(const GLuint WVP, const glm::mat4 &VP) const ;
 };

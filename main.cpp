@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
   scene.attach(&table);
 
   Ball ball;
-  Scale scale(&ball, glm::vec3(0.1, 0.1, 0.1));
+  Scale scale(ball, glm::vec3(0.1, 0.1, 0.1));
   scene.attach(&scale);
   
   bool running = true;

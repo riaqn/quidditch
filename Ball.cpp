@@ -116,7 +116,7 @@ Ball::Ball() {
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_.size() * sizeof(i_[0]), i_.data(), GL_STATIC_DRAW);
 }
 
-void Ball::render(const GLuint WVP, const glm::mat4 &VP) {
+void Ball::render(const GLuint WVP, const glm::mat4 &VP) const {
   glUniformMatrix4fv(WVP, 1, GL_FALSE, &VP[0][0]);
 
   glEnableVertexAttribArray(0);

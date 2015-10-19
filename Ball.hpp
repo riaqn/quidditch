@@ -10,5 +10,5 @@ private:
   size_t count_;
 public:
   Ball();
-  void render(const GLuint WVP, const glm::mat4 &VP);
+  void render(const GLuint WVP, const glm::mat4 &VP) const ;
 };
