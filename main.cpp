@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
   glBindVertexArray(VertexArrayID);
 
 
-  View view(glm::vec3(0, 3, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
+  View view(glm::vec3(0, 2, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
   Projection projection(45, 4.0f/3, 0.1, 100);
   Scene scene(view, projection);
 

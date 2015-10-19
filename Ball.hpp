@@ -5,9 +5,9 @@
 
 class Ball : public Renderable {
 private:
-  GLuint VBO_, IBO_;
+  GLuint VBO_, IBO_, UV_;
   const Texture &texture_;
-  static void evolve(std::vector<glm::vec3> &v, std::vector<glm::uvec3> &i);
+  static void evolve(std::vector<glm::vec3> &v, std::vector<glm::uvec3> &i, std::vector<glm::vec2> &uv);
   static void normalize(std::vector<glm::vec3> &v);
   size_t count_;
 public:
