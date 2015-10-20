@@ -2,6 +2,7 @@
 #include "Texture.hpp"
 
 #include <GL/glew.h>
+#include "Log.hpp"
 
 Texture::Texture(const GLenum target, const std::string &path)
   :target_(target) {
@@ -11,6 +12,8 @@ Texture::Texture(const GLenum target, const std::string &path)
 
   glGenTextures(1, &texture_);
   glBindTexture(target, texture_);
+
+  debug << "loaded texture " << path << " " << image.columns() << 'x' << image.rows() << "\n";
   glTexImage2D(target, 0, GL_RGBA, image.columns(), image.rows(), 0, GL_RGBA, GL_UNSIGNED_BYTE, blob.data());
 
   glTexParameterf(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -22,4 +25,3 @@ void Texture::bind(const GLenum unit) const {
   glActiveTexture(unit);
   glBindTexture(target_, texture_);
 }
-

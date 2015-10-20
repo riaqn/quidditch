@@ -7,10 +7,9 @@
 #include "Texture.hpp"
 #include "Table.hpp"
 #include "Sphere.hpp"
-#include "Scale.hpp"
 #include "Scene.hpp"
 
-#include "Translate.hpp"
+#include "BallWrapper.hpp"
 
 #include "Arena.hpp"
 #include "GhostBall.hpp"
@@ -48,12 +47,19 @@ int main(int argc, char *argv[]) {
   glBindVertexArray(VertexArrayID);
 
   Arena arena;
-  GhostBall ball(0.05f, 0.1f, glm::vec3(0, 0, 0), glm::vec3(0, 0, -0.5));
-  arena.attach(&ball);
+  GhostBall ballGhost0(0.05f, 0.1f, glm::vec3(0, 0.05, 0), glm::vec3(0.5, 0, -0.5));
+  arena.attach(&ballGhost0);
 
-  WanderBall ball0(0.05, 0.1, glm::vec3(1, 0, -1), glm::vec3(-0.1, 0, 0),
+  GhostBall ballCue(0.05f, 0.1f, glm::vec3(0, 0.05, -1), glm::vec3(0, 0, 0));
+  arena.attach(&ballCue);
+
+  WanderBall ballWander0(0.05, 0.1, glm::vec3(1, 0.05, -1), glm::vec3(-0.1, 0, 0.1),
                    1, 0.5);
-  arena.attach(&ball0);
+  arena.attach(&ballWander0);
+
+  WanderBall ballWander1(0.05, 0.1, glm::vec3(-1, 0.05, -2), glm::vec3(1, 0, 1),
+                        1, 0.5);
+  arena.attach(&ballWander1);
 
   Wall wall0{glm::vec3(0, 0, 1), 2};
   arena.attach(&wall0);
@@ -75,16 +81,24 @@ int main(int argc, char *argv[]) {
   Table table;
   scene.attach(&table);
 
-  Texture texRed(GL_TEXTURE_2D, "res/red.jpg");
-  Sphere sphere(texRed);
-  Scale scale(sphere, glm::vec3(0.1, 0.1, 0.1));
-  Translate translate(scale, ball.x);
-  scene.attach(&translate);
+  Sphere sphere;
 
-  Sphere sphere0(texRed);
-  Scale scale0(sphere, glm::vec3(0.1, 0.1, 0.1));
-  Translate translate0(scale, ball0.x);
-  scene.attach(&translate0);
+  Texture texRed(GL_TEXTURE_2D, "res/red.jpg");
+  Texture texWhite(GL_TEXTURE_2D, "res/white0.jpg");
+  Texture texBlue(GL_TEXTURE_2D, "res/blue.jpg");
+
+  BallWrapper sphereGhost(ballGhost0, sphere, texRed);
+  scene.attach(&sphereGhost);
+
+  BallWrapper sphereWander0(ballWander0, sphere, texBlue);
+  scene.attach(&sphereWander0);
+
+  BallWrapper sphereCue(ballCue, sphere, texWhite);
+  scene.attach(&sphereCue);
+
+  BallWrapper sphereWander1(ballWander1, sphere, texBlue);
+  scene.attach(&sphereWander1);
+  
   
   bool running = true;
   while (running) {

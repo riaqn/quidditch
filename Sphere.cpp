@@ -43,8 +43,7 @@ void Sphere::evolve(std::vector<glm::vec3> &v, std::vector<glm::uvec3> &i, std::
   }
 }
 
-Sphere::Sphere(const Texture &texture)
-  :texture_(texture) {
+Sphere::Sphere() {
   float phi = 1 / sqrt(2);
   glm::vec3 v[] = {
     glm::vec3(-1, 0, -phi),
@@ -62,16 +61,16 @@ Sphere::Sphere(const Texture &texture)
   std::vector<glm::uvec3> i_(i, i + 4);
 
   glm::vec2 uv[] = {glm::vec2(0, 0),
-                    glm::vec2(0, 0.05),
-                    glm::vec2(0.05, 0),
-                    glm::vec2(0.05, 0.05)};
+                    glm::vec2(0, 0.1),
+                    glm::vec2(0.1, 0),
+                    glm::vec2(0.1, 0.1)};
   std::vector<glm::vec2> uv_(uv, uv + 4);
 
   for (auto i = v_.begin(); i != v_.end(); ++i) {
     *i = glm::normalize(*i);
   }
 
-  for (int j = 0; j < 3; ++j)
+  for (int j = 0; j < 4; ++j)
     evolve(v_, i_, uv_);
 
   count_ = i_.size() * 3;
@@ -103,8 +102,6 @@ void Sphere::render(const GLuint WVP, const glm::mat4 &VP) const {
   
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO_);
 
-  texture_.bind(0);
-  
   glDrawElements(GL_TRIANGLES, count_, GL_UNSIGNED_INT, 0);
     
   glDisableVertexAttribArray(0);

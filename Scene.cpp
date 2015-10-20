@@ -18,7 +18,6 @@ void Scene::render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
   glUseProgram(program_);
-  glActiveTexture(GL_TEXTURE0);
 
   GLuint sampler = glGetUniformLocation(program_, "sampler");
   glUniform1i(sampler, 0);
