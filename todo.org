@@ -1,0 +1,7 @@
+* TODO Rotation of balls
+* TODO boundary of table
+* DONE boundary of Arena
+* TODO SnitchBall
+* TODO CueBall
+
+* TODO WanderBall avoid collision

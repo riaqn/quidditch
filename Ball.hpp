@@ -2,6 +2,7 @@
 #define BALL_HPP
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 struct Ball {
   Ball(float m, float r, const glm::vec3 &pos, const glm::vec3 &v);
@@ -12,9 +13,12 @@ struct Ball {
   //radius
   float r;
   //position
-  glm::vec3 pos;
+  glm::vec3 x;
   //speed
   glm::vec3 v;
+
+  //orientation
+  glm::quat q;
 };
 
 #endif

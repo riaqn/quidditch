@@ -15,6 +15,7 @@
 #include "Arena.hpp"
 #include "GhostBall.hpp"
 #include "WanderBall.hpp"
+#include "Wall.hpp"
 
 int main(int argc, char *argv[]) {
   Magick::InitializeMagick(argv[0]);
@@ -54,6 +55,18 @@ int main(int argc, char *argv[]) {
                    1, 0.5);
   arena.attach(&ball0);
 
+  Wall wall0{glm::vec3(0, 0, 1), 2};
+  arena.attach(&wall0);
+
+  Wall wall1{glm::vec3(0, 0, -1), 0};
+  arena.attach(&wall1);
+
+  Wall wall2{glm::vec3(1, 0, 0), 1};
+  arena.attach(&wall2);
+
+  Wall wall3{glm::vec3(-1, 0, 0), 1};
+  arena.attach(&wall3);
+
 
   View view(glm::vec3(0, 2, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
   Projection projection(45, 4.0f/3, 0.1, 100);
@@ -65,12 +78,12 @@ int main(int argc, char *argv[]) {
   Texture texRed(GL_TEXTURE_2D, "res/red.jpg");
   Sphere sphere(texRed);
   Scale scale(sphere, glm::vec3(0.1, 0.1, 0.1));
-  Translate translate(scale, ball.pos);
+  Translate translate(scale, ball.x);
   scene.attach(&translate);
 
   Sphere sphere0(texRed);
   Scale scale0(sphere, glm::vec3(0.1, 0.1, 0.1));
-  Translate translate0(scale, ball0.pos);
+  Translate translate0(scale, ball0.x);
   scene.attach(&translate0);
   
   bool running = true;
