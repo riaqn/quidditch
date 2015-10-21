@@ -1,6 +1,4 @@
 #include "BallWrapper.hpp"
-#include "Translate.hpp"
-#include "Scale.hpp"
 
 #include "Sphere.hpp"
 #include <glm/gtc/matrix_transform.hpp>
