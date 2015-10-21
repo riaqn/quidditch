@@ -47,32 +47,62 @@ int main(int argc, char *argv[]) {
   glBindVertexArray(VertexArrayID);
 
   Arena arena;
-  GhostBall ballGhost0(0.05f, 0.1f, glm::vec3(0, 0.05, 0), glm::vec3(0.5, 0, -0.5));
+  
+  GhostBall ballGhost0(0.05f, 0.1f, glm::vec3(-0.5, 0.05, -2.0), glm::vec3(0, 0, 0));
   arena.attach(&ballGhost0);
+  GhostBall ballGhost1(0.05f, 0.1f, glm::vec3(0, 0.05, -2.0), glm::vec3(0, 0, 1));
+  arena.attach(&ballGhost1);
+  GhostBall ballGhost2(0.05f, 0.1f, glm::vec3(0.5, 0.05, -2.0), glm::vec3(0, 0, 0));
+  arena.attach(&ballGhost2);
+  GhostBall ballGhost3(0.05f, 0.1f, glm::vec3(-0.5, 0.05, -1.5), glm::vec3(0, 0, 0));
+  arena.attach(&ballGhost3);
+  GhostBall ballGhost4(0.05f, 0.1f, glm::vec3(0, 0.05, -1.5), glm::vec3(0, 0, 0));
+  arena.attach(&ballGhost4);
+  GhostBall ballGhost5(0.05f, 0.1f, glm::vec3(0.5, 0.05, -1.5), glm::vec3(0, 0, 0));
+  arena.attach(&ballGhost5);
+  
 
-  GhostBall ballCue(0.05f, 0.1f, glm::vec3(0, 0.05, -1), glm::vec3(0, 0, 0));
+  GhostBall ballCue(0.05f, 0.1f, glm::vec3(0, 0.05, 0), glm::vec3(0, 0, 0));
   arena.attach(&ballCue);
 
-  WanderBall ballWander0(0.05, 0.1, glm::vec3(1, 0.05, -1), glm::vec3(-0.1, 0, 0.1),
+  WanderBall ballWander0(0.02, 0.1, glm::vec3(-0.5, 0.1, -1.0), glm::vec3(0, 0, 0),
                    1, 0.5);
   arena.attach(&ballWander0);
 
-  WanderBall ballWander1(0.05, 0.1, glm::vec3(-1, 0.05, -2), glm::vec3(1, 0, 1),
+  WanderBall ballWander1(0.02, 0.1, glm::vec3(0, 0.1, -1.0), glm::vec3(0, 0, 0),
                         1, 0.5);
   arena.attach(&ballWander1);
 
-  Wall wall0{glm::vec3(0, 0, 1), 2};
+    WanderBall ballWander2(0.02, 0.1, glm::vec3(0.5, 0.1, -1.0), glm::vec3(0, 0, 0),
+                   1, 0.5);
+  arena.attach(&ballWander2);
+
+  WanderBall ballWander3(0.02, 0.1, glm::vec3(-0.5, 0.1, -0.5), glm::vec3(0, 0, 0),
+                        1, 0.5);
+  arena.attach(&ballWander3);
+  
+  WanderBall ballWander4(0.02, 0.1, glm::vec3(0, 0.1, -0.5), glm::vec3(0, 0, 0),
+                   1, 0.5);
+  arena.attach(&ballWander4);
+
+  WanderBall ballWander5(0.02, 0.1, glm::vec3(0.5, 0.1, -0.5), glm::vec3(0, 0, 0),
+                        1, 0.5);
+  arena.attach(&ballWander5);
+
+  Wall wall0{glm::vec3(0, 0, 1), 2, 0.8};
   arena.attach(&wall0);
 
-  Wall wall1{glm::vec3(0, 0, -1), 0};
+  Wall wall1{glm::vec3(0, 0, -1), 0, 0.8};
   arena.attach(&wall1);
 
-  Wall wall2{glm::vec3(1, 0, 0), 1};
+  Wall wall2{glm::vec3(1, 0, 0), 1, 0.8};
   arena.attach(&wall2);
 
-  Wall wall3{glm::vec3(-1, 0, 0), 1};
+  Wall wall3{glm::vec3(-1, 0, 0), 1, 0.8};
   arena.attach(&wall3);
 
+  Wall wall4{glm::vec3(0, 1, 0), 0, 0.5};
+  arena.attach(&wall4);
 
   View view(glm::vec3(0, 2, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
   Projection projection(45, 4.0f/3, 0.1, 100);
@@ -87,18 +117,40 @@ int main(int argc, char *argv[]) {
   Texture texWhite(GL_TEXTURE_2D, "res/white0.jpg");
   Texture texBlue(GL_TEXTURE_2D, "res/blue.jpg");
 
-  BallWrapper sphereGhost(ballGhost0, sphere, texRed);
-  scene.attach(&sphereGhost);
-
-  BallWrapper sphereWander0(ballWander0, sphere, texBlue);
-  scene.attach(&sphereWander0);
+  BallWrapper sphereGhost0(ballGhost0, sphere, texRed);
+  scene.attach(&sphereGhost0);
+  BallWrapper sphereGhost1(ballGhost1, sphere, texRed);
+  scene.attach(&sphereGhost1);
+  BallWrapper sphereGhost2(ballGhost2, sphere, texRed);
+  scene.attach(&sphereGhost2);
+  BallWrapper sphereGhost3(ballGhost3, sphere, texRed);
+  scene.attach(&sphereGhost3);
+  BallWrapper sphereGhost4(ballGhost4, sphere, texRed);
+  scene.attach(&sphereGhost4);
+  BallWrapper sphereGhost5(ballGhost5, sphere, texRed);
+  scene.attach(&sphereGhost5);
 
   BallWrapper sphereCue(ballCue, sphere, texWhite);
   scene.attach(&sphereCue);
 
+  BallWrapper sphereWander0(ballWander0, sphere, texBlue);
+  scene.attach(&sphereWander0);
+
   BallWrapper sphereWander1(ballWander1, sphere, texBlue);
   scene.attach(&sphereWander1);
+
+  BallWrapper sphereWander2(ballWander2, sphere, texBlue);
+  scene.attach(&sphereWander2);
+
+  BallWrapper sphereWander3(ballWander3, sphere, texBlue);
+  scene.attach(&sphereWander3);
   
+  BallWrapper sphereWander4(ballWander4, sphere, texBlue);
+  scene.attach(&sphereWander4);
+
+  BallWrapper sphereWander5(ballWander5, sphere, texBlue);
+  scene.attach(&sphereWander5);
+
   
   bool running = true;
   while (running) {

@@ -6,7 +6,7 @@ class Arena {
 private:
   std::vector<Ball *> balls_;
   std::vector<Wall *> walls_;
-  const float g = 9.8;
+  const glm::vec3 g = glm::vec3(0, -9.8, 0);
   const float mu = 0.2;
 public:
   //everything in the universe is destined

@@ -6,6 +6,7 @@
 struct Wall {
   glm::vec3 n;
   float d;
+  float c;
 };
 
 #endif
