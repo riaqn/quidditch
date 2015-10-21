@@ -15,6 +15,7 @@
 #include "GhostBall.hpp"
 #include "WanderBall.hpp"
 #include "Wall.hpp"
+#include "Log.hpp"
 
 int main(int argc, char *argv[]) {
   Magick::InitializeMagick(argv[0]);
@@ -30,6 +31,7 @@ int main(int argc, char *argv[]) {
   
   sf::Window window(sf::VideoMode(800, 600), "Quidditch", sf::Style::Close, settings);
   window.setVerticalSyncEnabled(true);
+  window.setMouseCursorVisible(false);
 
   glewExperimental = GL_TRUE;
   GLenum res = glewInit();
@@ -48,8 +50,9 @@ int main(int argc, char *argv[]) {
 
   Arena arena;
   
-  GhostBall ballGhost0(0.05f, 0.1f, glm::vec3(-0.5, 0.05, -2.0), glm::vec3(0, 0, 0));
+  GhostBall ballGhost0(0.05f, 0.1f, glm::vec3(-0.5, 0.2, -2.0), glm::vec3(0, 0, 0));
   arena.attach(&ballGhost0);
+  /*
   GhostBall ballGhost1(0.05f, 0.1f, glm::vec3(0, 0.05, -2.0), glm::vec3(0, 0, 1));
   arena.attach(&ballGhost1);
   GhostBall ballGhost2(0.05f, 0.1f, glm::vec3(0.5, 0.05, -2.0), glm::vec3(0, 0, 0));
@@ -62,32 +65,34 @@ int main(int argc, char *argv[]) {
   arena.attach(&ballGhost5);
   
 
-  GhostBall ballCue(0.05f, 0.1f, glm::vec3(0, 0.05, 0), glm::vec3(0, 0, 0));
-  arena.attach(&ballCue);
-
-  WanderBall ballWander0(0.02, 0.1, glm::vec3(-0.5, 0.1, -1.0), glm::vec3(0, 0, 0),
+  WanderBall ballWander0(0.02, 0.1, glm::vec3(-0.5, 0.05, -1.0), glm::vec3(1, 0, 0),
                    1, 0.5);
   arena.attach(&ballWander0);
 
-  WanderBall ballWander1(0.02, 0.1, glm::vec3(0, 0.1, -1.0), glm::vec3(0, 0, 0),
+  WanderBall ballWander1(0.02, 0.1, glm::vec3(0, 0.05, -1.0), glm::vec3(0, 0, 0),
                         1, 0.5);
   arena.attach(&ballWander1);
 
-    WanderBall ballWander2(0.02, 0.1, glm::vec3(0.5, 0.1, -1.0), glm::vec3(0, 0, 0),
+    WanderBall ballWander2(0.02, 0.1, glm::vec3(0.5, 0.05, -1.0), glm::vec3(0, 0, 0),
                    1, 0.5);
   arena.attach(&ballWander2);
 
-  WanderBall ballWander3(0.02, 0.1, glm::vec3(-0.5, 0.1, -0.5), glm::vec3(0, 0, 0),
+  WanderBall ballWander3(0.02, 0.1, glm::vec3(-0.5, 0.05, -0.5), glm::vec3(0, 0, 0),
                         1, 0.5);
   arena.attach(&ballWander3);
   
-  WanderBall ballWander4(0.02, 0.1, glm::vec3(0, 0.1, -0.5), glm::vec3(0, 0, 0),
+  WanderBall ballWander4(0.02, 0.1, glm::vec3(0, 0.05, -0.5), glm::vec3(0, 0, 0),
                    1, 0.5);
   arena.attach(&ballWander4);
 
-  WanderBall ballWander5(0.02, 0.1, glm::vec3(0.5, 0.1, -0.5), glm::vec3(0, 0, 0),
+  WanderBall ballWander5(0.02, 0.1, glm::vec3(0.5, 0.05, -0.5), glm::vec3(0, 0, 0),
                         1, 0.5);
   arena.attach(&ballWander5);
+
+    GhostBall ballCue(0.05f, 0.1f, glm::vec3(0, 0.05, 0), glm::vec3(0, 0, 0));
+  arena.attach(&ballCue);
+
+  */
 
   Wall wall0{glm::vec3(0, 0, 1), 2, 0.8};
   arena.attach(&wall0);
@@ -104,7 +109,7 @@ int main(int argc, char *argv[]) {
   Wall wall4{glm::vec3(0, 1, 0), 0, 0.5};
   arena.attach(&wall4);
 
-  View view(glm::vec3(0, 2, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
+  View view(glm::vec3(0, 2, 0), glm::vec2(0, 0));
   Projection projection(45, 4.0f/3, 0.1, 100);
   Scene scene(view, projection);
 
@@ -119,6 +124,7 @@ int main(int argc, char *argv[]) {
 
   BallWrapper sphereGhost0(ballGhost0, sphere, texRed);
   scene.attach(&sphereGhost0);
+  /*
   BallWrapper sphereGhost1(ballGhost1, sphere, texRed);
   scene.attach(&sphereGhost1);
   BallWrapper sphereGhost2(ballGhost2, sphere, texRed);
@@ -151,18 +157,39 @@ int main(int argc, char *argv[]) {
   BallWrapper sphereWander5(ballWander5, sphere, texBlue);
   scene.attach(&sphereWander5);
 
-  
+  */
   bool running = true;
+  sf::Clock clock;
   while (running) {
+    sf::Time elapsed = clock.restart();
     sf::Event event;
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) {
         running = false;
       } else if (event.type == sf::Event::Resized) {
         glViewport(0, 0, event.size.width, event.size.height);
+      } else if (event.type == sf::Event::MouseMoved) {
+        sf::Vector2u size = window.getSize();
+        if (size.x / 2 == event.mouseMove.x && size.y / 2 == event.mouseMove.y)
+          continue;
+        sf::Mouse::setPosition(sf::Vector2i(size.x / 2,
+                                            size.y / 2), window);
+        static float turnSpeed = 0.01;
+        view.turn(glm::vec2(size.x / 2.0 - event.mouseMove.x,
+                             size.y / 2.0 - event.mouseMove.y) * turnSpeed);
       }
     }
-    arena.deduce(1.0/60);
+    static float moveSpeed = 1; //per second
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+      view.up(elapsed.asSeconds() * moveSpeed);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+      view.up(- elapsed.asSeconds() * moveSpeed);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+      view.right(-elapsed.asSeconds() * moveSpeed);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+      view.right(elapsed.asSeconds() * moveSpeed);
+
+    arena.deduce(elapsed.asSeconds());
     scene.render();
 
     window.display();

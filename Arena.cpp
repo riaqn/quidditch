@@ -21,17 +21,12 @@ void Arena::deduce(const float t) {
         if (dist < b.r) {
           float tendency = glm::dot(b.v, w.n);
           if (tendency < 0) {
-            debug << i - balls_.begin() << "<->" << j - walls_.begin() << '\n';
-            debug << b.v.x << '*' << w.n.x << '=' << b.v.x * w.n.x << '\n';
-            debug << b.v.y << '*' << w.n.y << '=' << b.v.y * w.n.y << '\n';
-            debug << b.v.z << '*' << w.n.z << '=' << b.v.z * w.n.z << '\n';
           
             float l = glm::length(w.n);
             glm::vec3 proj = tendency / (l * l) * w.n;
-            debug << proj.x << '\t' << proj.y << '\t' << proj.z << '\n';
             b.v -= proj * 2.0f;
             b.v *= w.c;
-            debug << b.v.x << '\t' << b.v.y << '\t' << b.v.z << '\n';
+            b.x += (b.r - dist) * glm::normalize(w.n);
 
             flag = false;
           }
@@ -80,10 +75,7 @@ void Arena::deduce(const float t) {
   for (auto i = balls_.begin(); i != balls_.end(); ++i) {
     if (auto b = dynamic_cast<GhostBall *>(*i)) {
       float v = glm::length(b->v);
-      if (v == 0)
-        continue;
       glm::vec3 v1 = b->v + g * t;
-
       b->x += (b->v + v1) * t * 0.5f;
       b->v = v1;
     } else if (auto b = dynamic_cast<WanderBall *>(*i)) {
