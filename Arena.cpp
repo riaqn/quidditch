@@ -1,12 +1,68 @@
 #include "Arena.hpp"
 #include "GhostBall.hpp"
 #include "WanderBall.hpp"
+#include "SnitchBall.hpp"
 #include "Log.hpp"
 #include <glm/gtc/random.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 void Arena::deduce(const float t) {
+  for (auto i = balls_.begin(); i != balls_.end(); ++i) {
+    if (auto b = dynamic_cast<GhostBall *>(*i)) {
+      if (onGround(b)) {
+        float v = glm::length(b->v);
+        if (v > 0) {
+          float v1 = v - glm::length(g) * mu * t;
+          if (v1 < 0) v1 = 0;
+          b->v *= v1 / v;
+        }
+      } else {
+        b->v += g * t;
+      }
+    } else if (auto b = dynamic_cast<WanderBall *>(*i)) {
+      if (onGround(b)) {
+        debug << "Wanderball is on Ground\n";
+        if (glm::length(b->v) == 0) {
+          b->v = glm::linearRand(glm::vec3(-1, 0, -1), glm::vec3(1, 0, 1));
+        }
+        b->v.y = 0;
+        glm::vec3 v1 = glm::normalize(glm::rotateY(b->v, glm::linearRand(-glm::pi<float>() / 2, glm::pi<float>() / 2))) * b->v0;
+        b->v += (v1 - b->v) * b->mu * t;
+      } else {
+        debug << "Wanderball is on fly\n";
+        b->v += g * t;
+      }
+    } else if (auto b = dynamic_cast<SnitchBall *>(*i))  {
+      if (b->isSleep) {
+        b->countdown -= t;
+        if (b->countdown < 0) {
+          debug << "Snatch timeout, going fly\n";
+          b->isSleep = false;
+          b->countdown = 10;
+        }
+        if (onGround(b)) {
+        } else {
+          b->v += g * t;
+        }
+      } else {
+        b->countdown -= t;
+        if (b->countdown < 0) {
+          debug << "Snatch timeout, going sleep\n";
+          b->isSleep = true;
+          b->countdown = 10;
+        }
+        glm::vec3 dst = glm::linearRand(b->zone_min, b->zone_max);
+        glm::vec3 v =  glm::normalize(dst - b->x) * b->v0;
+        b->v += (v - b->v) * mu * t;
+      }
+    } else {
+      error << "strange ball!\n"; 
+    }
+    Ball &b = **i;
+  }
+
   bool flag;
   unsigned time = 0;
   do {
@@ -25,8 +81,8 @@ void Arena::deduce(const float t) {
             float l = glm::length(w.n);
             glm::vec3 proj = tendency / (l * l) * w.n;
             b.v -= proj * 2.0f;
-            b.v *= w.c;
-            b.x += (b.r - dist) * glm::normalize(w.n);
+            b.v *= w.c ;
+            /*b.x += (b.r - dist) * glm::normalize(w.n);*/
 
             flag = false;
           }
@@ -45,6 +101,14 @@ void Arena::deduce(const float t) {
           float tendency = glm::dot(b0.v, dist) - glm::dot(b1.v, dist);
           if (tendency < 0) {
             debug << "collision " << i - balls_.begin() << "<->" << j - balls_.begin() << '\n';
+            if (SnitchBall *b = dynamic_cast<SnitchBall *>(*i)) {
+              b->isSleep = false;
+              b->countdown = 10;
+            }
+            if (SnitchBall *b = dynamic_cast<SnitchBall *>(*j)) {
+              b->isSleep = false;
+              b->countdown = 10;
+            }
             float &m0 = b0.m;
             float &m1 = b1.m;
             glm::vec3 &v0 = b0.v;
@@ -64,35 +128,16 @@ void Arena::deduce(const float t) {
   if (time > 2)
     debug << "time = " << time << "\n";
 
-  /*
+
   for (auto i = balls_.begin(); i != balls_.end(); ++i) {
     Ball &b = **i;
-    debug << i - balls_.begin() << ' ' << b.x.x << ' ' << b.x.y << ' ' << b.x.z << '\n';
+    debug << i - balls_.begin() << '\t' << glm::to_string(b.x) << '\t' << glm::to_string(b.v) << '\n';
   }
-  */
 
-  
   for (auto i = balls_.begin(); i != balls_.end(); ++i) {
-    if (auto b = dynamic_cast<GhostBall *>(*i)) {
-      float v = glm::length(b->v);
-      glm::vec3 v1 = b->v + g * t;
-      b->x += (b->v + v1) * t * 0.5f;
-      b->v = v1;
-    } else if (auto b = dynamic_cast<WanderBall *>(*i)) {
-      float v = glm::length(b->v);
-      if (v == 0)
-        b->v = glm::linearRand(glm::vec3(0, 0, 0), glm::vec3(1, 1, 1));
-      float v1f = v + (b->v0 - v) * b->mu * t;
-      glm::vec3 v1 = glm::normalize(b->v) * v1f;
-      v1 += g * t;
-
-      b->x += (b->v + v1) * t / 2.0f;
-      b->v = v1;
-    } else {
-      error << "strange ball!\n"; 
-    }
+    Ball &b = **i;
+    b.x += b.v * t;
   }
-
 }
 
 void Arena::attach(Ball *ball) {
@@ -101,4 +146,14 @@ void Arena::attach(Ball *ball) {
 
 void Arena::attach(Wall *wall) {
   walls_.push_back(wall);
+}
+
+bool Arena::onGround(const Ball *ball) const {
+  debug << ball->x.y << " " << ball->r << '\n';
+  if ((glm::abs(ball->x.y - ball->r) < 0.01) &&
+      (glm::abs(ball->v.y) < 0.01))
+    return true;
+  else
+    return false;
+    
 }

@@ -14,7 +14,9 @@
 #include "Arena.hpp"
 #include "GhostBall.hpp"
 #include "WanderBall.hpp"
+#include "SnitchBall.hpp"
 #include "Wall.hpp"
+
 #include "Log.hpp"
 
 int main(int argc, char *argv[]) {
@@ -50,49 +52,49 @@ int main(int argc, char *argv[]) {
 
   Arena arena;
   
-  GhostBall ballGhost0(0.05f, 0.1f, glm::vec3(-0.5, 0.2, -2.0), glm::vec3(0, 0, 0));
+  GhostBall ballGhost0(Ball(0.05f, 0.05, glm::vec3(-0.5, 0.2, -1.5), glm::vec3(0, 0, 1)));
   arena.attach(&ballGhost0);
-  /*
-  GhostBall ballGhost1(0.05f, 0.1f, glm::vec3(0, 0.05, -2.0), glm::vec3(0, 0, 1));
+  GhostBall ballGhost1(Ball(0.05f, 0.05, glm::vec3(0, 0.05, -2.0), glm::vec3(0, 0, 1)));
   arena.attach(&ballGhost1);
-  GhostBall ballGhost2(0.05f, 0.1f, glm::vec3(0.5, 0.05, -2.0), glm::vec3(0, 0, 0));
+  GhostBall ballGhost2(Ball(0.05f, 0.05, glm::vec3(0.5, 0.05, -2.0), glm::vec3(0, 0, 0)));
   arena.attach(&ballGhost2);
-  GhostBall ballGhost3(0.05f, 0.1f, glm::vec3(-0.5, 0.05, -1.5), glm::vec3(0, 0, 0));
+  GhostBall ballGhost3(Ball(0.05f, 0.05, glm::vec3(-0.5, 0.05, -1.5), glm::vec3(0, 0, 0)));
   arena.attach(&ballGhost3);
-  GhostBall ballGhost4(0.05f, 0.1f, glm::vec3(0, 0.05, -1.5), glm::vec3(0, 0, 0));
+  GhostBall ballGhost4(Ball(0.05f, 0.05, glm::vec3(0, 0.05, -1.5), glm::vec3(0, 0, 0)));
   arena.attach(&ballGhost4);
-  GhostBall ballGhost5(0.05f, 0.1f, glm::vec3(0.5, 0.05, -1.5), glm::vec3(0, 0, 0));
+  GhostBall ballGhost5(Ball(0.05f, 0.05, glm::vec3(0.5, 0.05, -1.5), glm::vec3(0, 0, 0)));
   arena.attach(&ballGhost5);
   
 
-  WanderBall ballWander0(0.02, 0.1, glm::vec3(-0.5, 0.05, -1.0), glm::vec3(1, 0, 0),
-                   1, 0.5);
+  WanderBall ballWander0(Ball(0.02, 0.05, glm::vec3(-0.5, 0.05, -1.0), glm::vec3(1, 0, 0)),
+                   1, 1);
   arena.attach(&ballWander0);
 
-  WanderBall ballWander1(0.02, 0.1, glm::vec3(0, 0.05, -1.0), glm::vec3(0, 0, 0),
-                        1, 0.5);
+  WanderBall ballWander1(Ball(0.02, 0.05, glm::vec3(0, 0.05, -1.0), glm::vec3(0, 0, 0)),
+                        1, 1);
   arena.attach(&ballWander1);
 
-    WanderBall ballWander2(0.02, 0.1, glm::vec3(0.5, 0.05, -1.0), glm::vec3(0, 0, 0),
-                   1, 0.5);
+  WanderBall ballWander2(Ball(0.02, 0.05, glm::vec3(0.5, 0.05, -1.0), glm::vec3(0, 0, 0)),
+                   1, 1);
   arena.attach(&ballWander2);
 
-  WanderBall ballWander3(0.02, 0.1, glm::vec3(-0.5, 0.05, -0.5), glm::vec3(0, 0, 0),
-                        1, 0.5);
+  WanderBall ballWander3(Ball(0.02, 0.05, glm::vec3(-0.5, 0.05, -0.5), glm::vec3(0, 0, 0)),
+                        1, 1);
   arena.attach(&ballWander3);
   
-  WanderBall ballWander4(0.02, 0.1, glm::vec3(0, 0.05, -0.5), glm::vec3(0, 0, 0),
-                   1, 0.5);
+  WanderBall ballWander4(Ball(0.02, 0.05, glm::vec3(0, 0.05, -0.5), glm::vec3(0, 0, 0)),
+                   1, 1);
   arena.attach(&ballWander4);
 
-  WanderBall ballWander5(0.02, 0.1, glm::vec3(0.5, 0.05, -0.5), glm::vec3(0, 0, 0),
-                        1, 0.5);
+  WanderBall ballWander5(Ball(0.02, 0.05, glm::vec3(0.5, 0.05, -0.5), glm::vec3(0, 0, 0)),
+                        1, 1);
   arena.attach(&ballWander5);
 
-    GhostBall ballCue(0.05f, 0.1f, glm::vec3(0, 0.05, 0), glm::vec3(0, 0, 0));
+  GhostBall ballCue(Ball(0.05f, 0.05, glm::vec3(0, 0.05, 0), glm::vec3(0, 0, 0)));
   arena.attach(&ballCue);
 
-  */
+  SnitchBall ballSnitch(Ball(0.05f, 0.05, glm::vec3(0.2, 0.05, 0), glm::vec3(0, 0, 0)), 10, true, glm::vec3(-1, 0.5, -2), glm::vec3(1, 0.5, 0), 0.5, 2);
+  arena.attach(&ballSnitch);
 
   Wall wall0{glm::vec3(0, 0, 1), 2, 0.8};
   arena.attach(&wall0);
@@ -109,7 +111,7 @@ int main(int argc, char *argv[]) {
   Wall wall4{glm::vec3(0, 1, 0), 0, 0.5};
   arena.attach(&wall4);
 
-  View view(glm::vec3(0, 2, 0), glm::vec2(0, 0));
+  View view(glm::vec3(0, 2, 0), glm::vec2(-glm::pi<float>(), -1.0));
   Projection projection(45, 4.0f/3, 0.1, 100);
   Scene scene(view, projection);
 
@@ -121,10 +123,10 @@ int main(int argc, char *argv[]) {
   Texture texRed(GL_TEXTURE_2D, "res/red.jpg");
   Texture texWhite(GL_TEXTURE_2D, "res/white0.jpg");
   Texture texBlue(GL_TEXTURE_2D, "res/blue.jpg");
+  Texture texGolden(GL_TEXTURE_2D, "res/golden.jpg");
 
   BallWrapper sphereGhost0(ballGhost0, sphere, texRed);
   scene.attach(&sphereGhost0);
-  /*
   BallWrapper sphereGhost1(ballGhost1, sphere, texRed);
   scene.attach(&sphereGhost1);
   BallWrapper sphereGhost2(ballGhost2, sphere, texRed);
@@ -157,7 +159,9 @@ int main(int argc, char *argv[]) {
   BallWrapper sphereWander5(ballWander5, sphere, texBlue);
   scene.attach(&sphereWander5);
 
-  */
+  BallWrapper sphereSnitch(ballSnitch, sphere, texGolden);
+  scene.attach(&sphereSnitch);
+
   bool running = true;
   sf::Clock clock;
   while (running) {
@@ -189,7 +193,7 @@ int main(int argc, char *argv[]) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
       view.right(elapsed.asSeconds() * moveSpeed);
 
-    arena.deduce(elapsed.asSeconds());
+    arena.deduce(elapsed.asSeconds() );
     scene.render();
 
     window.display();

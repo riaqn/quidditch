@@ -1,11 +1,12 @@
 #ifndef BALL_HPP
 #define BALL_HPP
 
+#include <string>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
 struct Ball {
-  Ball(float m, float r, const glm::vec3 &pos, const glm::vec3 &v);
+  Ball(float m, float r, const glm::vec3 &pos, const glm::vec3 &v, const std::string &name = "UNAMED");
   virtual void dumb() {}
 
   //quality
@@ -19,6 +20,8 @@ struct Ball {
 
   //orientation
   glm::quat q;
+
+  std::string name;
 };
 
 #endif
