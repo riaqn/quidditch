@@ -101,14 +101,6 @@ void Arena::deduce(const float t) {
           float tendency = glm::dot(b0.v, dist) - glm::dot(b1.v, dist);
           if (tendency < 0) {
             debug << "collision " << i - balls_.begin() << "<->" << j - balls_.begin() << '\n';
-            if (SnitchBall *b = dynamic_cast<SnitchBall *>(*i)) {
-              b->isSleep = false;
-              b->countdown = 10;
-            }
-            if (SnitchBall *b = dynamic_cast<SnitchBall *>(*j)) {
-              b->isSleep = false;
-              b->countdown = 10;
-            }
             float &m0 = b0.m;
             float &m1 = b1.m;
             glm::vec3 &v0 = b0.v;
@@ -121,6 +113,17 @@ void Arena::deduce(const float t) {
             v0 = v0_;
             v1 = v1_;
             flag = false;
+            if (SnitchBall *b = dynamic_cast<SnitchBall *>(*i)) {
+              b->isSleep = false;
+              b->countdown = 10;
+              b->v = glm::vec3(0);
+            }
+            if (SnitchBall *b = dynamic_cast<SnitchBall *>(*j)) {
+              b->isSleep = false;
+              b->countdown = 10;
+              b->v = glm::vec3(0);
+            }
+
           }
         }
       }

@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
   GhostBall ballCue(Ball(0.05f, 0.05, glm::vec3(0, 0.05, 0), glm::vec3(0, 0, 0)));
   arena.attach(&ballCue);
 
-  SnitchBall ballSnitch(Ball(0.05f, 0.05, glm::vec3(0.2, 0.05, 0), glm::vec3(0, 0, 0)), 10, true, glm::vec3(-1, 0.5, -2), glm::vec3(1, 0.5, 0), 0.5, 2);
+  SnitchBall ballSnitch(Ball(0.05f, 0.05, glm::vec3(0.2, 0.05, 0), glm::vec3(0, 0, 0)), 10, true, glm::vec3(-1, 0.3, -2), glm::vec3(1, 0.5, 0), 1, 2);
   arena.attach(&ballSnitch);
 
   Wall wall0{glm::vec3(0, 0, 1), 2, 0.8};
@@ -192,6 +192,11 @@ int main(int argc, char *argv[]) {
       view.right(-elapsed.asSeconds() * moveSpeed);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
       view.right(elapsed.asSeconds() * moveSpeed);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+      glm::vec3 v0 = ballCue.x - view.eye_;
+      v0.y = 0;
+      ballCue.v = glm::normalize(v0) * 5.0f;
+    }
 
     arena.deduce(elapsed.asSeconds() );
     scene.render();
