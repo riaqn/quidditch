@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 
 #include <Magick++.h>
 
@@ -15,6 +16,7 @@
 #include "GhostBall.hpp"
 #include "WanderBall.hpp"
 #include "SnitchBall.hpp"
+#include "CueBall.hpp"
 #include "Wall.hpp"
 
 #include "Log.hpp"
@@ -27,11 +29,10 @@ int main(int argc, char *argv[]) {
   settings.stencilBits = 8;
   settings.antialiasingLevel = 4;
   settings.majorVersion = 3;
-  settings.minorVersion = 3;
-  settings.attributeFlags = sf::ContextSettings::Attribute::Core
-    || sf::ContextSettings::Attribute::Debug; 
+  settings.minorVersion = 0;
+  settings.attributeFlags =  sf::ContextSettings::Attribute::Debug; 
   
-  sf::Window window(sf::VideoMode(800, 600), "Quidditch", sf::Style::Close, settings);
+  sf::RenderWindow window(sf::VideoMode(800, 600), "Quidditch", sf::Style::Close, settings);
   window.setVerticalSyncEnabled(true);
   window.setMouseCursorVisible(false);
 
@@ -42,13 +43,15 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
+  /*
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
-  
+
   GLuint VertexArrayID;
   glGenVertexArrays(1, &VertexArrayID);
   glBindVertexArray(VertexArrayID);
+  */
 
   Arena arena;
   
@@ -90,7 +93,7 @@ int main(int argc, char *argv[]) {
                         1, 1);
   arena.attach(&ballWander5);
 
-  GhostBall ballCue(Ball(0.05f, 0.05, glm::vec3(0, 0.05, 0), glm::vec3(0, 0, 0)));
+  CueBall ballCue(GhostBall(Ball(0.05f, 0.05, glm::vec3(0, 0.05, 0), glm::vec3(0, 0, 0))));
   arena.attach(&ballCue);
 
   SnitchBall ballSnitch(Ball(0.05f, 0.05, glm::vec3(0.2, 0.05, 0), glm::vec3(0, 0, 0)), 10, true, glm::vec3(-1, 0.3, -2), glm::vec3(1, 0.5, 0), 1, 2);
@@ -111,6 +114,9 @@ int main(int argc, char *argv[]) {
   Wall wall4{glm::vec3(0, 1, 0), 0, 0.5};
   arena.attach(&wall4);
 
+  Wall wall5{glm::vec3(0, -1, 0), 1, 0.8};
+  arena.attach(&wall5);
+
   View view(glm::vec3(0, 2, 0), glm::vec2(-glm::pi<float>(), -1.0));
   Projection projection(45, 4.0f/3, 0.1, 100);
   Scene scene(view, projection);
@@ -124,6 +130,11 @@ int main(int argc, char *argv[]) {
   Texture texWhite(GL_TEXTURE_2D, "res/white0.jpg");
   Texture texBlue(GL_TEXTURE_2D, "res/blue.jpg");
   Texture texGolden(GL_TEXTURE_2D, "res/golden.jpg");
+
+  sf::Font font;
+  if (!font.loadFromFile("/usr/share/fonts/wqy-zenhei/wqy-zenhei.ttc")) {
+    return -1;
+  }
 
   BallWrapper sphereGhost0(ballGhost0, sphere, texRed);
   scene.attach(&sphereGhost0);
@@ -197,10 +208,24 @@ int main(int argc, char *argv[]) {
       v0.y = 0;
       ballCue.v = glm::normalize(v0) * 5.0f;
     }
+    window.clear();
 
     arena.deduce(elapsed.asSeconds() );
     scene.render();
 
+    window.pushGLStates();
+
+    sf::Text text;
+    text.setFont(font);
+    text.setString(std::to_string(arena.score));
+    text.setCharacterSize(24);
+    text.setColor(sf::Color::Green);
+    text.setPosition(100,100);
+    text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+
+    window.draw(text);
+
+    window.popGLStates();
     window.display();
   }
 }

@@ -2,6 +2,8 @@
 #include "GhostBall.hpp"
 #include "WanderBall.hpp"
 #include "SnitchBall.hpp"
+#include "CueBall.hpp"
+
 #include "Log.hpp"
 #include <glm/gtc/random.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -12,6 +14,7 @@ void Arena::deduce(const float t) {
   for (auto i = balls_.begin(); i != balls_.end(); ++i) {
     if (auto b = dynamic_cast<GhostBall *>(*i)) {
       if (onGround(b)) {
+        b->v.y = 0;
         float v = glm::length(b->v);
         if (v > 0) {
           float v1 = v - glm::length(g) * mu * t;
@@ -43,6 +46,13 @@ void Arena::deduce(const float t) {
           b->countdown = 10;
         }
         if (onGround(b)) {
+          b->v.y = 0;
+          float v = glm::length(b->v);
+          if (v > 0) {
+            float v1 = v - glm::length(g) * mu * t;
+            if (v1 < 0) v1 = 0;
+            b->v *= v1 / v;
+          }
         } else {
           b->v += g * t;
         }
@@ -113,17 +123,24 @@ void Arena::deduce(const float t) {
             v0 = v0_;
             v1 = v1_;
             flag = false;
-            if (SnitchBall *b = dynamic_cast<SnitchBall *>(*i)) {
-              b->isSleep = false;
-              b->countdown = 10;
-              b->v = glm::vec3(0);
+            for (int t = 0; t < 2; ++t) {
+              
+              if (SnitchBall *b = dynamic_cast<SnitchBall *>(*i))
+                if (onGround(b))
+                  if (dynamic_cast<CueBall *>(*j)) {
+                    b->isSleep = false;
+                    b->countdown = 10;
+                  }
+              if (dynamic_cast<CueBall *>(*i)) {
+                if (dynamic_cast<GhostBall *>(*j))
+                  score += 1;
+                else if (dynamic_cast<WanderBall *>(*j))
+                  score += 2;
+                else if (dynamic_cast<SnitchBall *>(*j))
+                  score += 3;
+              }
+              swap(i, j);
             }
-            if (SnitchBall *b = dynamic_cast<SnitchBall *>(*j)) {
-              b->isSleep = false;
-              b->countdown = 10;
-              b->v = glm::vec3(0);
-            }
-
           }
         }
       }

@@ -82,10 +82,12 @@ Sphere::Sphere() {
   glGenBuffers(1, &IBO_);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO_);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_.size() * sizeof(i_[0]), i_.data(), GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
   glGenBuffers(1, &UV_);
   glBindBuffer(GL_ARRAY_BUFFER, UV_);
   glBufferData(GL_ARRAY_BUFFER, uv_.size() * sizeof(uv_[0]), uv_.data(), GL_STATIC_DRAW);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void Sphere::render(const GLuint WVP, const glm::mat4 &VP) const {
@@ -99,10 +101,14 @@ void Sphere::render(const GLuint WVP, const glm::mat4 &VP) const {
 
   glBindBuffer(GL_ARRAY_BUFFER, UV_);
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
   
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO_);
 
   glDrawElements(GL_TRIANGLES, count_, GL_UNSIGNED_INT, 0);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);

@@ -11,6 +11,7 @@ private:
 
   bool onGround(const Ball *ball) const ;
 public:
+  unsigned score = 0;
   //everything in the universe is destined
   void deduce(const float t);
   void attach(Ball *ball);

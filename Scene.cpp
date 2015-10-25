@@ -4,6 +4,7 @@
 
 Scene::Scene(const View &view, const Projection &projection)
   :view_(view), projection_(projection) {
+
   program_ = LoadShaders("shader.vert", "shader.frag");
   WVP_ = glGetUniformLocation(program_, "WVP");
   glActiveTexture(GL_TEXTURE0);
@@ -12,6 +13,7 @@ Scene::Scene(const View &view, const Projection &projection)
   glFrontFace(GL_CCW);
   glCullFace(GL_BACK);
   glEnable(GL_CULL_FACE);
+
 }
 
 void Scene::render() {

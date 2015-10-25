@@ -33,6 +33,8 @@ Table::Table() {
   glBindBuffer(GL_ARRAY_BUFFER, uv_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(uv), uv, GL_STATIC_DRAW);
 
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+
   glm::uvec3 index[2] = { glm::uvec3(0, 1, 2),
                           glm::uvec3(3, 2, 1)
   };
@@ -40,6 +42,7 @@ Table::Table() {
   glGenBuffers(1, &index_);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
   //now loading the texture
   Magick::Image image("res/table.jpg");
@@ -53,7 +56,7 @@ Table::Table() {
 
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
-
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
   
 void Table::render(const GLuint WVP, const glm::mat4 &VP) const {
@@ -67,12 +70,18 @@ void Table::render(const GLuint WVP, const glm::mat4 &VP) const {
   
   glBindBuffer(GL_ARRAY_BUFFER, uv_);
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
     
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_);
 
   glBindTexture(GL_TEXTURE_2D, texture_);
   
+  
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glBindTexture(GL_TEXTURE_2D, 0);
 
   glDisableVertexAttribArray(1);
   glDisableVertexAttribArray(0);
