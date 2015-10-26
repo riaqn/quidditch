@@ -192,6 +192,8 @@ int main(int argc, char *argv[]) {
         static float turnSpeed = 0.01;
         view.turn(glm::vec2(size.x / 2.0 - event.mouseMove.x,
                              size.y / 2.0 - event.mouseMove.y) * turnSpeed);
+      } else if (event.type == sf::Event::MouseWheelScrolled) {
+        view.eye_ += glm::normalize(view.direction_) * event.mouseWheelScroll.delta;
       }
     }
     static float moveSpeed = 1; //per second
