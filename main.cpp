@@ -43,11 +43,11 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  /*
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
 
+  /*
   GLuint VertexArrayID;
   glGenVertexArrays(1, &VertexArrayID);
   glBindVertexArray(VertexArrayID);
@@ -208,7 +208,6 @@ int main(int argc, char *argv[]) {
       v0.y = 0;
       ballCue.v = glm::normalize(v0) * 5.0f;
     }
-    window.clear();
 
     arena.deduce(elapsed.asSeconds() );
     scene.render();
