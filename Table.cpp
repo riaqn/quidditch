@@ -20,11 +20,6 @@ Table::Table()
     glm::vec3(-1.0f, 0.0f, 0),
     glm::vec3(1.0f, 0.0f, -2.0f),
     glm::vec3(1.0f, 0.0f, 0.0f),
-
-    glm::vec3(-1.0f, 0.1f, -2.0),
-    glm::vec3(-1.0f, 0.1f, 0),
-    glm::vec3(1.0f, 0.1f, -2.0f),
-    glm::vec3(1.0f, 0.1f, 0.0f)
   };
 
   glGenBuffers(1, &vertex_);
@@ -36,11 +31,6 @@ Table::Table()
     glm::vec2(0, 1),
     glm::vec2(1, 0),
     glm::vec2(1, 1),
-
-    glm::vec2(1, 1),
-    glm::vec2(1, 0),
-    glm::vec2(0, 1),
-    glm::vec2(0, 0)
   };
 
   glGenBuffers(1, &uv_);
@@ -53,21 +43,9 @@ Table::Table()
                           glm::uvec3(3, 2, 1)
   };
 
-  glm::uvec3 index_wall[8] = {glm::uvec3(0, 5, 1),
-                              glm::uvec3(4, 5, 0),
-                              glm::uvec3(3, 7, 6),
-                              glm::uvec3(2, 3, 6),
-                              glm::uvec3(0, 2, 6),
-                              glm::uvec3(4, 0, 6),
-                              glm::uvec3(1, 5, 3),
-                              glm::uvec3(3, 5, 7)};
-  
   glGenBuffers(1, &index_);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);
-  glGenBuffers(1, &index__);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index__);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index_wall), index_wall, GL_STATIC_DRAW);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
@@ -89,14 +67,33 @@ void Table::render(const GLuint WVP, const glm::mat4 &VP) const {
   
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index__);
-
   wood_.bind(GL_TEXTURE0);
-  glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
 
-  glm::vec3 s =  glm::vec3(0.05, 1, 0.05);
-
+  glm::vec3 s;
   glm::mat4 scale;
+
+  //draw wall
+  s = glm::vec3(1.1, 0.05, 0.05);
+  scale = glm::scale(glm::translate(VP, glm::vec3(0, 0, 0.05)), s);
+  glUniformMatrix4fv(WVP, 1, GL_FALSE, &scale[0][0]);
+  box_.draw();
+
+  scale = glm::scale(glm::translate(VP, glm::vec3(0, 0, -2.05)), s);
+  glUniformMatrix4fv(WVP, 1, GL_FALSE, &scale[0][0]);
+  box_.draw();
+
+  s = glm::vec3(0.05, 0.05, 1);
+  scale = glm::scale(glm::translate(VP, glm::vec3(-1.05, 0, -1)), s);
+  glUniformMatrix4fv(WVP, 1, GL_FALSE, &scale[0][0]);
+  box_.draw();
+
+  scale = glm::scale(glm::translate(VP, glm::vec3(1.05, 0, -1)), s);
+  glUniformMatrix4fv(WVP, 1, GL_FALSE, &scale[0][0]);
+  box_.draw();
+
+  
+  
+  s =  glm::vec3(0.05, 1, 0.05);
   scale = glm::scale(glm::translate(VP, glm::vec3(-1, -1.01, 0)), s);
   glUniformMatrix4fv(WVP, 1, GL_FALSE, &scale[0][0]);
   box_.draw();

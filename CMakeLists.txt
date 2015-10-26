@@ -16,6 +16,6 @@ string(REPLACE "\n" " " GM_LINKER_FLAGS "${GM_LINKER_FLAGS}")
 
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g3 -ggdb -O0 ${GM_CXX_FLAGS}")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lGL -lsfml-window -lsfml-system -lsfml-graphics -lGLEW ${GM_LINKER_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lGL -lsfml-window -lsfml-system -lsfml-graphics -lsfml-audio -lGLEW ${GM_LINKER_FLAGS}")
 
 

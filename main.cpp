@@ -2,6 +2,7 @@
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 #include <Magick++.h>
 
@@ -53,7 +54,28 @@ int main(int argc, char *argv[]) {
   glBindVertexArray(VertexArrayID);
   */
 
-  Arena arena;
+
+  sf::SoundBuffer buffer0;
+  if (!buffer0.loadFromFile("res/ball-wall.wav")) {
+    return -1;
+  }
+  sf::Sound sound0(buffer0);
+
+  sf::SoundBuffer buffer1;
+  if (!buffer1.loadFromFile("res/ball-ball.wav")) {
+    return -1;
+  }
+  sf::Sound sound1(buffer1);
+
+
+  Arena arena([&sound0](const Wall *w, const Ball *b) -> void {
+      debug << "playing buffer0\n";
+      sound0.setVolume(glm::length(b->v));
+      sound0.play();
+    }, [&sound1](const Ball *, const Ball *) -> void {
+      debug << "playing buffer1\n";
+      sound1.play();
+    });
   
   GhostBall ballGhost0(Ball(0.05f, 0.05, glm::vec3(-0.5, 0.05, -1.5), glm::vec3(0, 0, 1)));
   arena.attach(&ballGhost0);

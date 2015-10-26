@@ -87,12 +87,13 @@ void Arena::deduce(const float t) {
         if (dist < b.r) {
           float tendency = glm::dot(b.v, w.n);
           if (tendency < 0) {
-          
+            cb0_(*j, *i);
             float l = glm::length(w.n);
             glm::vec3 proj = tendency / (l * l) * w.n;
             b.v -= proj * 2.0f;
             b.v *= w.c ;
             /*b.x += (b.r - dist) * glm::normalize(w.n);*/
+
 
             flag = false;
           }
@@ -111,6 +112,7 @@ void Arena::deduce(const float t) {
           float tendency = glm::dot(b0.v, dist) - glm::dot(b1.v, dist);
           if (tendency < 0) {
             debug << "collision " << i - balls_.begin() << "<->" << j - balls_.begin() << '\n';
+            cb1_(*i, *j);
             float &m0 = b0.m;
             float &m1 = b1.m;
             glm::vec3 &v0 = b0.v;
@@ -141,6 +143,7 @@ void Arena::deduce(const float t) {
               }
               swap(i, j);
             }
+
           }
         }
       }
@@ -177,3 +180,8 @@ bool Arena::onGround(const Ball *ball) const {
     return false;
     
 }
+
+
+Arena::Arena(std::function<void(const Wall *, const Ball *)> cb0,
+        std::function<void(const Ball *, const Ball *)> cb1)
+  :cb0_(cb0), cb1_(cb1) {}
