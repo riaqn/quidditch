@@ -5,6 +5,7 @@
 #include <Magick++.h>
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "Table.hpp"
 #include "Log.hpp"
@@ -69,7 +70,6 @@ Table::Table()
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index_wall), index_wall, GL_STATIC_DRAW);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
 }
   
 void Table::render(const GLuint WVP, const glm::mat4 &VP) const {
@@ -82,7 +82,7 @@ void Table::render(const GLuint WVP, const glm::mat4 &VP) const {
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
+
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_);
 
   cloth_.bind(GL_TEXTURE0);
@@ -93,6 +93,26 @@ void Table::render(const GLuint WVP, const glm::mat4 &VP) const {
 
   wood_.bind(GL_TEXTURE0);
   glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
+
+  glm::vec3 s =  glm::vec3(0.05, 1, 0.05);
+
+  glm::mat4 scale;
+  scale = glm::scale(glm::translate(VP, glm::vec3(-1, -1.01, 0)), s);
+  glUniformMatrix4fv(WVP, 1, GL_FALSE, &scale[0][0]);
+  box_.draw();
+
+  scale = glm::scale(glm::translate(VP, glm::vec3(1, -1.01, 0)), s);
+  glUniformMatrix4fv(WVP, 1, GL_FALSE, &scale[0][0]);
+  box_.draw();
+
+  scale = glm::scale(glm::translate(VP, glm::vec3(-1, -1.01, -2)), s);
+  glUniformMatrix4fv(WVP, 1, GL_FALSE, &scale[0][0]);
+  box_.draw();
+
+  scale = glm::scale(glm::translate(VP, glm::vec3(1, -1.01, -2)), s);
+  glUniformMatrix4fv(WVP, 1, GL_FALSE, &scale[0][0]);
+  box_.draw();
+
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

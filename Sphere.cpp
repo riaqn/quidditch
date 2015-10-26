@@ -93,9 +93,6 @@ Sphere::Sphere() {
 void Sphere::render(const GLuint WVP, const glm::mat4 &VP) const {
   glUniformMatrix4fv(WVP, 1, GL_FALSE, &VP[0][0]);
 
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-
   glBindBuffer(GL_ARRAY_BUFFER, VBO_);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
@@ -110,6 +107,4 @@ void Sphere::render(const GLuint WVP, const glm::mat4 &VP) const {
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     
-  glDisableVertexAttribArray(0);
-  glDisableVertexAttribArray(1);
 }

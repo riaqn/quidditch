@@ -1,6 +1,8 @@
 #include <GL/glew.h>
+#include <vector>
 #include "Renderable.hpp"
 #include "Texture.hpp"
+#include "Box.hpp"
 
 class Table : public Renderable {
 private:
@@ -10,6 +12,8 @@ private:
   GLuint index__;
   Texture cloth_;
   Texture wood_;
+
+  const Box box_;
 public:
   Table();
   void render(const GLuint WVP, const glm::mat4 &VP) const ;
