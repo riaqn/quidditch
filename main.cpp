@@ -55,11 +55,11 @@ int main(int argc, char *argv[]) {
 
   Arena arena;
   
-  GhostBall ballGhost0(Ball(0.05f, 0.05, glm::vec3(-0.5, 0.2, -1.5), glm::vec3(0, 0, 1)));
+  GhostBall ballGhost0(Ball(0.05f, 0.05, glm::vec3(-0.5, 0.05, -1.5), glm::vec3(0, 0, 1)));
   arena.attach(&ballGhost0);
-  GhostBall ballGhost1(Ball(0.05f, 0.05, glm::vec3(0, 0.05, -2.0), glm::vec3(0, 0, 1)));
+  GhostBall ballGhost1(Ball(0.05f, 0.05, glm::vec3(0, 0.05, -1.5), glm::vec3(0, 0, 1)));
   arena.attach(&ballGhost1);
-  GhostBall ballGhost2(Ball(0.05f, 0.05, glm::vec3(0.5, 0.05, -2.0), glm::vec3(0, 0, 0)));
+  GhostBall ballGhost2(Ball(0.05f, 0.05, glm::vec3(0.5, 0.05, -1.5), glm::vec3(0, 0, 0)));
   arena.attach(&ballGhost2);
   GhostBall ballGhost3(Ball(0.05f, 0.05, glm::vec3(-0.5, 0.05, -1.5), glm::vec3(0, 0, 0)));
   arena.attach(&ballGhost3);
@@ -93,10 +93,10 @@ int main(int argc, char *argv[]) {
                         1, 1);
   arena.attach(&ballWander5);
 
-  CueBall ballCue(GhostBall(Ball(0.05f, 0.05, glm::vec3(0, 0.05, 0), glm::vec3(0, 0, 0))));
+  CueBall ballCue(GhostBall(Ball(0.05f, 0.05, glm::vec3(0, 0.05, -0.2), glm::vec3(0, 0, 0))));
   arena.attach(&ballCue);
 
-  SnitchBall ballSnitch(Ball(0.05f, 0.05, glm::vec3(0.2, 0.05, 0), glm::vec3(0, 0, 0)), 10, true, glm::vec3(-1, 0.3, -2), glm::vec3(1, 0.5, 0), 1, 2);
+  SnitchBall ballSnitch(Ball(0.05f, 0.05, glm::vec3(0.2, 0.05, -0.2), glm::vec3(0, 0, 0)), 10, true, glm::vec3(-1, 0.3, -2), glm::vec3(1, 0.5, 0), 1, 2);
   arena.attach(&ballSnitch);
 
   Wall wall0{glm::vec3(0, 0, 1), 2, 0.8};

@@ -21,6 +21,11 @@ Texture::Texture(const GLenum target, const std::string &path)
   glBindTexture(target, 0);
 }
 
+Texture::~Texture()
+{
+  glDeleteTextures(1, &texture_);
+}
+
 void Texture::bind(const GLenum unit) const {
   glActiveTexture(unit);
   glBindTexture(target_, texture_);
