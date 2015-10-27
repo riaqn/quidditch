@@ -1,0 +1,57 @@
+#+TITLE: Quidditch桌球详细设计说明书
+#+AUTHOR: 钱泽森(5130379069)
+#+OPTIONS: toc:t
+
+* 引言
+** 编写目的和范围
+   本详细设计说明书编写的目的是说明程序模块的设计考虑，包括程序描述、
+   输入/输出、算法和流程逻辑等，为软件编程和系统维护提供基础。本说明书
+   的预期读者为系统设计人员、软件开发人员、软件测试人员和项目评审人员。
+** 术语表
+   | 序号 | 术语或缩略语            | 说明性定义                                                                                                                                              |
+   |------+-------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
+   |    0 | Buffer Object           | An object that represents a linear array of memory, which is stored in the GPU. There are numerous ways to have the GPU access data in a buffer object. |
+   |    1 | Context, OpenGL         | A collection of state, memory and resources. Required to do any OpenGL operation.                                                                       |
+   |    2 | OpenGL Shading Language | The language for writing Shaders in OpenGL.                                                                                                             |
+   |    3 | Shader                  | A program, written in the OpenGL Shader Language, intended to run within OpenGL.                                                                        |
+   |    4 | Texture                 | An OpenGL object that contains one or more images, all of which are stored in the same Image Format.                                                    |
+   |    5 | OpenGL                  | A cross-platform graphics system with an openly available specification.                                                                                |
+
+** 参考资料
+   | 资料名称                   | 作者         | 文件编号/版本 | 资料存放地点                     |
+   | OpenGL Tutorial            | Unknown      | latest        | http://www.opengl-tutorial.org   |
+   | OpenGL step by step        | Unknown      | Latest        | http://ogldev.atspace.co.uk/     |
+   | OpenGL wiki                | collabrators | Latest        | https://www.opengl.org/wiki/     |
+   | OpenGL 3.3 Reference Pages | SGI          | 3.3           | https://www.opengl.org/sdk/docs/ |
+
+** 使用的文字处理和绘图工具
+   - 文字处理软件 ::  Emacs, Org Mode
+* 模块设计
+** 用例图
+** 功能设计说明
+*** 物理模块
+    物理模块主要由沙盒(Arena)和各个物理元件(SnitchBall, GhostBall,
+    CueBall, WanderBall, Wall)构成. 
+**** 沙盒(Arena)
+     沙盒模块负责对物理世界进行仿真模拟, 它负责的物理模拟主要有以下几
+     类:
+     - 滚动摩擦 :: 在桌面上的小球在不受到其他外力的情况下, 会收到桌布
+                   的滚动摩擦力, 因此速度会越来越小. 
+     - 小球间碰撞 :: 小球之间会产生非弹性碰撞, 碰撞后两球的速度和方向
+                     都会发生变化, 此过程会有能量损失.
+     - 小球和桌面以及墙面的碰撞 :: 小球和桌面以及墙面也会产生非弹性碰
+          撞.
+      
+     沙盒每次都往前演绎一段时间, 并且不断修改球桌上元件的物理属性, 来
+     反映物理世界的规律.
+**** 球(Ball)
+     所有球类的父类, 主要记录球的质量/半径/位置/速度.
+**** 幽灵球(GhostBall)
+     普通球, 直接继承自Ball, 没有额外的属性. 
+**** 母球(CueBall)
+     用户可以操作的球, 继承自GhostBall, 没有额外的属性.
+**** 游走球(WanderBall)
+     自主随机游走的球, 继承自Ball. 额外属性: v0表示理想速度, mu表示趋
+     近速度. 在当前速度不等于理想速度时, 本球会以mu的速率逐渐趋近于v0.
+**** 金色飞贼(SnitchBall)
+     会飞的球. 
