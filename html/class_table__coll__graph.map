@@ -1,0 +1,6 @@
+<map id="Table" name="Table">
+<area shape="rect" id="node2" href="$class_renderable.html" title="{Renderable\n||+ render()\l}" alt="" coords="5,154,100,231"/>
+<area shape="rect" id="node3" href="$class_texture.html" title="{Texture\n|&#45; texture_\l&#45; target_\l|+ Texture()\l+ ~Texture()\l+ bind()\l}" alt="" coords="125,132,231,253"/>
+<area shape="rect" id="node4" href="$class_box.html" title="{Box\n|&#45; v_\l&#45; i_\l&#45; uv_\l|+ Box()\l+ draw()\l}" alt="" coords="256,132,335,253"/>
+<area shape="rect" id="node5" href="$class_shape.html" title="{Shape\n||+ draw()\l}" alt="" coords="256,5,335,83"/>
+</map>

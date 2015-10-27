@@ -1,0 +1,6 @@
+<map id="Ball" name="Ball">
+<area shape="rect" id="node2" href="$class_ghost_ball.html" title="{GhostBall\n||+ GhostBall()\l}" alt="" coords="5,255,116,333"/>
+<area shape="rect" id="node4" href="$struct_snitch_ball.html" title="{SnitchBall\n|+ countdown\l+ isSleep\l+ zone_min\l+ zone_max\l+ mu\l+ v0\l|+ SnitchBall()\l}" alt="" coords="141,219,253,369"/>
+<area shape="rect" id="node5" href="$struct_wander_ball.html" title="{WanderBall\n|+ v0\l+ mu\l|+ WanderBall()\l}" alt="" coords="277,248,399,340"/>
+<area shape="rect" id="node3" href="$class_cue_ball.html" title="{CueBall\n||+ CueBall()\l}" alt="" coords="12,417,109,495"/>
+</map>

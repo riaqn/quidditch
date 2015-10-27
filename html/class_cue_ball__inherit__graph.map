@@ -1,0 +1,4 @@
+<map id="CueBall" name="CueBall">
+<area shape="rect" id="node2" href="$class_ghost_ball.html" title="{GhostBall\n||+ GhostBall()\l}" alt="" coords="5,219,116,296"/>
+<area shape="rect" id="node3" href="$struct_ball.html" title="{Ball\n|+ m\l+ r\l+ x\l+ v\l+ q\l+ name\l|+ Ball()\l+ dumb()\l}" alt="" coords="19,5,103,171"/>
+</map>
