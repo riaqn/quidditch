@@ -9,7 +9,13 @@
 #include "Texture.hpp"
 #include "Table.hpp"
 #include "Sphere.hpp"
+#include "Flag.hpp"
+#include "Wave.hpp"
+
 #include "Scene.hpp"
+
+#include "Translate.hpp"
+#include "Scale.hpp"
 
 #include "BallWrapper.hpp"
 
@@ -194,6 +200,20 @@ int main(int argc, char *argv[]) {
 
   BallWrapper sphereSnitch(ballSnitch, sphere, texGolden);
   scene.attach(&sphereSnitch);
+
+  Texture uk(GL_TEXTURE_2D, "res/flag1.png");
+  Texture usa(GL_TEXTURE_2D, "res/flag2.png");
+  Wave wave(100, 100);
+  Flag flag0(wave, uk);
+  Flag flag1(wave, usa);
+
+  Translate flag0_t(flag0, glm::vec3(0, 1, 0));
+  Scale flag0_s(flag0_t, glm::vec3(1, 0.5, 1));
+  scene.attach(&flag0_s);
+
+  Translate flag1_t(flag1, glm::vec3(0, 1, -2));
+  Scale flag1_s(flag1_t, glm::vec3(1, 0.5, 1));
+  scene.attach(&flag1_s);
 
   bool running = true;
   sf::Clock clock;
