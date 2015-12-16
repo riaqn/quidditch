@@ -5,6 +5,13 @@
 #include "Shape.hpp"
 #include "Bezier.hpp"
 class Wave : public Shape {
+public:
+  enum Type {
+    WAVE_BEZIER,
+    WAVE_TRIANGLE
+  };
+  Wave(int wSample, int hSample, Type type);
+  virtual void draw() const;
 private:
   unsigned n, m;
   Bezier *bezier;
@@ -12,9 +19,7 @@ private:
   int wSample, hSample;
   static float t_;
   std::vector<std::vector<float> > base;
-public:
-  Wave(int wSample, int hSample);
-  virtual void draw() const;
+  Type type_;
 };
 
 #endif

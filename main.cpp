@@ -203,9 +203,10 @@ int main(int argc, char *argv[]) {
 
   Texture uk(GL_TEXTURE_2D, "res/flag1.png");
   Texture usa(GL_TEXTURE_2D, "res/flag2.png");
-  Wave wave(100, 100);
-  Flag flag0(wave, uk);
-  Flag flag1(wave, usa);
+  Wave wave0(100, 100, Wave::WAVE_BEZIER);
+  Wave wave1(100, 100, Wave::WAVE_TRIANGLE);
+  Flag flag0(wave0, uk);
+  Flag flag1(wave1, usa);
 
   Translate flag0_t(flag0, glm::vec3(0, 1, 0));
   Scale flag0_s(flag0_t, glm::vec3(1, 0.5, 1));
