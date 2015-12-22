@@ -1,4 +1,4 @@
-% Created 2015-10-27 二 19:48
+% Created 2015-12-17 四 22:47
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -168,7 +168,48 @@ CueBall, WanderBall, Wall)构成.
 \item 形状(Shape)
 \label{sec-3-2-2-5}
 表示一个固定的形状, 比如, 处在原点且半径为1的球, 或者处在原点且边
-长为1的立方体, 等等.
+长为1的立方体, 等等. 
+\item 旗帜(Flag)
+\label{sec-3-2-2-6}
+\texttt{Flag} 实际上是 \texttt{Wave} 的一个包装, 后者才是真正的飘动动画.
+Wave用了两种实现， 一种是三角函数(\texttt{WAVE\_TRIANGLE}), 一种是Bezier函
+数(\texttt{WAVE\_BEZIER}). 
+
+\texttt{WAVE\_TRIANGLE} 的实现比较简单, 主要的难点在于旗帜的前后波动. 对于一个旗帜
+上的一个点, 这个点的深度就是一个三角函数函数, 其参数与下列因素有
+关:
+\begin{itemize}
+\item 这个点在旗帜上的位置(横向, 纵向)
+\item 当前的时间
+\end{itemize}
+
+根据这些算法就能实现旗帜飘动的效果. 
+
+\texttt{WAVE\_BEZIER} 的实现相对比较复杂, 首先写了一个类 \texttt{Bezier}, 用来进
+行Bezier曲线相关的计算. 计算步骤如下:
+\begin{enumerate}
+\item 对于每个control point, 生成一个随机的频率f. 这个频率这个Wave的
+生命周期中不会改变.
+\item 对于每一帧画面, 用 $sin(f*t)$ 作为这个control point的深度.
+\item 根据这些control point, 生成整个曲面.
+\end{enumerate}
+
+按照这种思路, 实际运行的时候发现有些卡顿, 为此我针对我的游戏实际
+的需求, 对曲面计算做了一些优化:
+\begin{enumerate}
+\item 对于Bezier曲线公式中的组合运算, 开启一块cache, 这样对于同样的
+$n$ 和 $m$, $C(n, m)$ 只需要计算一次.
+\item 考虑到曲线计算的采样点实际上是固定的, 因此先用这组固定的采样点
+计算好Bezier公式中的一大部分, 以后的每次调用只需要O(nm)的复杂
+度. 而不是\$O(nmWH)\$的复杂度.
+\end{enumerate}
+
+加了上述两个简单的优化后, 动画基本没有卡顿了.
+
+\texttt{Flag} 再在此基础上加上纹理(也就是旗帜图案). 这样, 一面冉冉飘动的旗帜就做好了.
+
+目前的缺点在于, 对于每一帧动画, 都需要重新传入顶点数据, 可能对性
+能会有一定影响(虽然实际中没有遇到卡顿). 目前正在寻找更好的方案.
 \end{enumerate}
 \subsubsection{接口模块}
 \label{sec-3-2-3}

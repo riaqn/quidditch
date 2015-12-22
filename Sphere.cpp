@@ -45,48 +45,52 @@ void Sphere::evolve(std::vector<glm::vec3> &v, std::vector<glm::uvec3> &i, std::
 
 Sphere::Sphere() {
   float phi = 1 / sqrt(2);
-  glm::vec3 v[] = {
-    glm::vec3(-1, 0, -phi),
-    glm::vec3(1, 0, -phi),
-    glm::vec3(0, -1, phi ),
-    glm::vec3(0, 1, phi),
-  };
-  std::vector<glm::vec3> v_(v, v + 4);
+
+  std::vector<glm::vec3> v({
+      glm::vec3(-1, 0, -phi), //0
+        glm::vec3(1, 0, -phi), //1
+        glm::vec3(0, -1, phi), //2
+        glm::vec3(0, 1, phi), //3
+        glm::vec3(0, 1, phi), //4
+        glm::vec3(0, 1, phi) //5
+        });
   
-  glm::uvec3 i[] = {glm::uvec3(0, 3, 1),
-                    glm::uvec3(0, 2, 3),
-                    glm::uvec3(3, 2, 1),
-                    glm::uvec3(2, 0, 1)
-  };
-  std::vector<glm::uvec3> i_(i, i + 4);
+  std::vector<glm::uvec3> i({
+      glm::uvec3(0, 3, 1),
+        glm::uvec3(0, 1, 2),
+        glm::uvec3(2, 1, 5),
+        glm::uvec3(4, 0, 2)
+  });
 
-  glm::vec2 uv[] = {glm::vec2(0, 0),
-                    glm::vec2(0, 0.1),
-                    glm::vec2(0.1, 0),
-                    glm::vec2(0.1, 0.1)};
-  std::vector<glm::vec2> uv_(uv, uv + 4);
-
-  for (auto i = v_.begin(); i != v_.end(); ++i) {
+   std::vector<glm::vec2> uv({
+       glm::fvec2(0.5, 1),
+         glm::fvec2(0.75, 0.5),
+         glm::fvec2(0.25, 0.5),
+         glm::fvec2(1, 1),
+         glm::fvec2(0, 1),
+         glm::fvec2(0.5, 0)});
+   
+  for (auto i = v.begin(); i != v.end(); ++i) {
     *i = glm::normalize(*i);
   }
 
   for (int j = 0; j < 4; ++j)
-    evolve(v_, i_, uv_);
+    evolve(v, i, uv);
 
-  count_ = i_.size() * 3;
+  count_ = i.size() * 3;
 
   glGenBuffers(1, &VBO_);
   glBindBuffer(GL_ARRAY_BUFFER, VBO_);
-  glBufferData(GL_ARRAY_BUFFER, v_.size() * sizeof(v_[0]), v_.data(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(v[0]), v.data(), GL_STATIC_DRAW);
 
   glGenBuffers(1, &IBO_);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO_);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_.size() * sizeof(i_[0]), i_.data(), GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(i[0]), i.data(), GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
   glGenBuffers(1, &UV_);
   glBindBuffer(GL_ARRAY_BUFFER, UV_);
-  glBufferData(GL_ARRAY_BUFFER, uv_.size() * sizeof(uv_[0]), uv_.data(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, uv.size() * sizeof(uv[0]), uv.data(), GL_STATIC_DRAW);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

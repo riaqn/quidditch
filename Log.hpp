@@ -20,7 +20,6 @@ Log<level> &Log<level>::operator<<(const T &t) {
   return *this;
 }
 
-
 extern Log<7> debug;
 extern Log<3> error;
 #endif

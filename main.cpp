@@ -6,7 +6,10 @@
 
 #include <Magick++.h>
 
-#include "Texture.hpp"
+#include "FileTexture.hpp"
+#include "NoiseTexture.hpp"
+#include "PerlinNoise.hpp"
+
 #include "Table.hpp"
 #include "Sphere.hpp"
 #include "Flag.hpp"
@@ -154,10 +157,14 @@ int main(int argc, char *argv[]) {
 
   Sphere sphere;
 
-  Texture texRed(GL_TEXTURE_2D, "res/red.jpg");
-  Texture texWhite(GL_TEXTURE_2D, "res/white0.jpg");
-  Texture texBlue(GL_TEXTURE_2D, "res/blue.jpg");
-  Texture texGolden(GL_TEXTURE_2D, "res/golden.jpg");
+  NoiseTexture texRed(PerlinNoise(), 800, 800, glm::fvec4(1, 0, 0, 1));
+
+  NoiseTexture texWhite(PerlinNoise(), 800, 800, glm::fvec4(1, 1, 1, 1));
+
+  
+  NoiseTexture texBlue(PerlinNoise(), 800, 800, glm::fvec4(0, 0, 1, 1));
+  NoiseTexture texGolden(PerlinNoise(), 800, 800, glm::fvec4(1, 1, 0, 1));
+  
 
   sf::Font font;
   if (!font.loadFromFile("/usr/share/fonts/wqy-zenhei/wqy-zenhei.ttc")) {
@@ -201,8 +208,8 @@ int main(int argc, char *argv[]) {
   BallWrapper sphereSnitch(ballSnitch, sphere, texGolden);
   scene.attach(&sphereSnitch);
 
-  Texture uk(GL_TEXTURE_2D, "res/flag1.png");
-  Texture usa(GL_TEXTURE_2D, "res/flag2.png");
+  FileTexture uk("res/flag1.png");
+  FileTexture usa("res/flag2.png");
   Wave wave0(100, 100, Wave::WAVE_BEZIER);
   Wave wave1(100, 100, Wave::WAVE_TRIANGLE);
   Flag flag0(wave0, uk);

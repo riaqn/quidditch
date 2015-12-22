@@ -12,9 +12,10 @@
 #include "Texture.hpp"
 
 
+
 Table::Table()
-  : cloth_(GL_TEXTURE_2D, "res/table.jpg"),
-    wood_(GL_TEXTURE_2D, "res/wood.jpg") {
+  : cloth_("res/table.jpg"),
+    wood_("res/wood.jpg") {
   glm::vec3 v[] = {
     glm::vec3(-1.0f, 0.0f, -2.0),
     glm::vec3(-1.0f, 0.0f, 0),

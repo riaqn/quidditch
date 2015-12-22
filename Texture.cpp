@@ -1,24 +1,22 @@
-#include <Magick++.h>
 #include "Texture.hpp"
 
 #include <GL/glew.h>
 #include "Log.hpp"
 
-Texture::Texture(const GLenum target, const std::string &path)
+Texture::Texture(const GLenum target)
   :target_(target) {
-  Magick::Image image(path);
-  Magick::Blob blob;
-  image.write(&blob, "RGBA");
-
   glGenTextures(1, &texture_);
-  glBindTexture(target, texture_);
+}
 
-  debug << "loaded texture " << path << " " << image.columns() << 'x' << image.rows() << "\n";
-  glTexImage2D(target, 0, GL_RGBA, image.columns(), image.rows(), 0, GL_RGBA, GL_UNSIGNED_BYTE, blob.data());
+void Texture::load(const unsigned width,
+              const unsigned height,
+              const void *const data) {
+  glBindTexture(target_, texture_);
+  glTexImage2D(target_, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-  glTexParameterf(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameterf(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);    
-  glBindTexture(target, 0);
+  glTexParameterf(target_, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameterf(target_, GL_TEXTURE_MAG_FILTER, GL_LINEAR);    
+  glBindTexture(target_, 0);
 }
 
 Texture::~Texture()
