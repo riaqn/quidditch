@@ -157,13 +157,13 @@ int main(int argc, char *argv[]) {
 
   Sphere sphere;
 
-  NoiseTexture texRed(PerlinNoise(), 800, 800, glm::fvec4(1, 0, 0, 1));
+  NoiseTexture texRed(PerlinNoise(), 800, 800, glm::fvec4(128, 0, 0, 255), glm::fvec4(255, 0, 0, 255));
 
-  NoiseTexture texWhite(PerlinNoise(), 800, 800, glm::fvec4(1, 1, 1, 1));
+  NoiseTexture texWhite(PerlinNoise(), 800, 800, glm::fvec4(128, 128, 128, 255), glm::fvec4(255,255,255,255));
 
   
-  NoiseTexture texBlue(PerlinNoise(), 800, 800, glm::fvec4(0, 0, 1, 1));
-  NoiseTexture texGolden(PerlinNoise(), 800, 800, glm::fvec4(1, 1, 0, 1));
+  NoiseTexture texBlue(PerlinNoise(), 800, 800, glm::fvec4(0, 0, 128, 255), glm::fvec4(0, 0, 255,255));
+  NoiseTexture texGolden(PerlinNoise(), 800, 800, glm::fvec4(128, 128, 0, 255), glm::fvec4(255,255,0,255));
   
 
   sf::Font font;

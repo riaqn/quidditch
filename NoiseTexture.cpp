@@ -6,7 +6,7 @@
 
 #include <Magick++.h>
 
-NoiseTexture::NoiseTexture(const Noise<float, glm::fvec2> &noise_, const unsigned width, const unsigned height, const glm::fvec4 &co)
+NoiseTexture::NoiseTexture(const Noise<float, glm::fvec2> &noise_, const unsigned width, const unsigned height, const glm::fvec4 &a, const glm::fvec4 &b)
   :Texture(GL_TEXTURE_2D)
 {
   data_ = new unsigned char[width * height * 4];
@@ -16,12 +16,9 @@ NoiseTexture::NoiseTexture(const Noise<float, glm::fvec2> &noise_, const unsigne
                      (float)j/height/10);
 
       unsigned base = (i * height + j) * 4;
-      data_[base + 0] = noise_.noise(xy) * co.x * 256;
-      data_[base + 1] = noise_.noise(xy) * co.y * 256;
-      data_[base + 2] = noise_.noise(xy) * co.z * 256;
-      
-      data_[base + 3] = 255; //noise_.noise(xy) * co.w * 256;
-      //debug << noise_.noise(xy) << "\n";
+      float noise = noise_.noise(xy);
+      for (unsigned k = 0; k < 4; ++k)
+      data_[base + k] = a[k] + noise * (b[k] - a[k]);
     }
   }
   Magick::Blob blob(data_, width * height * 4);
