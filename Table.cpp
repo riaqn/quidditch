@@ -17,18 +17,16 @@ Table::Table()
     wood_("res/wood.jpg") {
 }
   
-void Table::render(std::function<void (const glm::mat4 &)> ms,
-                   std::function<void (const GLenum)> ts) const {
+void Table::render(ModelSetter ms,
+                   MaterialSetter ts) const {
   glm::vec3 s;
   glm::mat4 scale;
-  
-  ts(0);
 
-  cloth_.bind(GL_TEXTURE0);
+  ts(Material{cloth_, 0, glm::vec3()});
   ms(glm::scale(glm::translate(glm::mat4(), glm::vec3(0, 0, -1)), glm::vec3(1, 0.01, 1)));
   box_.draw();
 
-  wood_.bind(GL_TEXTURE0);
+  ts(Material{wood_, 80, glm::vec3(1, 1, 1)});
   //draw wall
   s = glm::vec3(1.1, 0.05, 0.05);
   ms(glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0.05)), s));

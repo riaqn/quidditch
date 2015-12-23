@@ -11,5 +11,5 @@ private:
   const Box box_;
 public:
   Table();
-  void render(ModelSetter ms, TextureSetter ts) const ;
+  void render(ModelSetter ms, MaterialSetter ts) const ;
 };

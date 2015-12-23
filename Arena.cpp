@@ -154,11 +154,6 @@ void Arena::deduce(const float t) {
 
   for (auto i = balls_.begin(); i != balls_.end(); ++i) {
     Ball &b = **i;
-    debug << i - balls_.begin() << '\t' << glm::to_string(b.x) << '\t' << glm::to_string(b.v) << '\n';
-  }
-
-  for (auto i = balls_.begin(); i != balls_.end(); ++i) {
-    Ball &b = **i;
     b.x += b.v * t;
   }
 }

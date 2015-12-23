@@ -7,12 +7,12 @@ BallWrapper::BallWrapper(const Ball &ball, const Sphere &sphere, const Texture &
   :ball_(ball), sphere_(sphere), texture_(texture)
 { }
 
-void BallWrapper::render(ModelSetter ms, TextureSetter ts) const {
+void BallWrapper::render(ModelSetter ms, MaterialSetter ts) const {
   const Ball &ball = ball_;
   glm::mat4 translate = glm::translate(glm::mat4(), ball.x);
   glm::mat4 scale = glm::scale(translate, glm::vec3(ball.r));
   ms(scale);
-  texture_.bind(GL_TEXTURE0);
-  ts(0);
+  
+  ts(Material{texture_, 40, glm::vec3{1, 1, 1}});
   sphere_.draw();
 }

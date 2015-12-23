@@ -19,8 +19,9 @@ Log<level> &Log<level>::operator<<(const T &t) {
   return *this;
 }
 
-extern Log<8> debug;
+extern Log<7> debug;
 extern Log<3> error;
+extern Log<5> notice;
 
 template<typename T, glm::precision P>
 std::ostream &operator<<(std::ostream &os, const glm::tmat4x4<T, P> &mat) {

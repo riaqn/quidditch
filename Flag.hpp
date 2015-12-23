@@ -7,5 +7,5 @@ private:
   const Wave &wave_;
 public:
   Flag(const Wave &wave, const Texture &texture);
-  void render(ModelSetter ms, TextureSetter ts) const;
+  void render(ModelSetter ms, MaterialSetter ts) const;
 };

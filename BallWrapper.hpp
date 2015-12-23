@@ -10,5 +10,5 @@ private:
   const Texture &texture_;
 public:
   BallWrapper(const Ball &ball, const Sphere &sphere, const Texture &texture);
-  virtual void render(ModelSetter ms, TextureSetter ts) const;
+  virtual void render(ModelSetter ms, MaterialSetter ts) const;
 };
