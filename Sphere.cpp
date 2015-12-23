@@ -63,12 +63,12 @@ Sphere::Sphere() {
   });
 
    std::vector<glm::vec2> uv({
-       glm::fvec2(0.5, 1),
-         glm::fvec2(0.75, 0.5),
-         glm::fvec2(0.25, 0.5),
-         glm::fvec2(1, 1),
+       glm::fvec2(0.5, 0.75),
+         glm::fvec2(0.5, 0.25),
+         glm::fvec2(0, 0.5),
+         glm::fvec2(1, 0.5),
          glm::fvec2(0, 1),
-         glm::fvec2(0.5, 0)});
+         glm::fvec2(0, 0)});
    
   for (auto i = v.begin(); i != v.end(); ++i) {
     *i = glm::normalize(*i);
