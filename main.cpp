@@ -57,13 +57,6 @@ int main(int argc, char *argv[]) {
   glDepthFunc(GL_LESS);
 
 
-  /*
-  GLuint VertexArrayID;
-  glGenVertexArrays(1, &VertexArrayID);
-  glBindVertexArray(VertexArrayID);
-  */
-
-
   sf::SoundBuffer buffer0;
   if (!buffer0.loadFromFile("res/ball-wall.wav")) {
     return -1;
@@ -150,20 +143,26 @@ int main(int argc, char *argv[]) {
 
   View view(glm::vec3(0, 2, 0), glm::vec2(-glm::pi<float>(), -1.0));
   Projection projection(45, 4.0f/3, 0.1, 100);
-  Scene scene(view, projection);
+  Light light{glm::fvec3(0, 1, 0), glm::fvec3(1, 1, 1)};
+  Scene scene(view, projection, light);
 
   Table table;
   scene.attach(&table);
 
   Sphere sphere;
-
-  NoiseTexture texRed(PerlinNoise(), 800, 800, glm::fvec4(128, 0, 0, 255), glm::fvec4(255, 0, 0, 255));
-
-  NoiseTexture texWhite(PerlinNoise(), 800, 800, glm::fvec4(128, 128, 128, 255), glm::fvec4(255,255,255,255));
-
   
-  NoiseTexture texBlue(PerlinNoise(), 800, 800, glm::fvec4(0, 0, 128, 255), glm::fvec4(0, 0, 255,255));
-  NoiseTexture texGolden(PerlinNoise(), 800, 800, glm::fvec4(128, 128, 0, 255), glm::fvec4(255,255,0,255));
+  /*
+  PerlinNoise noise;
+  NoiseTexture texRed(noise, 800, 800, glm::fvec4(128, 0, 0, 255), glm::fvec4(255, 0, 0, 255));
+  NoiseTexture texWhite(noise, 800, 800, glm::fvec4(128, 128, 128, 255), glm::fvec4(255,255,255,255));
+  NoiseTexture texBlue(noise, 800, 800, glm::fvec4(0, 0, 128, 255), glm::fvec4(0, 0, 255,255));
+  NoiseTexture texGolden(noise, 800, 800, glm::fvec4(128, 128, 0, 255), glm::fvec4(255,255,0,255));
+  */
+
+  FileTexture texRed("res/red.png");
+  FileTexture texWhite("res/white.png");
+  FileTexture texBlue("res/blue.png");
+  FileTexture texGolden("res/golden.png");
   
 
   sf::Font font;
@@ -210,6 +209,7 @@ int main(int argc, char *argv[]) {
 
   FileTexture uk("res/flag1.png");
   FileTexture usa("res/flag2.png");
+  /*
   Wave wave0(100, 100, Wave::WAVE_BEZIER);
   Wave wave1(100, 100, Wave::WAVE_TRIANGLE);
   Flag flag0(wave0, uk);
@@ -222,6 +222,7 @@ int main(int argc, char *argv[]) {
   Translate flag1_t(flag1, glm::vec3(0, 1, -2));
   Scale flag1_s(flag1_t, glm::vec3(1, 0.5, 1));
   scene.attach(&flag1_s);
+  */
 
   bool running = true;
   sf::Clock clock;
@@ -264,6 +265,7 @@ int main(int argc, char *argv[]) {
     arena.deduce(elapsed.asSeconds() );
     scene.render();
 
+
     window.pushGLStates();
 
     sf::Text text;
@@ -277,6 +279,7 @@ int main(int argc, char *argv[]) {
     window.draw(text);
 
     window.popGLStates();
+
     window.display();
   }
 }

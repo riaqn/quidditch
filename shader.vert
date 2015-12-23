@@ -1,14 +1,21 @@
 #version 130
 
-in vec3 modelspace;
-in vec2 uv;
+uniform mat4 VP;
+uniform mat4 model;
 
-out vec2 uv0;
+in vec3 vert;
+in vec2 vertTexCoord;
+in vec3 vertNormal;
 
-//most valuable player
-uniform mat4 WVP;
+out vec3 fragVert;
+out vec2 fragTexCoord;
+out vec3 fragNormal;
 
 void main(){
-  gl_Position = WVP * vec4(modelspace, 1);
-  uv0 = uv;
+
+  fragTexCoord = vertTexCoord;
+  fragNormal = vertNormal;
+  fragVert = vert;
+  
+  gl_Position = VP * model * vec4(vert, 1);
 }

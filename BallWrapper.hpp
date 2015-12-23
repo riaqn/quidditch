@@ -9,7 +9,6 @@ private:
   const Sphere &sphere_;
   const Texture &texture_;
 public:
-  
   BallWrapper(const Ball &ball, const Sphere &sphere, const Texture &texture);
-  virtual void render(const GLuint WVP, const glm::mat4 &mat) const;
+  virtual void render(ModelSetter ms, TextureSetter ts) const;
 };

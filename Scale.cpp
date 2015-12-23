@@ -4,6 +4,9 @@
 Scale::Scale(const Renderable &r, const glm::vec3 v)
   :r_(r), v_(v) {
 }
-void Scale::render(const GLuint WVP, const glm::mat4 &mat) const {
-  r_.render(WVP, glm::scale(mat, v_));
+void Scale::render(ModelSetter ms, TextureSetter ts) const {
+  const glm::vec3 &v = v_;
+  r_.render([&ms, &v](const glm::mat4 &mat) -> void {
+      ms(glm::scale(mat, v));
+    }, ts);
 }

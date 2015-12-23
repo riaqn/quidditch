@@ -1,8 +1,12 @@
 #include <vector>
 #include <map>
 #include <utility>
+#include <functional>
 #include "Sphere.hpp"
 #include <glm/glm.hpp>
+
+using namespace std;
+using namespace glm;
 
 void Sphere::evolve(std::vector<glm::vec3> &v, std::vector<glm::uvec3> &i, std::vector<glm::vec2> &uv) {
   std::map<std::pair<unsigned, unsigned>, unsigned> MPcache;
@@ -70,45 +74,16 @@ Sphere::Sphere() {
          glm::fvec2(0, 1),
          glm::fvec2(0, 0)});
    
-  for (auto i = v.begin(); i != v.end(); ++i) {
-    *i = glm::normalize(*i);
+  for (auto k = v.begin(); k != v.end(); ++k) {
+    *k = glm::normalize(*k);
   }
 
-  for (int j = 0; j < 4; ++j)
+  for (auto k = 0; k < 4; ++k)
     evolve(v, i, uv);
 
-  count_ = i.size() * 3;
+  vector<Vertex> vert;
+  for (auto k = 0; k < v.size(); ++k)
+    vert.push_back(Vertex{v[k], uv[k], v[k]});
 
-  glGenBuffers(1, &VBO_);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO_);
-  glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(v[0]), v.data(), GL_STATIC_DRAW);
-
-  glGenBuffers(1, &IBO_);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO_);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(i[0]), i.data(), GL_STATIC_DRAW);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-  glGenBuffers(1, &UV_);
-  glBindBuffer(GL_ARRAY_BUFFER, UV_);
-  glBufferData(GL_ARRAY_BUFFER, uv.size() * sizeof(uv[0]), uv.data(), GL_STATIC_DRAW);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-void Sphere::render(const GLuint WVP, const glm::mat4 &VP) const {
-  glUniformMatrix4fv(WVP, 1, GL_FALSE, &VP[0][0]);
-
-  glBindBuffer(GL_ARRAY_BUFFER, VBO_);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-  glBindBuffer(GL_ARRAY_BUFFER, UV_);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO_);
-
-  glDrawElements(GL_TRIANGLES, count_, GL_UNSIGNED_INT, 0);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    
+  load(vert, i);
 }

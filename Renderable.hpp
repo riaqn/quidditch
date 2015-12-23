@@ -1,12 +1,12 @@
-#ifndef RENDERABLE_HPP
-#define RENDERABLE_HPP
-
-#include <GL/glew.h>
+#pragma  once
 #include <glm/glm.hpp>
+#include <GL/glew.h>
+#include <functional>
 
 class Renderable {
 public:
-  virtual void render(const GLuint WVP, const glm::mat4 &mat) const = 0;
+  typedef std::function<void (const glm::mat4 &)> ModelSetter;
+  typedef std::function<void (const GLenum)> TextureSetter;
+  virtual void render(ModelSetter ms, TextureSetter ts) const = 0;
 };
 
-#endif

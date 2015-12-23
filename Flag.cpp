@@ -4,9 +4,10 @@ Flag::Flag(const Wave &wave, const Texture &texture)
   :wave_(wave), texture_(texture)
 {
 }
-void Flag::render(const GLuint WVP, const glm::mat4 &VP) const {
-  glUniformMatrix4fv(WVP, 1, GL_FALSE, &VP[0][0]);
+void Flag::render(ModelSetter ms, TextureSetter ts) const {
+  ms(glm::mat4(1));
 
   texture_.bind(GL_TEXTURE0);
+  ts(0);
   wave_.draw();
 }

@@ -6,5 +6,5 @@ private:
   const glm::vec3 v_;
 public:
   Translate(const Renderable &r, const glm::vec3 v);
-  virtual void render(const GLuint WVP, const glm::mat4 &mat) const;
+  virtual void render(ModelSetter ms, TextureSetter ts) const;
 };

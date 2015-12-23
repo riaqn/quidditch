@@ -27,7 +27,8 @@ NoiseTexture::NoiseTexture(const Noise<float, glm::fvec2> &noise_, const unsigne
   image.magick("RGBA");
   image.read(blob);
 
-  image.display();
+  static int count = 0;
+  image.write("noise" + std::to_string(count++) + ".png");
   
   load(width, height, data_);
 }
