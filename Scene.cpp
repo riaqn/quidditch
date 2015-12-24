@@ -28,6 +28,7 @@ void Scene::render() {
     program_.uniform4fv(pre + "position", lights_[i]->getPosition());
     program_.uniform3fv(pre + "intensities", lights_[i]->getIntensities());
     program_.uniform1f(pre + "attenuation", lights_[i]->getAttenuation());
+    program_.uniform1f(pre + "ambientCoefficient", lights_[i]->getAmbientCoefficient());
     program_.uniform1f(pre + "coneAngle", lights_[i]->getConeAngle());
     program_.uniform3fv(pre + "coneDirection", lights_[i]->getConeDirection());
   }
