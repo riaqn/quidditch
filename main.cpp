@@ -15,6 +15,9 @@
 #include "Flag.hpp"
 #include "Wave.hpp"
 
+#include "SimpleLight.hpp"
+#include "FollowSpotLight.hpp"
+
 #include "Scene.hpp"
 
 #include "Translate.hpp"
@@ -143,15 +146,29 @@ int main(int argc, char *argv[]) {
 
   View view(glm::vec3(0, 2, 0), glm::vec2(-glm::pi<float>(), -1.0));
   Projection projection(45, 4.0f/3, 0.1, 100);
-  Light light{glm::fvec4(0, 1, 0, 0), //position
-      glm::fvec3(1, 1, 1), //white
-      0.1f, //atten
-      0.1f, //ambient light
-      180.0f, // coneangle
-      glm::vec3(0, -1, 0) //direciton
-      };
   Scene scene(view, projection);
-  scene.attach(&light);
+  
+  SimpleLight light0;
+  light0.position = glm::fvec4(0, 1, 0, 1);
+  light0.intensities = glm::fvec3(0.5, 0.5, 0.5);
+  light0.attenuation = 0.5f;
+  light0.ambientCoefficient = 0.5f;
+  light0.coneAngle = 180.0f;
+  light0.coneDirection = glm::vec3(0, -1, 0);
+  scene.attach(&light0);
+  
+  FollowSpotLight light1(ballCue, glm::vec3(0, 1, -1), glm::vec3(1, 1, 1), 0.1, 15);
+  scene.attach(&light1);
+  
+  SimpleLight light2;
+  light2.position = glm::fvec4(0, 1, -2, 1);
+  light2.intensities = glm::fvec3(0.5, 0.5, 0.5);
+  light2.attenuation = 0.5f;
+  light2.ambientCoefficient = 0.5f;
+  light2.coneAngle = 180.0f;
+  light2.coneDirection = glm::vec3(0, -1, 0);
+  scene.attach(&light2);
+  
 
   Table table;
   scene.attach(&table);

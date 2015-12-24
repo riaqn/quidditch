@@ -39,8 +39,10 @@ vec3 ApplyLight(Light light, vec3 surfaceColor, vec3 normal, vec3 surfacePos, ve
 
         //cone restrictions (affects attenuation)
         float lightToSurfaceAngle = degrees(acos(dot(-surfaceToLight, normalize(light.coneDirection))));
-        if(lightToSurfaceAngle > light.coneAngle){
-            attenuation = 0.0;
+        if(lightToSurfaceAngle > light.coneAngle) {
+          attenuation = 0.0;
+        } else {
+          attenuation = attenuation * cos(lightToSurfaceAngle / light.coneAngle * acos(0));
         }
     }
 
@@ -67,13 +69,11 @@ void main() {
     vec4 surfaceColor = texture(materialTex, fragTexCoord);
     vec3 surfaceToCamera = normalize(cameraPosition - surfacePos);
 
-    //combine color from all the lights
     vec3 linearColor = vec3(0);
     for(int i = 0; i < numLights; ++i){
         linearColor += ApplyLight(allLights[i], surfaceColor.rgb, normal, surfacePos, surfaceToCamera);
     }
     
-    //final color (after gamma correction)
     vec3 gamma = vec3(1.0/2.2);
     finalColor = vec4(pow(linearColor, gamma), surfaceColor.a);
 }

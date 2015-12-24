@@ -25,11 +25,11 @@ void Scene::render() {
   program_.uniform1i("numLights", lights_.size());
   for (auto i = 0; i < lights_.size(); ++i) {
     std::string pre = "allLights[" + std::to_string(i) + "].";
-    program_.uniform4fv(pre + "position", lights_[i]->position);
-    program_.uniform3fv(pre + "intensities", lights_[i]->intensities);
-    program_.uniform1f(pre + "attenuation", lights_[i]->attenuation);
-    program_.uniform1f(pre + "coneAngle", lights_[i]->coneAngle);
-    program_.uniform3fv(pre + "coneDirection", lights_[i]->coneDirection);
+    program_.uniform4fv(pre + "position", lights_[i]->getPosition());
+    program_.uniform3fv(pre + "intensities", lights_[i]->getIntensities());
+    program_.uniform1f(pre + "attenuation", lights_[i]->getAttenuation());
+    program_.uniform1f(pre + "coneAngle", lights_[i]->getConeAngle());
+    program_.uniform3fv(pre + "coneDirection", lights_[i]->getConeDirection());
   }
 
   glEnableVertexAttribArray(0);

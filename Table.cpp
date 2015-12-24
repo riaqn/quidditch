@@ -22,7 +22,7 @@ void Table::render(ModelSetter ms,
   glm::vec3 s;
   glm::mat4 scale;
 
-  ts(Material{cloth_, 0, glm::vec3()});
+  ts(Material{cloth_, 100, glm::vec3(0, 0, 0)});
   ms(glm::scale(glm::translate(glm::mat4(), glm::vec3(0, 0, -1)), glm::vec3(1, 0.01, 1)));
   box_.draw();
 
