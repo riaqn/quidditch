@@ -1,5 +1,6 @@
 0 -9.8 0
 GhostBall0.RigidBody
+WanderBall0.RigidBody
 Ground.RigidBody
 
 Wall+z.RigidBody

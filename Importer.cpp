@@ -52,7 +52,10 @@ btRigidBody *Importer::loadRigidBody(const path &p) {
   btTransform tf;
   ms->getWorldTransform(tf);
 
-  btRigidBody::btRigidBodyConstructionInfo info(mass, ms, loadCollisionShape(p.parent_path() / collisionShape));
+  btVector3 localInertia;
+  btCollisionShape *shape = loadCollisionShape(p.parent_path() / collisionShape);
+  shape->calculateLocalInertia(mass, localInertia);
+  btRigidBody::btRigidBodyConstructionInfo info(mass, ms, shape, localInertia);
   info.m_friction = friction;
   info.m_rollingFriction = rollingFriction;
   

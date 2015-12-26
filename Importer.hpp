@@ -10,7 +10,7 @@ public:
   public:
     ParseException();
   };
-  typedef std::function<void (const btRigidBody * const)> Callback;
+  typedef std::function<void (btRigidBody * const)> Callback;
   typedef std::function<void *(const std::string &)> UserPointerCallback;
 private:
   btDiscreteDynamicsWorld *dynamicsWorld_;

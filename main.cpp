@@ -16,6 +16,7 @@
 #include "Wave.hpp"
 
 #include "GhostBall.hpp"
+#include "WanderBall.hpp"
 
 #include "SimpleLight.hpp"
 #include "FollowSpotLight.hpp"
@@ -38,6 +39,7 @@
 
 #include <fstream>
 #include <glm/gtc/constants.hpp>
+
 
 #include <exception>
 
@@ -121,11 +123,17 @@ int main(int argc, char *argv[]) {
       is >> type;
       if (type == "GhostBall")
         return new GhostBall();
-      else 
+      else if (type == "WanderBall") {
+        float k, v0, mu;
+        is >> k >> v0 >> mu;
+        return new WanderBall(k, v0, mu);
+      } else 
         throw std::runtime_error("");
     });
+
+  std::vector<btRigidBody *> wanders;
   
-  importer.loadWorld(boost::filesystem::path("worlds/simple.world"), [&scene](const btRigidBody *const rb) -> void {
+  importer.loadWorld(boost::filesystem::path("worlds/simple.world"), [&scene, &wanders](btRigidBody *const rb) -> void {
       if (auto shape = dynamic_cast<const btSphereShape *>(rb->getCollisionShape())) {
         const Ball *b = (const Ball *)rb->getUserPointer();
       
@@ -133,7 +141,12 @@ int main(int argc, char *argv[]) {
           scene.attach(new BulletShapeRender(new SphereShape(shape),
                                              rb->getMotionState(),
                                              Renderable::Material{*FileTexture::get("res/red.png"), 80, glm::vec3(1, 1, 1)}));
-        } else
+        } else if (auto b0 = dynamic_cast<const WanderBall *>(b)) {
+          scene.attach(new BulletShapeRender(new SphereShape(shape),
+                                             rb->getMotionState(),
+                                             Renderable::Material{*FileTexture::get("res/blue.png"), 80, glm::vec3(1, 1, 1)}));
+          wanders.push_back(rb);
+        } else 
           throw std::runtime_error("");
       } else if (auto shape = dynamic_cast<const btTriangleMeshShape *>(rb->getCollisionShape())) {
         const btStridingMeshInterface *interface = shape->getMeshInterface();
@@ -223,7 +236,23 @@ int main(int argc, char *argv[]) {
       ballCue.v = glm::normalize(v0) * 5.0f;
       */
     }
-
+    static std::random_device rd;
+    static std::default_random_engine eng;
+    static std::uniform_real_distribution<> uniform_dist(0, 1);
+        
+    for (auto rb : wanders) {
+      WanderBall *b = (WanderBall *)rb->getUserPointer();
+      btVector3 v = rb->getLinearVelocity();
+      debug << "v = " << v << '\n';
+      btScalar v0 = v.length();
+      if (v0 == 0)
+        v = btVector3(uniform_dist(eng), uniform_dist(eng), uniform_dist(eng));
+      
+      rb->clearForces();
+      btVector3 f1 = v.normalize() * (b->v0 - v0) * b->mu * elapsed.asSeconds();
+      debug << "f1 = " << f1 << '\n';
+      rb->applyForce(f1, btVector3(0, 0, 0));
+    }
     dynamicsWorld.stepSimulation(elapsed.asSeconds());
     scene.render();
 
