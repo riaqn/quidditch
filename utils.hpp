@@ -12,6 +12,7 @@ std::istream &operator >>(std::istream &is, glm::tvec3<T, P> &vec) {
   return is;
 }
 
+
 template<typename T, glm::precision P>
 std::ostream &operator <<(std::ostream &is, const glm::tvec3<T, P> &vec) {
   is << glm::to_string(vec);
@@ -29,3 +30,7 @@ std::ostream &operator<<(std::ostream &os, const glm::tmat4x4<T, P> &mat) {
   os << glm::to_string(mat);
   return os;
 }
+
+
+std::ostream &operator<<(std::ostream &os, const btVector3 &vec);
+std::istream &operator >>(std::istream &is, btVector3 &vec);

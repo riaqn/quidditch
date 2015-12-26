@@ -1,5 +1,4 @@
 #include "Scene.hpp"
-#include "loadShader.hpp"
 #include "Log.hpp"
 
 Scene::Scene(const View &view, const Projection &projection)

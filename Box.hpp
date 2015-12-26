@@ -1,6 +1,4 @@
-#include <GL/glew.h>
-#include <vector>
-#include <glm/glm.hpp>
+#pragma once
 
 #include "Shape.hpp"
 

@@ -26,6 +26,7 @@ public:
     ts(material_);
     shape_->draw([&tf, &ms](const glm::vec3 &sca) -> void {
         glm::mat4 translate = glm::translate(glm::mat4(), convert(tf.getOrigin()));
+        debug << tf.getOrigin() << '\n';
         ms(glm::scale(translate, sca));
       });
   }

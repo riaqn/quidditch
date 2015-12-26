@@ -14,24 +14,6 @@ Importer::ParseException::ParseException()
   :runtime_error("")
 {}
 
-istream &operator>>(istream &is, btVector3 &vec) {
-  btScalar s;
-  is >> s;
-  vec.setX(s);
-  is >> s;
-  vec.setY(s);
-  is >> s;
-  vec.setZ(s);
-  return is;
-}
-
-ostream &operator<<(ostream &os, const btVector3 &vec) {
-  os << '[' << vec.x()
-     << ',' << vec.y()
-     << ',' << vec.z()
-     << ']';
-  return os;
-}
 
 void Importer::checkStream(const std::istream &is) {
   if (!is.good())
@@ -63,14 +45,19 @@ btRigidBody *Importer::loadRigidBody(const path &p) {
   btScalar mass;
   path collisionShape;
   path userPointer;
-  is >> mass >> collisionShape >> userPointer;
+  btScalar friction, rollingFriction;
+  is >> mass >> friction >> rollingFriction >> collisionShape >> userPointer;
   checkStream(is);
   btMotionState *ms = loadMotionState(is);
   btTransform tf;
   ms->getWorldTransform(tf);
-  btRigidBody *rb = new btRigidBody(mass,
-                                    ms,
-                                    loadCollisionShape(p.parent_path() / collisionShape));
+
+  btRigidBody::btRigidBodyConstructionInfo info(mass, ms, loadCollisionShape(p.parent_path() / collisionShape));
+  info.m_friction = friction;
+  info.m_rollingFriction = rollingFriction;
+  
+  btRigidBody *rb = new btRigidBody(info);
+                            
   if (userPointer == "NULL")
     rb->setUserPointer(NULL);
   else 
@@ -104,7 +91,10 @@ btCollisionShape *Importer::loadCollisionShape(const path &p) {
     return loadSphereShape(is);
   } else if (type == "TriangleMesh") {
     return loadTriangleMeshShape(is);
-  }
+  } else if (type == "Box") {
+    return loadBoxShape(is);
+  } else
+    throw ParseException();
 }
 
 btSphereShape *Importer::loadSphereShape(std::istream &is) {
@@ -117,4 +107,11 @@ btSphereShape *Importer::loadSphereShape(std::istream &is) {
 btTriangleMeshShape *Importer::loadTriangleMeshShape(std::istream &is) {
   FileMesh *fm = new FileMesh(is);
   return new btBvhTriangleMeshShape(fm, true);
+}
+
+btBoxShape *Importer::loadBoxShape(std::istream &is) {
+  btVector3 vec;
+  is >> vec;
+  checkStream(is);
+  return new btBoxShape(vec);
 }

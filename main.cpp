@@ -24,6 +24,7 @@
 
 #include "SphereShape.hpp"
 #include "TriangleMeshShape.hpp"
+#include "BoxShape.hpp"
 
 #include "Log.hpp"
 
@@ -65,7 +66,7 @@ int main(int argc, char *argv[]) {
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
-  View view(glm::vec3(0, 2, 0), glm::vec2(-glm::pi<float>(), -1.0));
+  View view(glm::vec3(0, 2, 2), glm::vec2(-glm::pi<float>(), -1.0));
   Projection projection(45, 4.0f/3, 0.1, 100);
   Scene scene(view, projection);
   
@@ -82,7 +83,7 @@ int main(int argc, char *argv[]) {
   sf::Sound sound1(buffer1);
 
   SimpleLight light0;
-  light0.position = glm::fvec4(0, 1, 0, 1);
+  light0.position = glm::fvec4(0, 1, 1, 1);
   light0.intensities = glm::fvec3(1, 1, 1);
   light0.attenuation = 1;
   light0.ambientCoefficient = 0.05f;
@@ -95,7 +96,7 @@ int main(int argc, char *argv[]) {
   scene.attach(&light1);*/
   
   SimpleLight light2;
-  light2.position = glm::fvec4(0, 1, -2, 1);
+  light2.position = glm::fvec4(0, 1, -1, 1);
   light2.intensities = glm::fvec3(1, 1, 1);
   light2.attenuation = 1;
   light2.ambientCoefficient = 0.05f;
@@ -112,6 +113,7 @@ int main(int argc, char *argv[]) {
 
 
   Importer importer(&dynamicsWorld, [](const std::string &path) -> void * {
+      //handle user pointer
       using namespace std;
       notice << "loadUserPointer(): " << path << "\n";
       ifstream is(path);
@@ -140,8 +142,15 @@ int main(int argc, char *argv[]) {
                                              rb->getMotionState(),
                                              Renderable::Material{*FileTexture::get("res/table.jpg"), 80, glm::vec3(0, 0, 0)}));
         }
-      }
+      } else if (auto shape = dynamic_cast<const btBoxShape *>(rb->getCollisionShape())) {
+        scene.attach(new BulletShapeRender(new BoxShape(shape),
+                                           rb->getMotionState(),
+                                           Renderable::Material{*FileTexture::get("res/wood.jpg"), 40, glm::vec3(1, 1, 1)
+                                               }));
+      } else
+        throw std::runtime_error("");
     });
+
   
   /*
   PerlinNoise noise;
