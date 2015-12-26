@@ -1,14 +1,15 @@
+#include <LinearMath/btMotionState.h>
 #include "Light.hpp"
 #include "Ball.hpp"
 
 class FollowSpotLight : public Light {
-  const Ball &ball_;
+  const btMotionState *motionState_;
   const glm::vec4 position_;
   const glm::vec3 intensities_;
   const float attenuation_;
   const float coneAngle_;
 public:
-  FollowSpotLight(const Ball &ball, const glm::vec3 &position, const glm::vec3 &intensities,
+  FollowSpotLight(const btMotionState *const motionState, const glm::vec3 &position, const glm::vec3 &intensities,
                   const float attenuation, const float coneAngle);
   virtual glm::vec4 getPosition() const ;
   virtual glm::vec3 getIntensities() const ;

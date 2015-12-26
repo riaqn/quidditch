@@ -1,7 +1,8 @@
 #include "FollowSpotLight.hpp"
+#include "utils.hpp"
 
-FollowSpotLight::FollowSpotLight(const Ball &ball, const glm::vec3 &position, const glm::vec3 &intensities, const float attenuation, const float coneAngle)
-  :ball_(ball), position_(glm::vec4(position, 1)), intensities_(intensities), attenuation_(attenuation), coneAngle_(coneAngle) {}
+FollowSpotLight::FollowSpotLight(const btMotionState *const motionState, const glm::vec3 &position, const glm::vec3 &intensities, const float attenuation, const float coneAngle)
+  :motionState_(motionState), position_(glm::vec4(position, 1)), intensities_(intensities), attenuation_(attenuation), coneAngle_(coneAngle) {}
 
 glm::vec4 FollowSpotLight::getPosition() const {
   return position_;
@@ -24,5 +25,7 @@ float FollowSpotLight::getConeAngle() const {
 }
 
 glm::vec3 FollowSpotLight::getConeDirection() const {
-  return ball_.x - glm::vec3(position_);
+  btTransform tf;
+  motionState_->getWorldTransform(tf);
+  return convert(tf.getOrigin()) - glm::vec3(position_);
 }

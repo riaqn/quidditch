@@ -84,7 +84,6 @@ void Program::use() const {
 
 GLuint Program::getUniformLocation(const std::string &var) const {
   GLuint loc = glGetUniformLocation(program_, var.c_str());
-  debug << "UniformLocation = " << loc << '\n';
   return loc;
 }
 

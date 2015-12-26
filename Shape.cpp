@@ -24,7 +24,6 @@ void Shape::load(const std::vector<Vertex> &vert, const std::vector<Face> &face)
 }
 
 void Shape::draw() const {
-  error << "draw() " << faces_ << " faces\n";
   glBindBuffer(GL_ARRAY_BUFFER, VBO_);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void *)offsetof(Vertex, position));
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void *)offsetof(Vertex, uv));

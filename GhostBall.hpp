@@ -1,11 +1,9 @@
-#ifndef GHOSTBALL_HPP
-#define GHOSTBALL_HPP
+#pragma once
 
 #include "Ball.hpp"
 
 class GhostBall : public Ball {
 public:
-  GhostBall(const Ball &ball);
+  GhostBall();
 };
 
-#endif
