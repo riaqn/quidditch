@@ -8,22 +8,25 @@
 
 #include "Log.hpp"
 
-class ShapeRender : public Renderable {
+#include "BulletShape.hpp"
+
+class BulletShapeRender : public Renderable {
 private:
-  const Shape *shape_;
+  const BulletShape *shape_;
   const btMotionState *const motionState_;
   const Material material_;
 public:
-  ShapeRender(const Shape *const shape, const btMotionState *const motionState, const Material &material)
+  BulletShapeRender(const BulletShape *const shape, const btMotionState *const motionState, const Material &material)
     :shape_(shape), motionState_(motionState), material_(material) {}
   
   void render(ModelSetter ms, MaterialSetter ts) const {
     btTransform tf;
     motionState_->getWorldTransform(tf);
 
-    glm::mat4 translate = glm::translate(glm::mat4(), convert(tf.getOrigin()));
-    ms(translate);
     ts(material_);
-    shape_->draw();
+    shape_->draw([&tf, &ms](const glm::vec3 &sca) -> void {
+        glm::mat4 translate = glm::translate(glm::mat4(), convert(tf.getOrigin()));
+        ms(glm::scale(translate, sca));
+      });
   }
 };

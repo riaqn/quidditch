@@ -22,13 +22,14 @@
 
 #include "Scene.hpp"
 
-#include "SphereRender.hpp"
+#include "SphereShape.hpp"
+#include "TriangleMeshShape.hpp"
 
 #include "Log.hpp"
 
 #include "Importer.hpp"
-#include "ShapeRender.hpp"
-#include "TriangleMeshShape.hpp"
+#include "BulletShapeRender.hpp"
+
 
 #include <btBulletDynamicsCommon.h>
 
@@ -127,17 +128,17 @@ int main(int argc, char *argv[]) {
         const Ball *b = (const Ball *)rb->getUserPointer();
       
         if (auto b0 = dynamic_cast<const GhostBall *>(b)) {
-          scene.attach(new SphereRender(shape,rb->getMotionState(), Renderable::Material{*FileTexture::get("res/red.png"),
-                  80, glm::vec3(1, 1, 1)}));
+          scene.attach(new BulletShapeRender(new SphereShape(shape),
+                                             rb->getMotionState(),
+                                             Renderable::Material{*FileTexture::get("res/red.png"), 80, glm::vec3(1, 1, 1)}));
         } else
           throw std::runtime_error("");
       } else if (auto shape = dynamic_cast<const btTriangleMeshShape *>(rb->getCollisionShape())) {
         const btStridingMeshInterface *interface = shape->getMeshInterface();
         for (auto i = 0; i < interface->getNumSubParts(); ++i) {
-          scene.attach(new ShapeRender(new TriangleMeshShape(shape, i),
-                                       rb->getMotionState(),
-                                       Renderable::Material{*FileTexture::get("res/table.jpg"), 80, glm::vec3(0, 0, 0)
-                                           }));
+          scene.attach(new BulletShapeRender(new TriangleMeshShape(shape, i),
+                                             rb->getMotionState(),
+                                             Renderable::Material{*FileTexture::get("res/table.jpg"), 80, glm::vec3(0, 0, 0)}));
         }
       }
     });

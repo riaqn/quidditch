@@ -1,7 +1,7 @@
 include(FindPkgConfig)
 cmake_minimum_required (VERSION 3.3)
 project (Quidditch)
-add_executable(quidditch main.cpp Projection.cpp View.cpp Scene.cpp Sphere.cpp Texture.cpp Log.cpp  SphereRender.cpp Box.cpp Wave.cpp Flag.cpp Translate.cpp Scale.cpp Bezier.cpp NoiseTexture.cpp Texture.cpp FileTexture.cpp PerlinNoise.cpp Shape.cpp Program.cpp SimpleLight.cpp FollowSpotLight.cpp GhostBall.cpp Importer.cpp utils.cpp Ball.cpp FileMesh.cpp TriangleMeshShape.cpp)
+add_executable(quidditch main.cpp Projection.cpp View.cpp Scene.cpp Sphere.cpp Texture.cpp Log.cpp  SphereShape.cpp Box.cpp Wave.cpp Flag.cpp Translate.cpp Scale.cpp Bezier.cpp NoiseTexture.cpp Texture.cpp FileTexture.cpp PerlinNoise.cpp Shape.cpp Program.cpp SimpleLight.cpp FollowSpotLight.cpp GhostBall.cpp Importer.cpp utils.cpp Ball.cpp FileMesh.cpp TriangleMeshShape.cpp)
 
 
 pkg_check_modules(BULLET REQUIRED bullet)

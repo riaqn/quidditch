@@ -1,3 +1,4 @@
+#pragma once
 #include <LinearMath/btVector3.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -21,4 +22,10 @@ template<typename T, glm::precision P>
 std::ostream &operator <<(std::ostream &is, const glm::tvec2<T, P> &vec) {
   is << glm::to_string(vec);
   return is;
+}
+
+template<typename T, glm::precision P>
+std::ostream &operator<<(std::ostream &os, const glm::tmat4x4<T, P> &mat) {
+  os << glm::to_string(mat);
+  return os;
 }

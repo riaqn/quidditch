@@ -6,8 +6,8 @@
 #include "utils.hpp"
 
 TriangleMeshShape::TriangleMeshShape(const btTriangleMeshShape *const shape, const int i) {
-  std::vector<Vertex> vert;
-  std::vector<Face> face;
+  std::vector<Shape::Vertex> vert;
+  std::vector<Shape::Face> face;
   const btStridingMeshInterface *interface = shape->getMeshInterface();
   
   const unsigned char *v;
@@ -28,7 +28,7 @@ TriangleMeshShape::TriangleMeshShape(const btTriangleMeshShape *const shape, con
     throw std::runtime_error("");
   for (auto j = 0; j < v_num; ++j) {
     glm::vec3 &pos = *(glm::vec3 *)&v[v_stride * j];
-    vert.push_back(Vertex{pos,
+    vert.push_back(Shape::Vertex{pos,
           glm::vec2(pos.x, pos.z),
           glm::vec3(0)});
   }
@@ -48,5 +48,10 @@ TriangleMeshShape::TriangleMeshShape(const btTriangleMeshShape *const shape, con
     debug << v0.position << v0.uv << v0.normal << '\n';
   for (auto f0 : face)
     debug << f0 << '\n';
-  load(vert, face);
+  shape_.load(vert, face);
+}
+
+void TriangleMeshShape::draw(ScaleSetter ss) const {
+  ss(glm::vec3(1));
+  shape_.draw();
 }

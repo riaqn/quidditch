@@ -1,6 +1,5 @@
 #pragma  once
 #include <glm/glm.hpp>
-#include <GL/glew.h>
 #include <functional>
 #include "Texture.hpp"
 

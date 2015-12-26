@@ -1,6 +1,7 @@
 #pragma  once
 #include <iostream>
 #include <glm/glm.hpp>
+#include "utils.hpp"
 
 #define LOG_LEVEL 8
 
@@ -23,13 +24,3 @@ extern Log<7> debug;
 extern Log<3> error;
 extern Log<5> notice;
 
-template<typename T, glm::precision P>
-std::ostream &operator<<(std::ostream &os, const glm::tmat4x4<T, P> &mat) {
-  for (auto i = 0; i < 4; ++i) {
-    for (auto j = 0; j < 4; ++j) {
-      os << mat[i][j] << '\t';
-    }
-    os << '\n';
-  }
-  return os;
-}
