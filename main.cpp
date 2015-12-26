@@ -22,14 +22,13 @@
 
 #include "Scene.hpp"
 
-#include "Translate.hpp"
-#include "Scale.hpp"
-
-#include "BallWrapper.hpp"
+#include "SphereRender.hpp"
 
 #include "Log.hpp"
 
 #include "Importer.hpp"
+#include "ShapeRender.hpp"
+#include "TriangleMeshShape.hpp"
 
 #include <btBulletDynamicsCommon.h>
 
@@ -37,6 +36,8 @@
 
 #include <fstream>
 #include <glm/gtc/constants.hpp>
+
+#include <exception>
 
 int main(int argc, char *argv[]) {
   Magick::InitializeMagick(argv[0]);
@@ -111,24 +112,33 @@ int main(int argc, char *argv[]) {
 
   Importer importer(&dynamicsWorld, [](const std::string &path) -> void * {
       using namespace std;
+      notice << "loadUserPointer(): " << path << "\n";
       ifstream is(path);
       string type;
       is >> type;
       if (type == "GhostBall")
         return new GhostBall();
+      else 
+        throw std::runtime_error("");
     });
   
   importer.loadWorld(boost::filesystem::path("worlds/simple.world"), [&scene](const btRigidBody *const rb) -> void {
-      static Sphere sphere;
-      static FileTexture texRed("res/red.png");
-      static FileTexture texWhite("res/white.png");
-      static FileTexture texBlue("res/blue.png");
-      static FileTexture texGolden("res/golden.png");
-      const btSphereShape *shape = (const btSphereShape *)rb->getCollisionShape();
-      const Ball *b = (const Ball *)rb->getUserPointer();
+      if (auto shape = dynamic_cast<const btSphereShape *>(rb->getCollisionShape())) {
+        const Ball *b = (const Ball *)rb->getUserPointer();
       
-      if (auto b0 = dynamic_cast<const GhostBall *>(b)) {
-        scene.attach(new BallWrapper(shape->getRadius(),rb->getMotionState(), sphere, texRed));
+        if (auto b0 = dynamic_cast<const GhostBall *>(b)) {
+          scene.attach(new SphereRender(shape,rb->getMotionState(), Renderable::Material{*FileTexture::get("res/red.png"),
+                  80, glm::vec3(1, 1, 1)}));
+        } else
+          throw std::runtime_error("");
+      } else if (auto shape = dynamic_cast<const btTriangleMeshShape *>(rb->getCollisionShape())) {
+        const btStridingMeshInterface *interface = shape->getMeshInterface();
+        for (auto i = 0; i < interface->getNumSubParts(); ++i) {
+          scene.attach(new ShapeRender(new TriangleMeshShape(shape, i),
+                                       rb->getMotionState(),
+                                       Renderable::Material{*FileTexture::get("res/table.jpg"), 80, glm::vec3(0, 0, 0)
+                                           }));
+        }
       }
     });
   

@@ -3,8 +3,8 @@
 #include <sstream>
 #include <boost/filesystem.hpp>
 #include "utils.hpp"
-
 #include "Log.hpp"
+#include "FileMesh.hpp"
 
 
 using namespace std;
@@ -68,11 +68,13 @@ btRigidBody *Importer::loadRigidBody(const path &p) {
   btMotionState *ms = loadMotionState(is);
   btTransform tf;
   ms->getWorldTransform(tf);
-  debug << "fuck" << tf.getOrigin() << '\n';
   btRigidBody *rb = new btRigidBody(mass,
                                     ms,
                                     loadCollisionShape(p.parent_path() / collisionShape));
-  rb->setUserPointer(upcb_((p.parent_path() / userPointer).string()));
+  if (userPointer == "NULL")
+    rb->setUserPointer(NULL);
+  else 
+    rb->setUserPointer(upcb_((p.parent_path() / userPointer).string()));
   checkStream(is);
   return rb;
 }
@@ -80,7 +82,6 @@ btRigidBody *Importer::loadRigidBody(const path &p) {
 
 btMotionState *Importer::loadMotionState(std::istream &is) {
   btTransform tf(loadTransform(is));
-  debug << "fuck2" << tf.getOrigin() << '\n';
   return new btDefaultMotionState(tf);
 }
 
@@ -101,7 +102,9 @@ btCollisionShape *Importer::loadCollisionShape(const path &p) {
   checkStream(is);
   if (type == "Sphere") {
     return loadSphereShape(is);
-  } 
+  } else if (type == "TriangleMesh") {
+    return loadTriangleMeshShape(is);
+  }
 }
 
 btSphereShape *Importer::loadSphereShape(std::istream &is) {
@@ -109,4 +112,9 @@ btSphereShape *Importer::loadSphereShape(std::istream &is) {
   is >> radius;
   checkStream(is);
   return new btSphereShape(radius);
+}
+
+btTriangleMeshShape *Importer::loadTriangleMeshShape(std::istream &is) {
+  FileMesh *fm = new FileMesh(is);
+  return new btBvhTriangleMeshShape(fm, true);
 }
