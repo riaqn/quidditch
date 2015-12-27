@@ -245,14 +245,18 @@ int main(int argc, char *argv[]) {
       float maxForce = 0.2;
       btVector3 v = cue->getLinearVelocity();
       float v0 = v.dot(dir);
+
       float f;
-      if (v0 == 0)
-        f = maxForce;
-      else {
+      if (v0 == 0) {
+        debug << "v0(=0) = " << v0 << "\n";
+        f = maxForce * 10;
+      } else {
+        debug << "v0(!0) = " << v0 << "\n";
         f = userPower / v0;
         if (f < 0 || f > maxForce)
           f = maxForce;
       }
+      debug << "applyForce = " << f * dir << '\n';
       cue->applyForce(f * dir, btVector3(0, 0, 0));
     };
 
@@ -272,14 +276,12 @@ int main(int argc, char *argv[]) {
     for (auto rb : wanders) {
       WanderBall *b = (WanderBall *)rb->getUserPointer();
       btVector3 v = rb->getLinearVelocity();
-      debug << "v = " << v << '\n';
       btScalar v0 = v.length();
       if (v0 == 0)
         v = btVector3(uniform_dist(eng), uniform_dist(eng), uniform_dist(eng));
       
       rb->clearForces();
       btVector3 f1 = v.normalize() * (b->v0 - v0) * b->mu * elapsed.asSeconds();
-      debug << "f1 = " << f1 << '\n';
       rb->applyForce(f1, btVector3(0, 0, 0));
     }
     dynamicsWorld.stepSimulation(elapsed.asSeconds());

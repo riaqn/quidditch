@@ -26,8 +26,9 @@ public:
     ts(material_);
     shape_->draw([&tf, &ms](const glm::vec3 &sca) -> void {
         glm::mat4 translate = glm::translate(glm::mat4(), convert(tf.getOrigin()));
-        debug << tf.getOrigin() << '\n';
-        ms(glm::scale(translate, sca));
+        btQuaternion quaternion = tf.getRotation();
+        glm::mat4 rotate = glm::rotate(translate, quaternion.getAngle(), convert(quaternion.getAxis()));
+        ms(glm::scale(rotate, sca));
       });
   }
 };
