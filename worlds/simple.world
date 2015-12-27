@@ -2,6 +2,7 @@
 GhostBall0.RigidBody
 WanderBall0.RigidBody
 Ground.RigidBody
+CueBall.RigidBody
 
 Wall+z.RigidBody
 Wall-z.RigidBody

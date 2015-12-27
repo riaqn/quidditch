@@ -1,6 +1,6 @@
 #include "GhostBall.hpp"
 
-class CueBall : public GhostBall {
+class CueBall : public Ball {
 public:
-  CueBall(const GhostBall &ball);
+  CueBall() {};
 };

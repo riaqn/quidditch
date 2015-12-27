@@ -17,6 +17,7 @@
 
 #include "GhostBall.hpp"
 #include "WanderBall.hpp"
+#include "CueBall.hpp"
 
 #include "SimpleLight.hpp"
 #include "FollowSpotLight.hpp"
@@ -93,9 +94,6 @@ int main(int argc, char *argv[]) {
   light0.coneDirection = glm::vec3(0, -1, -1);
   scene.attach(&light0);
 
-  /*
-  FollowSpotLight light1(ballCue, glm::vec3(0, 1, -1), glm::vec3(2, 2, 2), 0.1, 15);
-  scene.attach(&light1);*/
   
   SimpleLight light2;
   light2.position = glm::fvec4(0, 1, -1, 1);
@@ -127,13 +125,17 @@ int main(int argc, char *argv[]) {
         float k, v0, mu;
         is >> k >> v0 >> mu;
         return new WanderBall(k, v0, mu);
+      } else if (type == "CueBall") {
+        return new CueBall();
       } else 
         throw std::runtime_error("");
     });
 
   std::vector<btRigidBody *> wanders;
+  std::vector<btRigidBody *> snitches;
+  btRigidBody *cue;
   
-  importer.loadWorld(boost::filesystem::path("worlds/simple.world"), [&scene, &wanders](btRigidBody *const rb) -> void {
+  importer.loadWorld(boost::filesystem::path("worlds/simple.world"), [&scene, &wanders, &snitches, &cue](btRigidBody *const rb) -> void {
       if (auto shape = dynamic_cast<const btSphereShape *>(rb->getCollisionShape())) {
         const Ball *b = (const Ball *)rb->getUserPointer();
       
@@ -146,6 +148,11 @@ int main(int argc, char *argv[]) {
                                              rb->getMotionState(),
                                              Renderable::Material{*FileTexture::get("res/blue.png"), 80, glm::vec3(1, 1, 1)}));
           wanders.push_back(rb);
+        } else if (auto b0 = dynamic_cast<const CueBall *>(b)) {
+          scene.attach(new BulletShapeRender(new SphereShape(shape),
+                                             rb->getMotionState(),
+                                             Renderable::Material{*FileTexture::get("res/white.png"), 80, glm::vec3(1, 1, 1)}));
+          cue = rb;
         } else 
           throw std::runtime_error("");
       } else if (auto shape = dynamic_cast<const btTriangleMeshShape *>(rb->getCollisionShape())) {
@@ -164,6 +171,8 @@ int main(int argc, char *argv[]) {
         throw std::runtime_error("");
     });
 
+  FollowSpotLight light1(cue->getMotionState(), glm::vec3(0, 1, -1), glm::vec3(2, 2, 2), 0.1, 15);
+  scene.attach(&light1);
   
   /*
   PerlinNoise noise;
