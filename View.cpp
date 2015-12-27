@@ -4,35 +4,39 @@
 #include <glm/gtc/constants.hpp>
 
 View::View(const glm::vec3 &eye, const glm::vec2 &angle)
-  :eye_(eye), angle_(angle) {
+  :eye(eye), angle(angle) {
   turn(glm::vec2(0, 0));
 }
 
 
 void View::turn(const glm::vec2 &d) {
-  angle_ += d;
-  direction_ = glm::vec3(
-                         cos(angle_.y) * sin(angle_.x),
-                         sin(angle_.y),
-                         cos(angle_.y) * cos(angle_.x)
+  angle += d;
+  direction = glm::vec3(
+                         cos(angle.y) * sin(angle.x),
+                         sin(angle.y),
+                         cos(angle.y) * cos(angle.x)
                          );
-  right_ = glm::vec3(
-                     sin(angle_.x - glm::pi<float>() / 2),
+  right = glm::vec3(
+                     sin(angle.x - glm::pi<float>() / 2),
                      0,
-                     cos(angle_.x - glm::pi<float>() / 2)
+                     cos(angle.x - glm::pi<float>() / 2)
                      );
 
-  up_ = glm::cross(right_, direction_);
+  up = glm::cross(right, direction);
 }
 
-void View::up(const float d) {
-  eye_ += up_ * d;
+void View::moveUp(const float d) {
+  eye += up * d;
 }
 
-void View::right(const float d) {
-  eye_ += right_ * d;
+void View::moveRight(const float d) {
+  eye += right * d;
 }
 
 glm::mat4 View::matrix() const {
-  return glm::lookAt(eye_, eye_ + direction_, up_);
+  return glm::lookAt(eye, eye + direction, up);
+}
+
+void View::zoom(const float d) {
+  eye += d * direction;
 }

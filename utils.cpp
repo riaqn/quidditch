@@ -4,6 +4,10 @@ glm::vec3 convert(const btVector3 &vec) {
   return glm::vec3(vec.x(), vec.y(), vec.z());
 }
 
+btVector3 convert(const glm::vec3 &vec) {
+  return btVector3(vec.x, vec.y, vec.z);
+}
+
 std::ostream &operator<<(std::ostream &os, const btVector3 &vec) {
   os << '[' << vec.x()
      << ',' << vec.y()

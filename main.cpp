@@ -226,25 +226,45 @@ int main(int argc, char *argv[]) {
         view.turn(glm::vec2(size.x / 2.0 - event.mouseMove.x,
                              size.y / 2.0 - event.mouseMove.y) * turnSpeed);
       } else if (event.type == sf::Event::MouseWheelScrolled) {
-        view.eye_ += glm::normalize(view.direction_) * event.mouseWheelScroll.delta;
+        view.zoom(event.mouseWheelScroll.delta);
       }
     }
     static float moveSpeed = 1; //per second
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-      view.up(elapsed.asSeconds() * moveSpeed);
+      view.moveUp(elapsed.asSeconds() * moveSpeed);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-      view.up(- elapsed.asSeconds() * moveSpeed);
+      view.moveUp(- elapsed.asSeconds() * moveSpeed);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-      view.right(-elapsed.asSeconds() * moveSpeed);
+      view.moveRight(-elapsed.asSeconds() * moveSpeed);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-      view.right(elapsed.asSeconds() * moveSpeed);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-      /*
-      glm::vec3 v0 = ballCue.x - view.eye_;
-      v0.y = 0;
-      ballCue.v = glm::normalize(v0) * 5.0f;
-      */
-    }
+      view.moveRight(elapsed.asSeconds() * moveSpeed);
+
+    cue->clearForces();
+    auto applyForce = [&cue](const btVector3 &dir) -> void {
+      float userPower = 0.05;
+      float maxForce = 0.2;
+      btVector3 v = cue->getLinearVelocity();
+      float v0 = v.dot(dir);
+      float f;
+      if (v0 == 0)
+        f = maxForce;
+      else {
+        f = userPower / v0;
+        if (f < 0 || f > maxForce)
+          f = maxForce;
+      }
+      cue->applyForce(f * dir, btVector3(0, 0, 0));
+    };
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+      applyForce(convert(view.up));
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+      applyForce(-convert(view.up));
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+      applyForce(convert(view.right));
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+      applyForce(-convert(view.right));
+    
     static std::random_device rd;
     static std::default_random_engine eng;
     static std::uniform_real_distribution<> uniform_dist(0, 1);

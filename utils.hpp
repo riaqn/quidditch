@@ -5,6 +5,7 @@
 #include <istream>
 
 glm::vec3 convert(const btVector3 &vec);
+btVector3 convert(const glm::vec3 &vec);
 
 template<typename T, glm::precision P>
 std::istream &operator >>(std::istream &is, glm::tvec3<T, P> &vec) {

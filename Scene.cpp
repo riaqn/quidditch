@@ -17,7 +17,7 @@ void Scene::render() {
   
   program_.use();
 
-  program_.uniform3fv("cameraPosition", view_.eye_);
+  program_.uniform3fv("cameraPosition", view_.eye);
 
   program_.uniformMatrix4fv("camera", projection_.matrix() * view_.matrix());
 
