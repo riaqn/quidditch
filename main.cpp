@@ -249,7 +249,7 @@ int main(int argc, char *argv[]) {
       float f;
       if (v0 == 0) {
         debug << "v0(=0) = " << v0 << "\n";
-        f = maxForce * 10;
+        f = maxForce;
       } else {
         debug << "v0(!0) = " << v0 << "\n";
         f = userPower / v0;
@@ -258,6 +258,7 @@ int main(int argc, char *argv[]) {
       }
       debug << "applyForce = " << f * dir << '\n';
       cue->applyForce(f * dir, btVector3(0, 0, 0));
+      cue->activate();
     };
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
