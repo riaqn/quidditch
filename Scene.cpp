@@ -41,7 +41,7 @@ void Scene::render() {
     r->render([&program](const glm::mat4 & m) -> void {
         program.uniformMatrix4fv("model", m);
       }, [&program](const Renderable::Material &m) -> void {
-        m.texture.bind(GL_TEXTURE0);
+        m.texture->bind(GL_TEXTURE0);
         program.uniform1i("materialTex", 0);
         program.uniform1f("materialShininess", m.shininess);
         program.uniform3fv("materialSpecularColor", m.specularColor);

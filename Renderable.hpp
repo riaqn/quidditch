@@ -6,7 +6,7 @@
 class Renderable {
 public:
   struct Material {
-    const Texture &texture;
+    const Texture *texture;
     float shininess;
     glm::vec3 specularColor;
   };

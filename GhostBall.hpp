@@ -4,6 +4,7 @@
 
 class GhostBall : public Ball {
 public:
-  GhostBall();
+  GhostBall() {}
+  virtual void action(btRigidBody *rb, const float elapsed) {}
 };
 

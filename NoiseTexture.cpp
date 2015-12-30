@@ -2,8 +2,6 @@
 #include <vector>
 #include "NoiseTexture.hpp"
 #include "Log.hpp"
-
-
 #include <Magick++.h>
 
 NoiseTexture::NoiseTexture(const Noise<float, glm::fvec2> &noise_, const unsigned width, const unsigned height, const glm::fvec4 &a, const glm::fvec4 &b)

@@ -18,6 +18,7 @@
 #include "GhostBall.hpp"
 #include "WanderBall.hpp"
 #include "CueBall.hpp"
+#include "SnitchBall.hpp"
 
 #include "SimpleLight.hpp"
 #include "FollowSpotLight.hpp"
@@ -119,60 +120,64 @@ int main(int argc, char *argv[]) {
       ifstream is(path);
       string type;
       is >> type;
-      if (type == "GhostBall")
+      if (type == "GhostBall") {
         return new GhostBall();
-      else if (type == "WanderBall") {
-        float k, v0, mu;
-        is >> k >> v0 >> mu;
-        return new WanderBall(k, v0, mu);
+      } else if (type == "WanderBall") {
+        float v0, mu;
+        is >> v0 >> mu;
+        return new WanderBall(v0, mu);
       } else if (type == "CueBall") {
-        return new CueBall();
+        float p, f;
+        is >> p >> f;
+        return new CueBall(p, f);
+      } else if (type == "SnitchBall") {
+        float t0, t1;
+        btVector3 min, max, mu;
+        float v0;
+        is >> t0 >> t1 >> min >> max >> mu >> v0;
+        return new SnitchBall(t0, t1, min, max, mu, v0);
       } else 
         throw std::runtime_error("");
     });
 
-  std::vector<btRigidBody *> wanders;
-  std::vector<btRigidBody *> snitches;
-  btRigidBody *cue;
+  std::vector<btRigidBody *> bodies;
+  CueBall *cue;
   
-  importer.loadWorld(boost::filesystem::path("worlds/simple.world"), [&scene, &wanders, &snitches, &cue](btRigidBody *const rb) -> void {
+  importer.loadWorld(boost::filesystem::path("worlds/simple.world"), [&scene, &bodies, &cue](btRigidBody *const rb) -> void {
       if (auto shape = dynamic_cast<const btSphereShape *>(rb->getCollisionShape())) {
-        const Ball *b = (const Ball *)rb->getUserPointer();
-      
-        if (auto b0 = dynamic_cast<const GhostBall *>(b)) {
-          scene.attach(new BulletShapeRender(new SphereShape(shape),
-                                             rb->getMotionState(),
-                                             Renderable::Material{*FileTexture::get("res/red.png"), 80, glm::vec3(1, 1, 1)}));
-        } else if (auto b0 = dynamic_cast<const WanderBall *>(b)) {
-          scene.attach(new BulletShapeRender(new SphereShape(shape),
-                                             rb->getMotionState(),
-                                             Renderable::Material{*FileTexture::get("res/blue.png"), 80, glm::vec3(1, 1, 1)}));
-          wanders.push_back(rb);
-        } else if (auto b0 = dynamic_cast<const CueBall *>(b)) {
-          scene.attach(new BulletShapeRender(new SphereShape(shape),
-                                             rb->getMotionState(),
-                                             Renderable::Material{*FileTexture::get("res/white.png"), 80, glm::vec3(1, 1, 1)}));
-          cue = rb;
-        } else 
+        Renderable::Material &material = *(Renderable::Material *)alloca(sizeof(Renderable::Material));
+        Ball *b = (Ball *)rb->getUserPointer();
+        
+        if (auto b0 = dynamic_cast<GhostBall *>(b))
+          material = Renderable::Material{FileTexture::get("res/red.png"), 80, glm::vec3(1, 1, 1)};
+        else if (auto b0 = dynamic_cast<WanderBall *>(b)) 
+          material = Renderable::Material{FileTexture::get("res/blue.png"), 80, glm::vec3(1, 1, 1)};
+        else if (auto b0 = dynamic_cast<CueBall *>(b)) {
+          material = Renderable::Material{FileTexture::get("res/white.png"), 80, glm::vec3(1, 1, 1)};
+          cue = b0;
+          scene.attach(new FollowSpotLight(rb->getMotionState(), glm::vec3(0, 1, 0), glm::vec3(2, 2, 2), 0.1, 15));
+        } else if (auto b0 = dynamic_cast<SnitchBall *>(b)) 
+          material = Renderable::Material{FileTexture::get("res/golden.png"), 80, glm::vec3(1, 1, 1)};
+        else 
           throw std::runtime_error("");
+        bodies.push_back(rb);
+        scene.attach(new BulletShapeRender(new SphereShape(shape), rb->getMotionState(), material));
       } else if (auto shape = dynamic_cast<const btTriangleMeshShape *>(rb->getCollisionShape())) {
         const btStridingMeshInterface *interface = shape->getMeshInterface();
         for (auto i = 0; i < interface->getNumSubParts(); ++i) {
           scene.attach(new BulletShapeRender(new TriangleMeshShape(shape, i),
                                              rb->getMotionState(),
-                                             Renderable::Material{*FileTexture::get("res/table.jpg"), 80, glm::vec3(0, 0, 0)}));
+                                             Renderable::Material{FileTexture::get("res/table.jpg"), 80, glm::vec3(0, 0, 0)}));
         }
       } else if (auto shape = dynamic_cast<const btBoxShape *>(rb->getCollisionShape())) {
         scene.attach(new BulletShapeRender(new BoxShape(shape),
                                            rb->getMotionState(),
-                                           Renderable::Material{*FileTexture::get("res/wood.jpg"), 40, glm::vec3(1, 1, 1)
+                                           Renderable::Material{FileTexture::get("res/wood.jpg"), 40, glm::vec3(1, 1, 1)
                                                }));
       } else
         throw std::runtime_error("");
     });
 
-  FollowSpotLight light1(cue->getMotionState(), glm::vec3(0, 1, -1), glm::vec3(2, 2, 2), 0.1, 15);
-  scene.attach(&light1);
   
   /*
   PerlinNoise noise;
@@ -239,52 +244,21 @@ int main(int argc, char *argv[]) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
       view.moveRight(elapsed.asSeconds() * moveSpeed);
 
-    cue->clearForces();
-    auto applyForce = [&cue](const btVector3 &dir) -> void {
-      float userPower = 0.05;
-      float maxForce = 0.2;
-      btVector3 v = cue->getLinearVelocity();
-      float v0 = v.dot(dir);
-
-      float f;
-      if (v0 == 0) {
-        debug << "v0(=0) = " << v0 << "\n";
-        f = maxForce;
-      } else {
-        debug << "v0(!0) = " << v0 << "\n";
-        f = userPower / v0;
-        if (f < 0 || f > maxForce)
-          f = maxForce;
-      }
-      debug << "applyForce = " << f * dir << '\n';
-      cue->applyForce(f * dir, btVector3(0, 0, 0));
-      cue->activate();
-    };
-
+    cue->dir = btVector3();
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-      applyForce(convert(view.up));
+      cue->dir += convert(view.up);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-      applyForce(-convert(view.up));
+      cue->dir -= convert(view.up);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-      applyForce(convert(view.right));
+      cue->dir += convert(view.right);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-      applyForce(-convert(view.right));
-    
-    static std::random_device rd;
-    static std::default_random_engine eng;
-    static std::uniform_real_distribution<> uniform_dist(0, 1);
-        
-    for (auto rb : wanders) {
-      WanderBall *b = (WanderBall *)rb->getUserPointer();
-      btVector3 v = rb->getLinearVelocity();
-      btScalar v0 = v.length();
-      if (v0 == 0)
-        v = btVector3(uniform_dist(eng), uniform_dist(eng), uniform_dist(eng));
-      
-      rb->clearForces();
-      btVector3 f1 = v.normalize() * (b->v0 - v0) * b->mu * elapsed.asSeconds();
-      rb->applyForce(f1, btVector3(0, 0, 0));
+      cue->dir -= convert(view.right);
+
+    for (auto rb : bodies) {
+      Ball *b = static_cast<Ball *>(rb->getUserPointer());
+      b->action(rb, elapsed.asSeconds());
     }
+    
     dynamicsWorld.stepSimulation(elapsed.asSeconds());
     scene.render();
 

@@ -1,6 +1,6 @@
-* TODO Rotation of balls
+* DONE Rotation of balls
 * TODO SnitchBall
-* TODO CueBall
+* DONE CueBall
 
 * TODO particle system
   - flare when collision
