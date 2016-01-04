@@ -7,10 +7,11 @@
 
 class FileTexture : public Texture {
 private:
-  static std::map<std::string, FileTexture *> map_;
-  FileTexture(const std::string &path);
+  static std::map<std::pair<GLenum, std::string>, FileTexture *> map_;
+  FileTexture(const GLenum unit, const std::string &path);
 public:
-  static FileTexture *get(const std::string &path);
+  static FileTexture *get(const GLenum unit,
+                          const std::string &path);
 };
 
 

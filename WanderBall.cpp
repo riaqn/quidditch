@@ -5,7 +5,7 @@ WanderBall::WanderBall(const float v0,
                        const float mu)
   :v0(v0), mu(mu) {}
 
-void WanderBall::action(btRigidBody *const rb,
+bool WanderBall::action(btRigidBody *const rb,
                         const float elapsed) {
   btVector3 v = rb->getLinearVelocity();
   btScalar vl = v.length();
@@ -16,6 +16,7 @@ void WanderBall::action(btRigidBody *const rb,
   btVector3 f1 = v.normalize() * (v0 - vl) * mu;
 
   rb->applyCentralForce(f1);
+  return true;
 }
 
 std::random_device WanderBall::rd;

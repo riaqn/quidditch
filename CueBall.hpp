@@ -10,6 +10,6 @@ public:
   CueBall(const float userPower,
           const float maxForce)
     :userPower_(userPower), maxForce_(maxForce) {};
-  virtual void action(btRigidBody *const rb,
+  virtual bool action(btRigidBody *const rb,
                       const float elapsed);
 };

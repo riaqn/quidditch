@@ -11,6 +11,6 @@ class WanderBall : public Ball {
   float mu;
 public:
   WanderBall(const float v0, const float mu);
-  virtual void action(btRigidBody *const rb,
+  virtual bool action(btRigidBody *const rb,
                       const float elapsed);
 };

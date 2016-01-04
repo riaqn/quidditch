@@ -1,8 +1,5 @@
 #pragma once
-#include <BulletDynamics/Dynamics/btRigidBody.h>
+#include "Body.hpp"
 
-class Ball {
-public:
-  virtual void action(btRigidBody *const rb,
-                      const float elapsed) = 0;
+class Ball : public Body {
 };

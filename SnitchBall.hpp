@@ -22,5 +22,5 @@ public:
              const btVector3 &mu,
              const float v0);
 
-  virtual void action(btRigidBody *const rb, const float elapsed);
+  virtual bool action(btRigidBody *const rb, const float elapsed);
 };

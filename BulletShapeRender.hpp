@@ -18,6 +18,10 @@ private:
 public:
   BulletShapeRender(const BulletShape *const shape, const btMotionState *const motionState, const Material &material)
     :shape_(shape), motionState_(motionState), material_(material) {}
+
+  const BulletShape *getShape() {
+    return shape_;
+  }
   
   void render(ModelSetter ms, MaterialSetter ts) const {
     btTransform tf;

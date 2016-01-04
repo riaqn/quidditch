@@ -1,6 +1,6 @@
 #include "CueBall.hpp"
 
-void CueBall::action(btRigidBody *const rb,
+bool CueBall::action(btRigidBody *const rb,
                      const float elapsed) {
   btVector3 v = rb->getLinearVelocity();
   float v0 = v.dot(dir);
@@ -16,4 +16,5 @@ void CueBall::action(btRigidBody *const rb,
   rb->clearForces();
   rb->applyCentralForce(f * dir);
   rb->activate();
+  return true;
 }

@@ -17,7 +17,7 @@ SnitchBall::SnitchBall(const float time_active,
    active_(false),
    countdown_(time_dormant) {}
 
-void SnitchBall::action(btRigidBody *const rb,
+bool SnitchBall::action(btRigidBody *const rb,
                         const float elapsed) {
   if (active_) {
     countdown_ -= elapsed;
@@ -58,4 +58,5 @@ void SnitchBall::action(btRigidBody *const rb,
       v_ = rb->getLinearVelocity();
     }
   }
+  return true;
 }

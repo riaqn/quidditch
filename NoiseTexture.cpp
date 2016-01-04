@@ -4,8 +4,13 @@
 #include "Log.hpp"
 #include <Magick++.h>
 
-NoiseTexture::NoiseTexture(const Noise<float, glm::fvec2> &noise_, const unsigned width, const unsigned height, const glm::fvec4 &a, const glm::fvec4 &b)
-  :Texture(GL_TEXTURE_2D)
+NoiseTexture::NoiseTexture(const GLenum unit,
+                           const Noise<float, glm::fvec2> &noise_,
+                           const unsigned width,
+                           const unsigned height,
+                           const glm::fvec4 &a,
+                           const glm::fvec4 &b)
+  :Texture(unit, GL_TEXTURE_2D)
 {
   data_ = new unsigned char[width * height * 4];
   for (unsigned i = 0; i < width; ++i) {
