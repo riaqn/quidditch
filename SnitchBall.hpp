@@ -15,12 +15,22 @@ class SnitchBall : public Ball {
   btVector3 v_;
 
 public:
-  SnitchBall(const float time_active,
+  SnitchBall(const Ball &ball,
+             const float time_active,
              const float time_dormant,
              const btVector3 &zone_min,
              const btVector3 &zone_max,
              const btVector3 &mu,
-             const float v0);
+             const float v0)
+    :Ball(ball),
+     time_active_(time_active),
+     time_dormant_(time_dormant),
+     zone_min_(zone_min),
+     zone_max_(zone_max),
+     mu_(mu),
+     v0_(v0),
+     active_(false),
+     countdown_(time_dormant) {}
 
-  virtual bool action(btRigidBody *const rb, const float elapsed);
+  virtual bool control(const float elapsed, RemoveCallback cb);
 };

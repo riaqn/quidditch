@@ -1,8 +1,9 @@
-#include <btBulletDynamicsCommon.h>
 #include <string>
 #include <boost/filesystem.hpp>
 #include <functional>
 #include <exception>
+#include "Controller.hpp"
+#include "Arena.hpp"
 
 class Importer {
 public:
@@ -10,19 +11,16 @@ public:
   public:
     ParseException();
   };
-  typedef std::function<void (btRigidBody * const)> Callback;
-  typedef std::function<void *(const std::string &)> UserPointerCallback;
+  typedef std::function<void (Controller *const, std::istream &)> CustomDataCallback;
 private:
-  btDiscreteDynamicsWorld *dynamicsWorld_;
-  UserPointerCallback upcb_;
   static void checkStream(const std::istream &is);
+  Arena &arena_;
 public:
+  Importer(Arena &arena)
+    :arena_(arena) {}
   
-  Importer(btDiscreteDynamicsWorld *const dynamicsWorld,
-           UserPointerCallback upcb);
-  void loadWorld(const boost::filesystem::path &path, Callback cb);
-  btRigidBody *loadRigidBody(const boost::filesystem::path &path);
-  void *loadUserPointer(const boost::filesystem::path &path);
+  void loadArena(const boost::filesystem::path &path, CustomDataCallback cb);
+  btRigidBody::btRigidBodyConstructionInfo loadRigidBody(const boost::filesystem::path &path);
   btMotionState *loadMotionState(std::istream &is);
   btCollisionShape *loadCollisionShape(const boost::filesystem::path &path);
   btSphereShape *loadSphereShape(std::istream &is);

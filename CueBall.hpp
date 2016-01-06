@@ -1,4 +1,4 @@
-#include "GhostBall.hpp"
+#include "Ball.hpp"
 #include <glm/glm.hpp>
 
 class CueBall : public Ball {
@@ -7,9 +7,10 @@ private:
   float maxForce_;
 public:
   btVector3 dir;
-  CueBall(const float userPower,
+  CueBall(const Ball &ball,
+          const float userPower,
           const float maxForce)
-    :userPower_(userPower), maxForce_(maxForce) {};
-  virtual bool action(btRigidBody *const rb,
-                      const float elapsed);
+    :Ball(ball), userPower_(userPower), maxForce_(maxForce) {};
+  virtual bool control(const float elapsed,
+                       RemoveCallback cb);
 };

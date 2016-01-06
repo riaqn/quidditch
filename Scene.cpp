@@ -3,7 +3,9 @@
 
 Scene::Scene(const View &view, const Projection &projection)
   :view_(view), projection_(projection),
-   program_("shader.vert", "shader.frag") {
+   program_("shader.vert", "shader.frag"),
+   program_particle_("shader_particle.vert",
+                     "shader_particle.frag") {
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glFrontFace(GL_CCW);
   /*
@@ -21,15 +23,17 @@ void Scene::render() {
 
   program_.uniformMatrix4fv("camera", projection_.matrix() * view_.matrix());
 
+  size_t i = 0;
   program_.uniform1i("numLights", lights_.size());
-  for (auto i = 0; i < lights_.size(); ++i) {
+  for (auto it = lights_.begin(); it != lights_.end(); ++it, ++i) {
+    auto light = *it;
     std::string pre = "allLights[" + std::to_string(i) + "].";
-    program_.uniform4fv(pre + "position", lights_[i]->getPosition());
-    program_.uniform3fv(pre + "intensities", lights_[i]->getIntensities());
-    program_.uniform1f(pre + "attenuation", lights_[i]->getAttenuation());
-    program_.uniform1f(pre + "ambientCoefficient", lights_[i]->getAmbientCoefficient());
-    program_.uniform1f(pre + "coneAngle", lights_[i]->getConeAngle());
-    program_.uniform3fv(pre + "coneDirection", lights_[i]->getConeDirection());
+    program_.uniform4fv(pre + "position", light->getPosition());
+    program_.uniform3fv(pre + "intensities", light->getIntensities());
+    program_.uniform1f(pre + "attenuation", light->getAttenuation());
+    program_.uniform1f(pre + "ambientCoefficient", light->getAmbientCoefficient());
+    program_.uniform1f(pre + "coneAngle", light->getConeAngle());
+    program_.uniform3fv(pre + "coneDirection", light->getConeDirection());
   }
 
   glEnableVertexAttribArray(0);
@@ -37,7 +41,7 @@ void Scene::render() {
   glEnableVertexAttribArray(2);
 
   const Program &program = program_;
-  for (auto r : vector_)
+  for (auto r : renderables_)
     r->render([&program](const glm::mat4 & m) -> void {
         program.uniformMatrix4fv("model", m);
       }, [&program](const Renderable::Material &m) -> void {
@@ -51,12 +55,3 @@ void Scene::render() {
   glDisableVertexAttribArray(1);
   glDisableVertexAttribArray(2);
 }
-
-void Scene::attach(const Renderable *const renderable) {
-  vector_.push_back(renderable);
-}
-
-void Scene::attach(const Light *const light) {
-  lights_.push_back(light);
-}
-

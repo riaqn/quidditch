@@ -1,11 +1,18 @@
 #include "Importer.hpp"
 #include <fstream>
 #include <sstream>
+#include <memory>
 #include <boost/filesystem.hpp>
 #include "utils.hpp"
 #include "Log.hpp"
 #include "FileMesh.hpp"
 
+#include "GhostBall.hpp"
+#include "WanderBall.hpp"
+#include "SnitchBall.hpp"
+#include "CueBall.hpp"
+#include "Ground.hpp"
+#include "Wall.hpp"
 
 using namespace std;
 using namespace boost::filesystem;
@@ -20,33 +27,60 @@ void Importer::checkStream(const std::istream &is) {
     throw ParseException();
 }
 
-Importer::Importer(btDiscreteDynamicsWorld *const dynamicsWorld,
-                   UserPointerCallback upcb)
-  :dynamicsWorld_(dynamicsWorld), upcb_(upcb) {}
-
-void Importer::loadWorld(const path &p, Callback cb) {
+void Importer::loadArena(const path &p, CustomDataCallback cb) {
   ifstream is(p.string());
-  btVector3 gravity;
-  is >> gravity;
-  checkStream(is);
-              
-  dynamicsWorld_->setGravity(gravity);
-  path rigidBody;
-  while (is >> rigidBody) {
-    btRigidBody *rb = loadRigidBody(p.parent_path() / rigidBody);
-    dynamicsWorld_->addRigidBody(rb);
-    cb(rb);
+  while (is) {
+
+    stringstream ss;
+    string line;
+    while (std::getline(is, line)) {
+      if (line.size() == 0)
+        break;
+      ss << line << ' ';
+    }
+    if (ss.str().size() == 0)
+      continue;
+
+    string type;
+    ss >> type;
+    path rb;
+    ss >> rb;
+    btRigidBody::btRigidBodyConstructionInfo info = loadRigidBody(p.parent_path() / rb);
+    Controller *con;
+    if (type == "GhostBall") {
+      con = new GhostBall(info);
+    } else if (type == "WanderBall") {
+      float v0, mu;
+      ss >> v0 >> mu;
+      con = new WanderBall(info, v0, mu);
+    } else if (type == "CueBall") {
+      float p, f;
+      ss >> p >> f;
+      con = new CueBall(info, p, f);
+    } else if (type == "SnitchBall") {
+      float t0, t1;
+      btVector3 min, max, mu;
+      float v0;
+      ss >> t0 >> t1 >> min >> max >> mu >> v0;
+      con = new SnitchBall(info, t0, t1, min, max, mu, v0);
+    } else if (type == "Ground") {
+      con = new Ground(info);
+    } else if (type == "Wall") {
+      con = new Wall(info);
+    } else 
+      throw std::runtime_error("");
+    arena_.add(con);
+    cb(con, ss);
   }
 }
 
-btRigidBody *Importer::loadRigidBody(const path &p) {
+btRigidBody::btRigidBodyConstructionInfo Importer::loadRigidBody(const path &p) {
   notice << "loadRigidBody():" << p << '\n';
   ifstream is(p.string());
   btScalar mass;
   path collisionShape;
-  path userPointer;
   btScalar friction, rollingFriction;
-  is >> mass >> friction >> rollingFriction >> collisionShape >> userPointer;
+  is >> mass >> friction >> rollingFriction >> collisionShape;
   checkStream(is);
   btMotionState *ms = loadMotionState(is);
   btTransform tf;
@@ -59,17 +93,10 @@ btRigidBody *Importer::loadRigidBody(const path &p) {
   btRigidBody::btRigidBodyConstructionInfo info(mass, ms, shape, localInertia);
   info.m_friction = friction;
   info.m_rollingFriction = rollingFriction;
-  
-  btRigidBody *rb = new btRigidBody(info);
-                            
-  if (userPointer == "NULL")
-    rb->setUserPointer(NULL);
-  else 
-    rb->setUserPointer(upcb_((p.parent_path() / userPointer).string()));
-  checkStream(is);
-  return rb;
-}
 
+  checkStream(is);
+  return info;
+}
 
 btMotionState *Importer::loadMotionState(std::istream &is) {
   btTransform tf(loadTransform(is));

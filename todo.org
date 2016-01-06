@@ -1,7 +1,15 @@
 * DONE Rotation of balls
 * TODO SnitchBall
+  lighting of snitchball
 * DONE CueBall
 
 * TODO particle system
   - flare when collision
   - dusty balls 
+* TODO collision between camera and bodies
+* TODO containing box/skybox?
+
+* TODO cloth simulation?
+  fuck, too hard
+
+

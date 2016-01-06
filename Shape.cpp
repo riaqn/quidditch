@@ -30,6 +30,8 @@ void Shape::draw() const {
   glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void *)offsetof(Vertex, normal));
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO_);
+
+  debug << "Shape::draw()\n";
   glDrawElements(GL_TRIANGLES, faces_ * 3, GL_UNSIGNED_INT, 0);
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);

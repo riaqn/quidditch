@@ -7,10 +7,13 @@ class WanderBall : public Ball {
   static std::default_random_engine eng;
   static std::uniform_real_distribution<> uniform_dist;
 
-  float v0;
-  float mu;
+  float v0_;
+  float mu_;
 public:
-  WanderBall(const float v0, const float mu);
-  virtual bool action(btRigidBody *const rb,
-                      const float elapsed);
+  WanderBall(const btRigidBody::btRigidBodyConstructionInfo &info,
+             const float v0, const float mu)
+    :Ball(info), v0_(v0), mu_(mu) {}
+  
+  virtual bool control(const float elapsed,
+                       RemoveCallback cb);
 };

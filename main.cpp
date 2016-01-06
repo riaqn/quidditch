@@ -6,12 +6,15 @@
 
 #include <Magick++.h>
 
+#include "main.hpp"
+
 #include "FileTexture.hpp"
 #include "NoiseTexture.hpp"
 #include "PerlinNoise.hpp"
 
+#include "Arena.hpp"
+
 #include "Table.hpp"
-#include "Sphere.hpp"
 #include "Flag.hpp"
 #include "Wave.hpp"
 
@@ -19,7 +22,6 @@
 #include "WanderBall.hpp"
 #include "CueBall.hpp"
 #include "SnitchBall.hpp"
-#include "Particle.hpp"
 #include "Ground.hpp"
 #include "Wall.hpp"
 
@@ -35,6 +37,7 @@
 #include "Log.hpp"
 
 #include "Importer.hpp"
+#include "MaterialImporter.hpp"
 #include "BulletShapeRender.hpp"
 
 
@@ -44,10 +47,18 @@
 
 #include <map>
 #include <fstream>
+#include <sstream>
+
 #include <glm/gtc/constants.hpp>
 
 
 #include <exception>
+
+Scene *scene;
+Arena *arena;
+
+//yes, I 'm green.
+using namespace std;
 
 int main(int argc, char *argv[]) {
   Magick::InitializeMagick(argv[0]);
@@ -76,7 +87,7 @@ int main(int argc, char *argv[]) {
 
   View view(glm::vec3(0, 2, 2), glm::vec2(-glm::pi<float>(), -1.0));
   Projection projection(45, 4.0f/3, 0.1, 100);
-  Scene scene(view, projection);
+  scene = new Scene(view, projection);
   
   sf::SoundBuffer buffer0;
   if (!buffer0.loadFromFile("res/ball-wall.wav")) {
@@ -97,7 +108,7 @@ int main(int argc, char *argv[]) {
   light0.ambientCoefficient = 0.05f;
   light0.coneAngle = 45.0f;
   light0.coneDirection = glm::vec3(0, -1, -1);
-  scene.attach(&light0);
+  scene->add(&light0);
 
   
   SimpleLight light2;
@@ -107,7 +118,7 @@ int main(int argc, char *argv[]) {
   light2.ambientCoefficient = 0.05f;
   light2.coneAngle = 45.0f;
   light2.coneDirection = glm::vec3(0, -1, 1);
-  scene.attach(&light2);
+  scene->add(&light2);
   
 
   btDbvtBroadphase broadphase;
@@ -116,115 +127,87 @@ int main(int argc, char *argv[]) {
   btSequentialImpulseConstraintSolver solver;
   btDiscreteDynamicsWorld dynamicsWorld(&dispatcher, &broadphase, &solver, &collisionConfiguration);
 
-
-  Importer importer(&dynamicsWorld, [](const std::string &path) -> void * {
-      //handle user pointer
-      using namespace std;
-      notice << "loadUserPointer(): " << path << "\n";
-      ifstream is(path);
-      string type;
-      is >> type;
-      if (type == "GhostBall") {
-        return new GhostBall();
-      } else if (type == "WanderBall") {
-        float v0, mu;
-        is >> v0 >> mu;
-        return new WanderBall(v0, mu);
-      } else if (type == "CueBall") {
-        float p, f;
-        is >> p >> f;
-        return new CueBall(p, f);
-      } else if (type == "SnitchBall") {
-        float t0, t1;
-        btVector3 min, max, mu;
-        float v0;
-        is >> t0 >> t1 >> min >> max >> mu >> v0;
-        return new SnitchBall(t0, t1, min, max, mu, v0);
-      } else if (type == "Ground") {
-        return new Ground();
-      } else if (type == "Wall") {
-        return new Wall();
-      } else 
-        throw std::runtime_error("");
-    });
+  arena = new Arena(dynamicsWorld);
 
   std::map<btRigidBody *, Renderable *> bodies;
   CueBall *cue;
-  
-  importer.loadWorld(boost::filesystem::path("worlds/simple.world"), [&scene, &bodies, &cue](btRigidBody *const rb) -> void {
+
+  Importer importer(*arena);
+  importer.loadArena(boost::filesystem::path("arenas/simple.arena"), [&cue](Controller *const con, istream &is) -> void {
+      string materialPath;
+      is >> materialPath;
+
+      static MaterialImporter mi;
+      Renderable::Material m = mi.import(materialPath);
+      
       BulletShape *shape;
-      Renderable::Material material;
-      Body *const body = static_cast<Body *>(rb->getUserPointer());
-      const btCollisionShape *const cs = rb->getCollisionShape();
-      if (auto b = dynamic_cast<Ball *>(body)) {
+      auto sc = dynamic_cast<SingleController *const>(con);
+      if (sc == NULL)
+        return ;
+      auto rb = sc->getBody();
+
+      const btCollisionShape *const cs = rb.getCollisionShape();
+      if (auto b = dynamic_cast<Ball *>(con)) {
         shape = new SphereShape(dynamic_cast<const btSphereShape *>(cs));
-        if (auto b0 = dynamic_cast<GhostBall *>(b))
-          material = Renderable::Material{FileTexture::get(GL_TEXTURE0, "res/red.png"), 80, glm::vec3(1, 1, 1)};
-        else if (auto b0 = dynamic_cast<WanderBall *>(b)) 
-          material = Renderable::Material{FileTexture::get(GL_TEXTURE0, "res/blue.png"), 80, glm::vec3(1, 1, 1)};
-        else if (auto b0 = dynamic_cast<CueBall *>(b)) {
-          material = Renderable::Material{FileTexture::get(GL_TEXTURE0, "res/white.png"), 80, glm::vec3(1, 1, 1)};
+        if (auto b0 = dynamic_cast<CueBall *>(b)) {
           cue = b0;
-          scene.attach(new FollowSpotLight(rb->getMotionState(), glm::vec3(0, 1, 0), glm::vec3(2, 2, 2), 0.1, 15));
-        } else if (auto b0 = dynamic_cast<SnitchBall *>(b)) 
-          material = Renderable::Material{FileTexture::get(GL_TEXTURE0, "res/golden.png"), 80, glm::vec3(1, 1, 1)};
-        else 
-          throw std::runtime_error("");
-      } else if (auto b = dynamic_cast<Ground *>(body)) {
+          scene->add(new FollowSpotLight(rb.getMotionState(), glm::vec3(0, 1, 0), glm::vec3(2, 2, 2), 0.1, 15));
+        }
+      } else if (auto b = dynamic_cast<Ground *>(con)) {
         const btTriangleMeshShape *tms = dynamic_cast<const btTriangleMeshShape *>(cs);
         const btStridingMeshInterface *interface = tms->getMeshInterface();
         if (interface->getNumSubParts() > 1)
           throw std::runtime_error("");
         shape = new TriangleMeshShape(tms, 0);
-        material = Renderable::Material{FileTexture::get(GL_TEXTURE0, "res/table.jpg"), 80, glm::vec3(0, 0, 0)};
-      } else if (auto b = dynamic_cast<Wall *>(body)) {
+      } else if (auto b = dynamic_cast<Wall *>(con)) {
         shape = new BoxShape(dynamic_cast<const btBoxShape *>(cs));
-        material = Renderable::Material{FileTexture::get(GL_TEXTURE0, "res/wood.jpg"), 40, glm::vec3(1, 1, 1)};
       } else
         throw std::runtime_error("");
-
-      auto render = new BulletShapeRender(shape, rb->getMotionState(), material);
-      scene.attach(render);
-      bodies.insert(std::make_pair(rb, render));
+      auto render = new BulletShapeRender(shape, rb.getMotionState(), m);
+      scene->add(render);
+      con->setDestroyCallback([render]() -> void {
+          scene->remove(render);
+          delete render;
+        });
     });
 
   /*
-  gContactProcessedCallback = [&dynamicsWorld, &scene, &bodies](btManifoldPoint &cp, void *body0_, void *body1_) -> bool {
+  gContactProcessedCallback = [](btManifoldPoint &cp, void *body0_, void *body1_) -> bool {
     auto body0 = static_cast<btCollisionObject *>(body0_);
     auto body1 = static_cast<btCollisionObject *>(body1_);
 
     void *p0 = body0->getUserPointer();
     void *p1 = body1->getUserPointer();
 
-    int ParticleFilter = 64;
+    static int ParticleFilter = 64;
+
+    
+    std::vector<glm::vec4> &colors;
+    static auto material_spark{0, glm::vec3(0, 0, 0)};
     for (auto i = 0; i < 16; ++i) {
       static btBoxShape *shape = new btBoxShape(btVector3(0.001, 0.001, 0.001));
-      static  btQuaternion quaternion(0, 0, 0, 1);
+      static btQuaternion quaternion(0, 0, 0, 1);
       static const btScalar mass = 0.000001;
       static const int ParticleFilter = 64;
-      static const float lifetime = 2;
       
       btVector3 localInertia;
       shape->calculateLocalInertia(mass, localInertia);
       
       btMotionState *ms = new btDefaultMotionState(btTransform(quaternion, cp.getPositionWorldOnA()));
-      btRigidBody *rb = new btRigidBody(0.000001, ms, shape, localInertia);
+      btRigidBody *rb = new btRigidBody(mass, ms, shape, localInertia);
 
       static std::default_random_engine gen;
       static std::uniform_int_distribution<> dist;
 
       rb->setLinearVelocity(btVector3(dist(gen), dist(gen), dist(gen)));
-      rb->setUserPointer(new Particle(lifetime));
       dynamicsWorld.addRigidBody(rb, ParticleFilter, btBroadphaseProxy::AllFilter);
-      auto render = new BulletShapeRender(new BoxShape(shape),
-                                         ms,
-                                         Renderable::Material{FileTexture::get("res/golden.jpg"), 40, glm::vec3(0, 0, 0)
-                                             });
-      scene.attach(render);
-      bodies.insert(std::make_pair(rb, render));
+      particles.push_back(rb);
+      colors.push_back(glm::fvec4(255, 215, 0, 256) / 256.0f);
     }
-  };
-  
+    auto particle = new BulletParticle(particles, colors, material_spark);
+    scene.add(particle);
+
+    };
   */
   
   /*
@@ -301,27 +284,9 @@ int main(int argc, char *argv[]) {
       cue->dir += convert(view.right);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
       cue->dir -= convert(view.right);
-
-    auto it = bodies.begin();
-    while (it != bodies.end()) {
-      auto rb = it->first;
-      Body *b = static_cast<Body *>(rb->getUserPointer());
-      if (!b->action(rb, elapsed.asSeconds())) {
-        /*
-        delete it->second->getShape();
-        delete it->second;
-        delete b;
-        delete rb->getCollisionShape();
-        delete rb;
-        */
-        it = bodies.erase(it);
-      } else
-        ++it;
-    }
     
-    dynamicsWorld.stepSimulation(elapsed.asSeconds());
-    scene.render();
-
+    arena->step(elapsed.asSeconds());
+    scene->render();
 
     window.pushGLStates();
 

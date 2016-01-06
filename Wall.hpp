@@ -1,6 +1,7 @@
-#include "Body.hpp"
+#include "SingleController.hpp"
 
-struct Wall : public Body {
+class Wall : public SingleController {
 public:
-  Wall() {}
+  Wall(const SingleController &sc)
+    :SingleController(sc) {}
 };

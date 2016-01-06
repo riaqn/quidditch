@@ -1,5 +1,8 @@
 #pragma once
-#include "Body.hpp"
+#include "SingleController.hpp"
 
-class Ball : public Body {
+class Ball : public SingleController {
+public:
+  Ball(const btRigidBody::btRigidBodyConstructionInfo &info)
+    :SingleController(info) {}
 };

@@ -4,6 +4,7 @@
 
 class GhostBall : public Ball {
 public:
-  GhostBall() {}
+  GhostBall(const Ball &ball)
+    :Ball(ball) {}
 };
 

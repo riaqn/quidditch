@@ -1,5 +1,6 @@
-#include "Body.hpp"
-class Ground : public Body {
+#include "SingleController.hpp"
+class Ground : public SingleController {
 public:
-  Ground() {}
+  Ground(const SingleController &sc)
+    :SingleController(sc) {}
 };

@@ -2,23 +2,8 @@
 
 #include "Log.hpp"
 
-SnitchBall::SnitchBall(const float time_active,
-                       const float time_dormant,
-                       const btVector3 &zone_min,
-                       const btVector3 &zone_max,
-                       const btVector3 &mu,
-                       const float v0)
-  :time_active_(time_active),
-   time_dormant_(time_dormant),
-   zone_min_(zone_min),
-   zone_max_(zone_max),
-   mu_(mu),
-   v0_(v0),
-   active_(false),
-   countdown_(time_dormant) {}
-
-bool SnitchBall::action(btRigidBody *const rb,
-                        const float elapsed) {
+bool SnitchBall::control(const float elapsed,
+                         RemoveCallback cb) {
   if (active_) {
     countdown_ -= elapsed;
     if (countdown_ < 0) {
@@ -27,7 +12,7 @@ bool SnitchBall::action(btRigidBody *const rb,
       countdown_ = time_dormant_;
     }
     
-    const btVector3 &p = rb->getWorldTransform().getOrigin();
+    const btVector3 &p = rb_.getWorldTransform().getOrigin();
     
     if (p.x() < zone_min_.x())
       v_ += btVector3(1, 0, 0) * mu_ * elapsed;
@@ -47,16 +32,16 @@ bool SnitchBall::action(btRigidBody *const rb,
 
     if (v_.length() > v0_)
       v_ *= v0_ / v_.length();
-    rb->setLinearVelocity(v_);
-    rb->activate();
+    rb_.setLinearVelocity(v_);
+    rb_.activate();
   } else {
     countdown_ -= elapsed;
     if (countdown_ < 0) {
       debug << "enter acitve\n";
       active_ = true;
       countdown_ = time_active_;
-      v_ = rb->getLinearVelocity();
+      v_ = rb_.getLinearVelocity();
     }
   }
-  return true;
+  return false;
 }
