@@ -14,6 +14,21 @@ Scene::Scene(const View &view, const Projection &projection)
   */
 }
 
+void Scene::setLight(Program &program) {
+  program.uniform1i("numLights", lights_.size());
+  size_t i = 0;
+  for (auto light : lights_) {
+    Light::Spec spec = (*light)();
+    std::string pre = "allLights[" + std::to_string(i) + "].";
+    program.uniform4fv(pre + "position", spec.position);
+    program.uniform3fv(pre + "intensities", spec.intensities);
+    program.uniform1f(pre + "attenuation", spec.attenuation);
+    program.uniform1f(pre + "ambientCoefficient", spec.ambientCoefficient);
+    program.uniform1f(pre + "coneAngle", spec.coneAngle);
+    program.uniform3fv(pre + "coneDirection", spec.coneDirection);
+    ++i;
+  }
+}
 
 void Scene::render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -23,19 +38,8 @@ void Scene::render() {
   program_.uniform3fv("cameraPosition", view_.eye);
 
   program_.uniformMatrix4fv("camera", projection_.matrix() * view_.matrix());
-
-  size_t i = 0;
-  program_.uniform1i("numLights", lights_.size());
-  for (auto it = lights_.begin(); it != lights_.end(); ++it, ++i) {
-    auto light = *it;
-    std::string pre = "allLights[" + std::to_string(i) + "].";
-    program_.uniform4fv(pre + "position", light->getPosition());
-    program_.uniform3fv(pre + "intensities", light->getIntensities());
-    program_.uniform1f(pre + "attenuation", light->getAttenuation());
-    program_.uniform1f(pre + "ambientCoefficient", light->getAmbientCoefficient());
-    program_.uniform1f(pre + "coneAngle", light->getConeAngle());
-    program_.uniform3fv(pre + "coneDirection", light->getConeDirection());
-  }
+  
+  setLight(program_);
 
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
@@ -62,18 +66,7 @@ void Scene::render() {
 
   program_particle_.uniformMatrix4fv("camera", projection_.matrix() * view_.matrix());
 
-  program_particle_.uniform1i("numLights", lights_.size());
-  i = 0;
-  for (auto it = lights_.begin(); it != lights_.end(); ++it, ++i) {
-    auto light = *it;
-    std::string pre = "allLights[" + std::to_string(i) + "].";
-    program_particle_.uniform4fv(pre + "position", light->getPosition());
-    program_particle_.uniform3fv(pre + "intensities", light->getIntensities());
-    program_particle_.uniform1f(pre + "attenuation", light->getAttenuation());
-    program_particle_.uniform1f(pre + "ambientCoefficient", light->getAmbientCoefficient());
-    program_particle_.uniform1f(pre + "coneAngle", light->getConeAngle());
-    program_particle_.uniform3fv(pre + "coneDirection", light->getConeDirection());
-  }
+  setLight(program_particle_);
 
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);

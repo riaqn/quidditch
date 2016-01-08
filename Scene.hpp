@@ -16,7 +16,10 @@ class Scene {
   std::set<const Particle *> particles_;
   const View &view_;
   const Projection &projection_;
-  const Program program_, program_particle_;
+  Program program_, program_particle_;
+
+  void setLight(Program &program);
+  
  public:
   Scene(const View &view, const Projection &projection);
   void render();

@@ -1,21 +1,19 @@
 #include <LinearMath/btMotionState.h>
 #include "Light.hpp"
-#include "Ball.hpp"
 #include "utils.hpp"
 
-class FollowSpotLight : public Light {
+class MovingLight : public Light {
   const btMotionState *motionState_;
   const Light &light_;
 public:
-  FollowSpotLight(const btMotionState *const motionState, const Light &light)
+  MovingLight(const btMotionState *const motionState, const Light &light)
     :motionState_(motionState), light_(light) {}
   
-  Spec operator() () const {
+  virtual Spec operator() () const {
     Spec spec = light_();
     btTransform tf;
     motionState_->getWorldTransform(tf);
-    spec.coneDirection = convert(tf.getOrigin()) - glm::vec3(spec.position);
+    spec.position = glm::vec4(convert(tf.getOrigin()), 1);
     return spec;
   }
 };
-
