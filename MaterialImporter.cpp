@@ -10,11 +10,11 @@ Render::Material MaterialImporter::import(const std::string &path) {
 
 Render::Material MaterialImporter::import(std::istream &is) {
   std::string texture;
-  float shininess;
+  float shininess, brightness;
   glm::vec3 specularColor;
 
-  is >> texture >> shininess >> specularColor;
+  is >> texture >> shininess >> specularColor >> brightness;
   auto tex = FileTexture::get(GL_TEXTURE0, texture);
-  return Render::Material{tex, shininess, specularColor};
+  return Render::Material{tex, shininess, specularColor, brightness};
 }
 

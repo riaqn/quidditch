@@ -52,6 +52,7 @@ void Scene::render() {
       }, [&program](const Render::Material &m) -> void {
         m.texture->bind();
         program.uniform1i("materialTex", m.texture->unit_ - GL_TEXTURE0);
+        program.uniform1f("brightness", m.brightness);
         program.uniform1f("materialShininess", m.shininess);
         program.uniform3fv("materialSpecularColor", m.specularColor);
       });

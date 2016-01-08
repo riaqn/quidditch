@@ -9,6 +9,7 @@ public:
     const Texture *texture;
     float shininess;
     glm::vec3 specularColor;
+    float brightness;
   };
   typedef std::function<void (const glm::mat4 &)> ModelSetter;
   typedef std::function<void (const Material &)> MaterialSetter;

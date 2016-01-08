@@ -3,6 +3,7 @@
 uniform mat4 model;
 uniform vec3 cameraPosition;
 
+uniform float brightness;
 uniform sampler2D materialTex;
 uniform float materialShininess;
 uniform vec3 materialSpecularColor;
@@ -69,7 +70,7 @@ void main() {
     vec4 surfaceColor = texture(materialTex, fragTexCoord);
     vec3 surfaceToCamera = normalize(cameraPosition - surfacePos);
 
-    vec3 linearColor = vec3(0);
+    vec3 linearColor = surfaceColor.xyz * brightness;
     for(int i = 0; i < numLights; ++i){
         linearColor += ApplyLight(allLights[i], surfaceColor.rgb, normal, surfacePos, surfaceToCamera);
     }
