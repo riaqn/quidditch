@@ -18,6 +18,8 @@
 #include "WanderBall.hpp"
 #include "CueBall.hpp"
 #include "SnitchBall.hpp"
+#include "FantasyBall.hpp"
+
 #include "Ground.hpp"
 #include "Wall.hpp"
 
@@ -58,6 +60,8 @@
 
 #include <exception>
 #include <memory>
+
+#include "SoundPool.hpp"
 
 
 Scene *scene;
@@ -186,43 +190,54 @@ int main(int argc, char *argv[]) {
     });
 
   gContactProcessedCallback = ContactHandler<Controller>::handle;
-  ContactHandler<Controller>::add(typeid(CueBall), typeid(GhostBall), [](btManifoldPoint &cp,
-                                                                         btRigidBody *const rb0,
-                                                                         btRigidBody *const rb1,
-                                                                         Controller *const b0, Controller *const b1) -> void {
-      static int ParticleFilter = 64;
+  ContactHandler<Controller>::add(typeid(CueBall), typeid(GhostBall),
+                                  [](btManifoldPoint &cp,
+                                     btRigidBody *const rb0,
+                                     btRigidBody *const rb1,
+                                     Controller *const b0, Controller *const b1) -> void {
+                                    static int ParticleFilter = 64;
 
-      auto colors = new std::vector<glm::vec4>();
-      static Particle::Material material_spark{0, glm::vec3(0, 0, 0), 1};
+                                    auto colors = new std::vector<glm::vec4>();
+                                    static Particle::Material material_spark{0, glm::vec3(0, 0, 0), 1};
 
-      auto pc = new ParticleController (1);
-      for (auto i = 0; i < (rb0->getLinearVelocity() - rb1->getLinearVelocity()).length2(); ++i) {
-        static btBoxShape *shape = new btBoxShape(btVector3(0.001, 0.001, 0.001));
-        static btQuaternion quaternion(0, 0, 0, 1);
-        static const btScalar mass = 0.000001;
-        static const int ParticleFilter = 64;
+                                    auto pc = new ParticleController (1);
+                                    for (auto i = 0; i < cp.getAppliedImpulse() * 1000; ++i) {
+                                      static btBoxShape *shape = new btBoxShape(btVector3(0.001, 0.001, 0.001));
+                                      static btQuaternion quaternion(0, 0, 0, 1);
+                                      static const btScalar mass = 0.000001;
+                                      static const int ParticleFilter = 64;
       
-        btVector3 localInertia;
-        shape->calculateLocalInertia(mass, localInertia);
+                                      btVector3 localInertia;
+                                      shape->calculateLocalInertia(mass, localInertia);
       
-        btMotionState *ms = new btDefaultMotionState(btTransform(quaternion, cp.getPositionWorldOnA()));
-        btRigidBody *rb = new btRigidBody(mass, ms, shape, localInertia);
+                                      btMotionState *ms = new btDefaultMotionState(btTransform(quaternion, cp.getPositionWorldOnA()));
+                                      btRigidBody *rb = new btRigidBody(mass, ms, shape, localInertia);
 
-        static std::default_random_engine gen;
-        static std::uniform_real_distribution<float> dist(-2, 2);
+                                      static std::default_random_engine gen;
+                                      static std::uniform_real_distribution<float> dist(-2, 2);
 
-        rb->setLinearVelocity(btVector3(dist(gen), dist(gen), dist(gen)));
-        pc->add(rb);
-        colors->push_back(glm::vec4(255, 215, 0, 256) / 256.0f);
-      }
-      auto particle = new BulletParticle(pc->getGroup(), *colors, material_spark);
-      pc->setDestroyCallback([particle, colors]() -> void {
-          scene->remove(particle);
-          delete particle;
-          delete colors;
-        });
-      arena->add(pc);
-      scene->add(particle);
+                                      rb->setLinearVelocity(btVector3(dist(gen), dist(gen), dist(gen)));
+                                      pc->add(rb);
+                                      colors->push_back(glm::vec4(255, 215, 0, 256) / 256.0f);
+                                    }
+                                    auto particle = new BulletParticle(pc->getGroup(), *colors, material_spark);
+                                    pc->setDestroyCallback([particle, colors]() -> void {
+                                        scene->remove(particle);
+                                        delete particle;
+                                        delete colors;
+                                      });
+                                    arena->add(pc);
+                                    scene->add(particle);
+                                  });
+
+  ContactHandler<Controller>::add(typeid(CueBall), typeid(FantasyBall),
+                                  [](btManifoldPoint &cp,
+                                     btRigidBody *const rb0,
+                                     btRigidBody *const rb1,
+                                     Controller *const b0, Controller *const b1) -> void {
+                                    CueBall *cue = dynamic_cast<CueBall *>(b0);
+                                    FantasyBall *f = dynamic_cast<FantasyBall *>(b1);
+                                    cue->setFantasy(f->getDuration());
                                   });
 
   const std::type_info *ti_ball[] = {
@@ -230,12 +245,15 @@ int main(int argc, char *argv[]) {
     &typeid(WanderBall),
     &typeid(GhostBall),
     &typeid(CueBall),
+    &typeid(FantasyBall)
   };
   
   const std::type_info *ti_wall[] = {
     //&typeid(Ground),
     &typeid(Wall)
   };
+
+  SoundPool sp;
 
   sf::SoundBuffer buffer0;
   if (!buffer0.loadFromFile("res/ball-wall.wav")) {
@@ -244,17 +262,18 @@ int main(int argc, char *argv[]) {
 
   for (auto i : ti_ball)
     for (auto j : ti_wall)
-      ContactHandler<Controller>::add(*i, *j, [&buffer0](btManifoldPoint &cp,
-                                               btRigidBody *const rb0,
-                                               btRigidBody *const rb1,
-                                               Controller *const b0, Controller *const b1) {
+      ContactHandler<Controller>::add(*i, *j, [&buffer0, &sp](btManifoldPoint &cp,
+                                                              btRigidBody *const rb0,
+                                                              btRigidBody *const rb1,
+                                                              Controller *const b0, Controller *const b1) {
                                         debug << cp.getAppliedImpulse() << '\n';
-                                        auto sound = new sf::Sound(buffer0);
+                                        auto sound = sp.pop();
                                         sound->setPosition(convert<sf::Vector3f>(cp.getPositionWorldOnA()));
                                         sound->setMinDistance(5.0f);
                                         sound->setAttenuation(10.f);
                                         sound->setVolume(cp.getAppliedImpulse() * 10000);
                                         sound->play();
+                                        sp.push(sound);
                                       });
 
   sf::SoundBuffer buffer1;
@@ -264,17 +283,18 @@ int main(int argc, char *argv[]) {
 
   for (auto i : ti_ball)
     for (auto j : ti_ball)
-      ContactHandler<Controller>::add(*i, *j, [&buffer1](btManifoldPoint &cp,
-                                               btRigidBody *const rb0,
-                                               btRigidBody *const rb1,
-                                               Controller *const b0, Controller *const b1) {
+      ContactHandler<Controller>::add(*i, *j, [&buffer1, &sp](btManifoldPoint &cp,
+                                                              btRigidBody *const rb0,
+                                                              btRigidBody *const rb1,
+                                                              Controller *const b0, Controller *const b1) {
                                         debug << "ball - ball\n";
-                                        auto sound = new sf::Sound(buffer1);
+                                        auto sound = sp.pop();
                                         sound->setPosition(convert<sf::Vector3f>(cp.getPositionWorldOnA()));
                                         sound->setMinDistance(5.0f);
                                         sound->setAttenuation(10.f);
                                         sound->setVolume(cp.getAppliedImpulse() * 10000);
                                         sound->play();
+                                        sp.push(sound);
                                       }, false);
 
   

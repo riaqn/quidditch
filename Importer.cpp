@@ -11,6 +11,8 @@
 #include "WanderBall.hpp"
 #include "SnitchBall.hpp"
 #include "CueBall.hpp"
+#include "FantasyBall.hpp"
+
 #include "Ground.hpp"
 #include "Wall.hpp"
 
@@ -63,6 +65,10 @@ void Importer::loadArena(const path &p, CustomDataCallback cb) {
       float v0;
       ss >> t0 >> t1 >> min >> max >> mu >> v0;
       con = new SnitchBall(Ball(info), t0, t1, min, max, mu, v0);
+    } else if (type == "FantacyBall") {
+      float duration;
+      ss >> duration;
+      con = new FantasyBall(Ball(info), duration);
     } else if (type == "Ground") {
       con = new Ground(info);
     } else if (type == "Wall") {
