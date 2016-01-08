@@ -3,18 +3,18 @@
 #include <fstream>
 #include "utils.hpp"
 
-Renderable::Material MaterialImporter::import(const std::string &path) {
+Render::Material MaterialImporter::import(const std::string &path) {
   std::ifstream is(path);
   return import(is);
 }
 
-Renderable::Material MaterialImporter::import(std::istream &is) {
+Render::Material MaterialImporter::import(std::istream &is) {
   std::string texture;
   float shininess;
   glm::vec3 specularColor;
 
   is >> texture >> shininess >> specularColor;
   auto tex = FileTexture::get(GL_TEXTURE0, texture);
-  return Renderable::Material{tex, shininess, specularColor};
+  return Render::Material{tex, shininess, specularColor};
 }
 

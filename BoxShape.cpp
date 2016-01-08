@@ -1,11 +1,9 @@
 #include "BoxShape.hpp"
 #include "utils.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
-void BoxShape::draw(ScaleSetter ss) const {
-  ss(convert(shape_->getHalfExtentsWithMargin()));
-  if (box_ == NULL)
-    box_ = new Box();
-  box_->draw();
+void BoxShape::render(Render::ModelSetter ms) const {
+  cube_.render([this, ms](const glm::mat4 &mat) {
+      ms(glm::scale(glm::mat4(), convert(this->shape_.getHalfExtentsWithMargin())) * mat);
+    });
 }
-
-const Box *BoxShape::box_ = NULL;

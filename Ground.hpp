@@ -1,6 +1,6 @@
 #include "SingleController.hpp"
 class Ground : public SingleController {
 public:
-  Ground(const SingleController &sc)
-    :SingleController(sc) {}
+  Ground(SingleController &&sc)
+    :SingleController(std::move(sc)) {}
 };

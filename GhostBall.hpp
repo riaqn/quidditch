@@ -4,7 +4,7 @@
 
 class GhostBall : public Ball {
 public:
-  GhostBall(const Ball &ball)
-    :Ball(ball) {}
+  GhostBall(Ball &&ball)
+    :Ball(std::move(ball)) {}
 };
 

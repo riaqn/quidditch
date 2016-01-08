@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 
 class Texture {
+  GLuint texture_;
 public:
   Texture(const GLenum unit,
           const GLenum target);
@@ -14,10 +15,9 @@ public:
             const unsigned height,
             const void *const data);
   void bind() const;
-private:
-  GLuint texture_;
-  GLenum target_;
-  GLenum unit_;
+  const GLenum target_;
+  const GLenum unit_;
+  
 };
 
 

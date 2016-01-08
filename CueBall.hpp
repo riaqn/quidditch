@@ -7,10 +7,10 @@ private:
   float maxForce_;
 public:
   btVector3 dir;
-  CueBall(const Ball &ball,
+  CueBall(Ball &&ball,
           const float userPower,
           const float maxForce)
-    :Ball(ball), userPower_(userPower), maxForce_(maxForce) {};
+    :Ball(std::move(ball)), userPower_(userPower), maxForce_(maxForce) {};
   virtual bool control(const float elapsed,
                        RemoveCallback cb);
 };

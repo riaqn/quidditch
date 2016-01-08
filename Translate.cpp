@@ -2,7 +2,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Translate.hpp"
 
-Translate::Translate(const Renderable &r, const glm::vec3 v)
+Translate::Translate(const Render &r, const glm::vec3 v)
   :r_(r), v_(v) {
 }
 

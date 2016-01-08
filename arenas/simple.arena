@@ -5,7 +5,7 @@ WanderBall WanderBall0.RigidBody 1 0.2
 res/WanderBall.material
 
 Ground Ground.RigidBody
-res/Ground.material
+res/Cloth.material
 
 CueBall CueBall.RigidBody 0.05 0.2
 res/CueBall.material
@@ -17,14 +17,33 @@ SnitchBall SnitchBall.RigidBody 30 1
 0.2
 res/SnitchBall.material
 
-Wall Wall+z.RigidBody
-res/Wall.material
+Wall Wood+z.RigidBody
+res/Wood.material
 
-Wall Wall-z.RigidBody
+Wall Wood-z.RigidBody
+res/Wood.material
+
+Wall Wood+x.RigidBody
+res/Wood.material
+
+Wall Wood-x.RigidBody
+res/Wood.material
+
+Wall Wall-x.RigidBody
 res/Wall.material
 
 Wall Wall+x.RigidBody
 res/Wall.material
 
-Wall Wall-x.RigidBody
+Wall Wall-z.RigidBody
 res/Wall.material
+
+Wall Wall+z.RigidBody
+res/Wall.material
+
+Wall Wall-y.RigidBody
+res/Floor.material
+
+Wall Wall+y.RigidBody
+res/Ceil.material
+

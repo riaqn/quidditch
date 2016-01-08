@@ -1,10 +1,10 @@
 #include <GL/glew.h>
 #include <vector>
-#include "Renderable.hpp"
+#include "Render.hpp"
 #include "FileTexture.hpp"
 #include "Box.hpp"
 
-class Table : public Renderable {
+class Table : public Render {
 private:
   FileTexture cloth_;
   FileTexture wood_;

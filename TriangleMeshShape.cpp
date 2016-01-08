@@ -1,13 +1,14 @@
 #include "TriangleMeshShape.hpp"
 #include <BulletCollision/CollisionShapes/btStridingMeshInterface.h>
+#include <vector>
 #include <glm/glm.hpp>
 #include <stdexcept>
 #include "Log.hpp"
 #include "utils.hpp"
 
 TriangleMeshShape::TriangleMeshShape(const btTriangleMeshShape *const shape, const int i) {
-  std::vector<Shape::Vertex> vert;
-  std::vector<Shape::Face> face;
+  std::vector<Vertex> vert;
+  std::vector<Face> face;
   const btStridingMeshInterface *interface = shape->getMeshInterface();
   
   const unsigned char *v;
@@ -28,7 +29,7 @@ TriangleMeshShape::TriangleMeshShape(const btTriangleMeshShape *const shape, con
     throw std::runtime_error("");
   for (auto j = 0; j < v_num; ++j) {
     glm::vec3 &pos = *(glm::vec3 *)&v[v_stride * j];
-    vert.push_back(Shape::Vertex{pos,
+    vert.push_back(Vertex{pos,
           glm::vec2(pos.x, pos.z),
           glm::vec3(0)});
   }
@@ -48,10 +49,6 @@ TriangleMeshShape::TriangleMeshShape(const btTriangleMeshShape *const shape, con
     debug << v0.position << v0.uv << v0.normal << '\n';
   for (auto f0 : face)
     debug << f0 << '\n';
-  shape_.load(vert, face);
+  load(vert, face);
 }
 
-void TriangleMeshShape::draw(ScaleSetter ss) const {
-  ss(glm::vec3(1));
-  shape_.draw();
-}

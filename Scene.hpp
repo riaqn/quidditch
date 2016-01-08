@@ -4,14 +4,14 @@
 #include <SFML/OpenGL.hpp>
 #include "View.hpp"
 #include "Projection.hpp"
-#include "Renderable.hpp"
+#include "Render.hpp"
 #include "Particle.hpp"
 #include "Light.hpp"
 #include "Program.hpp"
 
 class Scene {
  private:
-  std::set<const Renderable *> renderables_;
+  std::set<const Render *> renderables_;
   std::set<const Light *> lights_;
   std::set<const Particle *> particles_;
   const View &view_;
@@ -20,7 +20,7 @@ class Scene {
  public:
   Scene(const View &view, const Projection &projection);
   void render();
-  void add(const Renderable *const renderable) {
+  void add(const Render *const renderable) {
     renderables_.insert(renderable);
   }
     
@@ -32,7 +32,7 @@ class Scene {
     particles_.insert(particle);
   }
 
-  bool remove(const Renderable *const renderable) {
+  bool remove(const Render *const renderable) {
     return renderables_.erase(renderable) == 1;
   }
 

@@ -1,8 +1,8 @@
+#include "Sphere.hpp"
 #include <vector>
 #include <map>
 #include <utility>
 #include <functional>
-#include "Sphere.hpp"
 #include <glm/glm.hpp>
 
 using namespace std;

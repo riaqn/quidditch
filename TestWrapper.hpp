@@ -1,7 +1,7 @@
-#include "Renderable.hpp"
+#include "Render.hpp"
 #include "Sphere.hpp"
 #include "FileTexture.hpp"
-class TestWrapper : public Renderable {
+class TestWrapper : public Render {
   Sphere sphere_;
   FileTexture texture_;
 public:

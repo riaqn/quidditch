@@ -14,10 +14,6 @@
 
 #include "Arena.hpp"
 
-#include "Table.hpp"
-#include "Flag.hpp"
-#include "Wave.hpp"
-
 #include "GhostBall.hpp"
 #include "WanderBall.hpp"
 #include "CueBall.hpp"
@@ -38,8 +34,12 @@
 
 #include "Importer.hpp"
 #include "MaterialImporter.hpp"
+
 #include "BulletShapeRender.hpp"
 
+#include "BulletParticle.hpp"
+
+#include "ParticleController.hpp"
 
 #include <btBulletDynamicsCommon.h>
 
@@ -51,8 +51,12 @@
 
 #include <glm/gtc/constants.hpp>
 
+#include "ContactHandler.hpp"
+
 
 #include <exception>
+#include <memory>
+
 
 Scene *scene;
 Arena *arena;
@@ -129,7 +133,7 @@ int main(int argc, char *argv[]) {
 
   arena = new Arena(dynamicsWorld);
 
-  std::map<btRigidBody *, Renderable *> bodies;
+  std::map<btRigidBody *, Render *> bodies;
   CueBall *cue;
 
   Importer importer(*arena);
@@ -138,13 +142,13 @@ int main(int argc, char *argv[]) {
       is >> materialPath;
 
       static MaterialImporter mi;
-      Renderable::Material m = mi.import(materialPath);
+      Render::Material m = mi.import(materialPath);
       
-      BulletShape *shape;
+      Shape *shape;
       auto sc = dynamic_cast<SingleController *const>(con);
       if (sc == NULL)
         return ;
-      auto rb = sc->getBody();
+      const btRigidBody &rb = sc->getBody();
 
       const btCollisionShape *const cs = rb.getCollisionShape();
       if (auto b = dynamic_cast<Ball *>(con)) {
@@ -157,12 +161,12 @@ int main(int argc, char *argv[]) {
         const btTriangleMeshShape *tms = dynamic_cast<const btTriangleMeshShape *>(cs);
         const btStridingMeshInterface *interface = tms->getMeshInterface();
         if (interface->getNumSubParts() > 1)
-          throw std::runtime_error("");
+          throw std::runtime_error("TriangleMeshShape with more than 1 subpart");
         shape = new TriangleMeshShape(tms, 0);
       } else if (auto b = dynamic_cast<Wall *>(con)) {
-        shape = new BoxShape(dynamic_cast<const btBoxShape *>(cs));
+        shape = new BoxShape(*dynamic_cast<const btBoxShape *>(cs));
       } else
-        throw std::runtime_error("");
+        throw std::runtime_error("unrecognized controller. WTF?");
       auto render = new BulletShapeRender(shape, rb.getMotionState(), m);
       scene->add(render);
       con->setDestroyCallback([render]() -> void {
@@ -171,51 +175,52 @@ int main(int argc, char *argv[]) {
         });
     });
 
-  /*
-  gContactProcessedCallback = [](btManifoldPoint &cp, void *body0_, void *body1_) -> bool {
-    auto body0 = static_cast<btCollisionObject *>(body0_);
-    auto body1 = static_cast<btCollisionObject *>(body1_);
+  gContactProcessedCallback = ContactHandler<Controller>::handle;
+  ContactHandler<Controller>::set<CueBall, GhostBall>([](btManifoldPoint &cp,
+                                                         btRigidBody *const rb0,
+                                                         btRigidBody *const rb1,
+                                                         Controller *const b0, Controller *const b1) -> void {
+      static int ParticleFilter = 64;
 
-    void *p0 = body0->getUserPointer();
-    void *p1 = body1->getUserPointer();
+      auto colors = new std::vector<glm::vec4>();
+      static Particle::Material material_spark{0, glm::vec3(0, 0, 0)};
 
-    static int ParticleFilter = 64;
-
-    
-    std::vector<glm::vec4> &colors;
-    static auto material_spark{0, glm::vec3(0, 0, 0)};
-    for (auto i = 0; i < 16; ++i) {
-      static btBoxShape *shape = new btBoxShape(btVector3(0.001, 0.001, 0.001));
-      static btQuaternion quaternion(0, 0, 0, 1);
-      static const btScalar mass = 0.000001;
-      static const int ParticleFilter = 64;
+      auto pc = new ParticleController (1);
+      for (auto i = 0; i < (rb0->getLinearVelocity() - rb1->getLinearVelocity()).length2(); ++i) {
+        static btBoxShape *shape = new btBoxShape(btVector3(0.001, 0.001, 0.001));
+        static btQuaternion quaternion(0, 0, 0, 1);
+        static const btScalar mass = 0.000001;
+        static const int ParticleFilter = 64;
       
-      btVector3 localInertia;
-      shape->calculateLocalInertia(mass, localInertia);
+        btVector3 localInertia;
+        shape->calculateLocalInertia(mass, localInertia);
       
-      btMotionState *ms = new btDefaultMotionState(btTransform(quaternion, cp.getPositionWorldOnA()));
-      btRigidBody *rb = new btRigidBody(mass, ms, shape, localInertia);
+        btMotionState *ms = new btDefaultMotionState(btTransform(quaternion, cp.getPositionWorldOnA()));
+        btRigidBody *rb = new btRigidBody(mass, ms, shape, localInertia);
 
-      static std::default_random_engine gen;
-      static std::uniform_int_distribution<> dist;
+        static std::default_random_engine gen;
+        static std::uniform_real_distribution<float> dist(-2, 2);
 
-      rb->setLinearVelocity(btVector3(dist(gen), dist(gen), dist(gen)));
-      dynamicsWorld.addRigidBody(rb, ParticleFilter, btBroadphaseProxy::AllFilter);
-      particles.push_back(rb);
-      colors.push_back(glm::fvec4(255, 215, 0, 256) / 256.0f);
-    }
-    auto particle = new BulletParticle(particles, colors, material_spark);
-    scene.add(particle);
-
-    };
-  */
+        rb->setLinearVelocity(btVector3(dist(gen), dist(gen), dist(gen)));
+        pc->add(rb);
+        colors->push_back(glm::fvec4(255, 215, 0, 256) / 256.0f);
+      }
+      auto particle = new BulletParticle(pc->getGroup(), *colors, material_spark);
+      pc->setDestroyCallback([particle, colors]() -> void {
+          scene->remove(particle);
+          delete particle;
+          delete colors;
+        });
+      arena->add(pc);
+      scene->add(particle);
+    });
   
   /*
-  PerlinNoise noise;
-  NoiseTexture texRed(noise, 800, 800, glm::fvec4(128, 0, 0, 255), glm::fvec4(255, 0, 0, 255));
-  NoiseTexture texWhite(noise, 800, 800, glm::fvec4(128, 128, 128, 255), glm::fvec4(255,255,255,255));
-  NoiseTexture texBlue(noise, 800, 800, glm::fvec4(0, 0, 128, 255), glm::fvec4(0, 0, 255,255));
-  NoiseTexture texGolden(noise, 800, 800, glm::fvec4(128, 128, 0, 255), glm::fvec4(255,255,0,255));
+    PerlinNoise noise;
+    NoiseTexture texRed(noise, 800, 800, glm::fvec4(128, 0, 0, 255), glm::fvec4(255, 0, 0, 255));
+    NoiseTexture texWhite(noise, 800, 800, glm::fvec4(128, 128, 128, 255), glm::fvec4(255,255,255,255));
+    NoiseTexture texBlue(noise, 800, 800, glm::fvec4(0, 0, 128, 255), glm::fvec4(0, 0, 255,255));
+    NoiseTexture texGolden(noise, 800, 800, glm::fvec4(128, 128, 0, 255), glm::fvec4(255,255,0,255));
   */
   
 
@@ -225,21 +230,21 @@ int main(int argc, char *argv[]) {
   }
   
   /*
-  FileTexture uk("res/flag1.png");
-  FileTexture usa("res/flag2.png");
+    FileTexture uk("res/flag1.png");
+    FileTexture usa("res/flag2.png");
 
-  Wave wave0(100, 100, Wave::WAVE_BEZIER);
-  Wave wave1(100, 100, Wave::WAVE_TRIANGLE);
-  Flag flag0(wave0, uk);
-  Flag flag1(wave1, usa);
+    Wave wave0(100, 100, Wave::WAVE_BEZIER);
+    Wave wave1(100, 100, Wave::WAVE_TRIANGLE);
+    Flag flag0(wave0, uk);
+    Flag flag1(wave1, usa);
 
-  Translate flag0_t(flag0, glm::vec3(0, 1, 0));
-  Scale flag0_s(flag0_t, glm::vec3(1, 0.5, 1));
-  scene.attach(&flag0_s);
+    Translate flag0_t(flag0, glm::vec3(0, 1, 0));
+    Scale flag0_s(flag0_t, glm::vec3(1, 0.5, 1));
+    scene.attach(&flag0_s);
 
-  Translate flag1_t(flag1, glm::vec3(0, 1, -2));
-  Scale flag1_s(flag1_t, glm::vec3(1, 0.5, 1));
-  scene.attach(&flag1_s);
+    Translate flag1_t(flag1, glm::vec3(0, 1, -2));
+    Scale flag1_s(flag1_t, glm::vec3(1, 0.5, 1));
+    scene.attach(&flag1_s);
   */
 
   bool running = true;
@@ -260,7 +265,7 @@ int main(int argc, char *argv[]) {
                                             size.y / 2), window);
         static float turnSpeed = 0.01;
         view.turn(glm::vec2(size.x / 2.0 - event.mouseMove.x,
-                             size.y / 2.0 - event.mouseMove.y) * turnSpeed);
+                            size.y / 2.0 - event.mouseMove.y) * turnSpeed);
       } else if (event.type == sf::Event::MouseWheelScrolled) {
         view.zoom(event.mouseWheelScroll.delta);
       }

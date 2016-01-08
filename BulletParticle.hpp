@@ -2,7 +2,8 @@
 
 #include <GL/glew.h>
 #include <vector>
-#include <BulletDynamics/Dynamics/btRigidBody.h>
+#include "GroupController.hpp"
+#include <memory>
 
 class BulletParticle : public Particle {
 private:
@@ -11,14 +12,16 @@ private:
   GLuint vertNormal_;
   GLuint vertColor_;
 
-  const std::vector<btRigidBody *> &particles_;
+  const GroupController::Group &particles_;
+  const std::vector<glm::vec4> &colors_;
   const size_t n_;
 
   const Material &material_;
   
 public:
-  BulletParticle(const std::vector<btRigidBody *> &particles,
+  BulletParticle(const GroupController::Group &particles,
                  const std::vector<glm::vec4> &colors,
                  const Material &material);
+  ~BulletParticle();
   virtual void render(MaterialSetter ts) const;
 };

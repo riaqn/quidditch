@@ -10,9 +10,9 @@ class WanderBall : public Ball {
   float v0_;
   float mu_;
 public:
-  WanderBall(const btRigidBody::btRigidBodyConstructionInfo &info,
+  WanderBall(Ball &&ball,
              const float v0, const float mu)
-    :Ball(info), v0_(v0), mu_(mu) {}
+    :Ball(std::move(ball)), v0_(v0), mu_(mu) {}
   
   virtual bool control(const float elapsed,
                        RemoveCallback cb);

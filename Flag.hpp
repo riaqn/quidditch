@@ -1,7 +1,7 @@
-#include "Renderable.hpp"
+#include "Render.hpp"
 #include "Texture.hpp"
 #include "Wave.hpp"
-class Flag : public Renderable {
+class Flag : public Render {
 private:
   const Texture &texture_;
   const Wave &wave_;

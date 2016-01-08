@@ -2,6 +2,6 @@
 
 class Wall : public SingleController {
 public:
-  Wall(const SingleController &sc)
-    :SingleController(sc) {}
+  Wall(SingleController &&sc)
+    :SingleController(std::move(sc)) {}
 };

@@ -1,13 +1,15 @@
 #pragma once
-#include <BulletCollision/CollisionShapes/btBoxShape.h>
+
 #include "BulletShape.hpp"
-#include "Box.hpp"
+#include "Cube.hpp"
+#include <BulletCollision/CollisionShapes/btBoxShape.h>
 
 class BoxShape : public BulletShape {
-  const btBoxShape *shape_;
-  const static Box *box_;
+private:
+  const Cube cube_;
+  const btBoxShape &shape_;
 public:
-  BoxShape(const btBoxShape *const shape)
-    :shape_(shape) {}
-  virtual void draw(ScaleSetter ss) const;
+  BoxShape(const btBoxShape &shape)
+    :cube_(), shape_(shape) {}
+  virtual void render(Render::ModelSetter ms) const ;
 };

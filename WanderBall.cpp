@@ -3,15 +3,15 @@
 
 bool WanderBall::control(const float elapsed,
                          RemoveCallback cb) {
-  btVector3 v = rb_.getLinearVelocity();
+  btVector3 v = rb_->getLinearVelocity();
   btScalar vl = v.length();
   if (vl == 0)
     v = btVector3(uniform_dist(eng), uniform_dist(eng), uniform_dist(eng));
       
-  rb_.clearForces();
+  rb_->clearForces();
   btVector3 f1 = v.normalize() * (v0_ - vl) * mu_;
 
-  rb_.applyCentralForce(f1);
+  rb_->applyCentralForce(f1);
   return false;
 }
 

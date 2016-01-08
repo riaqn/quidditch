@@ -1,10 +1,10 @@
 #include <glm/glm.hpp>
-#include "Renderable.hpp"
-class Translate : public Renderable {
+#include "Render.hpp"
+class Translate : public Render {
 private:
-  const Renderable &r_;
+  const Render &r_;
   const glm::vec3 v_;
 public:
-  Translate(const Renderable &r, const glm::vec3 v);
+  Translate(const Render &r, const glm::vec3 v);
   virtual void render(ModelSetter ms, MaterialSetter ts) const;
 };

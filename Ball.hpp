@@ -3,6 +3,7 @@
 
 class Ball : public SingleController {
 public:
-  Ball(const btRigidBody::btRigidBodyConstructionInfo &info)
-    :SingleController(info) {}
+  Ball(SingleController &&ball)
+    :SingleController(std::move(ball)) {}
+
 };

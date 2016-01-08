@@ -1,7 +1,7 @@
 #include "Scale.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 
-Scale::Scale(const Renderable &r, const glm::vec3 v)
+Scale::Scale(const Render &r, const glm::vec3 v)
   :r_(r), v_(v) {
 }
 

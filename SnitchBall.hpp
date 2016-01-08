@@ -15,14 +15,14 @@ class SnitchBall : public Ball {
   btVector3 v_;
 
 public:
-  SnitchBall(const Ball &ball,
+  SnitchBall(Ball &&ball,
              const float time_active,
              const float time_dormant,
              const btVector3 &zone_min,
              const btVector3 &zone_max,
              const btVector3 &mu,
              const float v0)
-    :Ball(ball),
+    :Ball(std::move(ball)),
      time_active_(time_active),
      time_dormant_(time_dormant),
      zone_min_(zone_min),

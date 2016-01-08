@@ -4,7 +4,7 @@
 
 class Controller {
 public:
-  typedef std::function<void (btRigidBody *const)> AddCallback;
+  typedef std::function<void (btRigidBody *const, short group, short mask)> AddCallback;
   typedef std::function<void (btRigidBody *const)> RemoveCallback;
   typedef std::function<void ()> DestroyCallback;
 private:
@@ -16,6 +16,7 @@ public:
                        RemoveCallback cb) {
     return false;
   }
+  
   ~Controller() {
     if (cb_)
       cb_();

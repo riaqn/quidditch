@@ -12,7 +12,7 @@ bool SnitchBall::control(const float elapsed,
       countdown_ = time_dormant_;
     }
     
-    const btVector3 &p = rb_.getWorldTransform().getOrigin();
+    const btVector3 &p = rb_->getWorldTransform().getOrigin();
     
     if (p.x() < zone_min_.x())
       v_ += btVector3(1, 0, 0) * mu_ * elapsed;
@@ -32,15 +32,15 @@ bool SnitchBall::control(const float elapsed,
 
     if (v_.length() > v0_)
       v_ *= v0_ / v_.length();
-    rb_.setLinearVelocity(v_);
-    rb_.activate();
+    rb_->setLinearVelocity(v_);
+    rb_->activate();
   } else {
     countdown_ -= elapsed;
     if (countdown_ < 0) {
       debug << "enter acitve\n";
       active_ = true;
       countdown_ = time_active_;
-      v_ = rb_.getLinearVelocity();
+      v_ = rb_->getLinearVelocity();
     }
   }
   return false;

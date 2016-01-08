@@ -11,6 +11,6 @@ private:
 public:
   SphereShape(const btSphereShape *const shape)
     :shape_(shape) {}
-  virtual void draw(ScaleSetter ss) const ;
+  virtual void render(Render::ModelSetter ss) const ;
 };
 

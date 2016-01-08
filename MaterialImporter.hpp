@@ -1,8 +1,8 @@
-#include "Renderable.hpp"
+#include "Render.hpp"
 #include <string>
 
 class MaterialImporter {
 public:
-  Renderable::Material import(const std::string &path);
-  Renderable::Material import(std::istream &is);
+  Render::Material import(const std::string &path);
+  Render::Material import(std::istream &is);
 };

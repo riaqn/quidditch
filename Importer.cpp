@@ -48,21 +48,21 @@ void Importer::loadArena(const path &p, CustomDataCallback cb) {
     btRigidBody::btRigidBodyConstructionInfo info = loadRigidBody(p.parent_path() / rb);
     Controller *con;
     if (type == "GhostBall") {
-      con = new GhostBall(info);
+      con = new GhostBall(Ball(info));
     } else if (type == "WanderBall") {
       float v0, mu;
       ss >> v0 >> mu;
-      con = new WanderBall(info, v0, mu);
+      con = new WanderBall(Ball(info), v0, mu);
     } else if (type == "CueBall") {
       float p, f;
       ss >> p >> f;
-      con = new CueBall(info, p, f);
+      con = new CueBall(Ball(info), p, f);
     } else if (type == "SnitchBall") {
       float t0, t1;
       btVector3 min, max, mu;
       float v0;
       ss >> t0 >> t1 >> min >> max >> mu >> v0;
-      con = new SnitchBall(info, t0, t1, min, max, mu, v0);
+      con = new SnitchBall(Ball(info), t0, t1, min, max, mu, v0);
     } else if (type == "Ground") {
       con = new Ground(info);
     } else if (type == "Wall") {
