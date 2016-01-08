@@ -24,6 +24,7 @@
 #include "SimpleLight.hpp"
 #include "FollowSpotLight.hpp"
 #include "MovingLight.hpp"
+#include "ToggleLight.hpp"
 
 #include "Scene.hpp"
 
@@ -137,9 +138,10 @@ int main(int argc, char *argv[]) {
 
   std::map<btRigidBody *, Render *> bodies;
   CueBall *cue;
+  ToggleLight *tl;
 
   Importer importer(*arena);
-  importer.loadArena(boost::filesystem::path("arenas/simple.arena"), [&cue](Controller *const con, istream &is) -> void {
+  importer.loadArena(boost::filesystem::path("arenas/simple.arena"), [&cue, &tl](Controller *const con, istream &is) -> void {
       string materialPath;
       is >> materialPath;
 
@@ -163,8 +165,10 @@ int main(int argc, char *argv[]) {
           spec->coneAngle = 15;
           spec->ambientCoefficient = 0;
           cue = b0;
-          auto light = new SimpleLight(*spec);
-          scene->add(new FollowSpotLight(rb.getMotionState(), *light));
+          auto sl = new SimpleLight(*spec);
+          auto fsl = new FollowSpotLight(rb.getMotionState(), *sl);
+          tl = new ToggleLight(*fsl);
+          scene->add(tl);
         } else if (auto b0 = dynamic_cast<SnitchBall *>(b)) {
           auto spec = new Light::Spec();
           spec->intensities = glm::vec3(2, 1.68, 0);
@@ -286,6 +290,9 @@ int main(int argc, char *argv[]) {
                             size.y / 2.0 - event.mouseMove.y) * turnSpeed);
       } else if (event.type == sf::Event::MouseWheelScrolled) {
         view.zoom(event.mouseWheelScroll.delta);
+      } else if (event.type == sf::Event::KeyReleased) {
+        if (event.key.code == sf::Keyboard::H)
+          tl->toggle();
       }
     }
     static float moveSpeed = 1; //per second

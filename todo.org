@@ -1,14 +1,16 @@
 * DONE Rotation of balls
 * TODO SnitchBall
-  lighting of snitchball
+** DONE lighting of snitchball
+** TODO twinkle light
 * DONE CueBall
 
 * TODO particle system
-  - flare when collision
-  - dusty balls 
+** DONE flare when collision
+*** TODO bug exists
+** TODO dusty balls 
 * TODO collision between camera and bodies
 * TODO containing box/skybox?
-
+** TODO open a window/cubemap
 * TODO cloth simulation?
   fuck, too hard
 
