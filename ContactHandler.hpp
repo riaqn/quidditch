@@ -1,6 +1,7 @@
 #pragma once
 #include <btBulletDynamicsCommon.h>
 #include <unordered_map>
+#include <list>
 #include <functional>
 #include "Log.hpp"
 
@@ -11,7 +12,7 @@ public:
   using Hook = std::function<void (btManifoldPoint &cp, btRigidBody *const rb0, btRigidBody *const rb1, T0 *const, T1 *const)>;
   
 private:
-  static std::unordered_map<size_t, std::unordered_map<size_t, Hook<T, T> > > table_;
+  static std::unordered_map<size_t, std::unordered_map<size_t, std::list<Hook<T, T> > > > table_;
 public:
   static bool handle(btManifoldPoint &cp, void *body0_, void *body1_) {
     //debug << "ContactHandler::handle()\n";
@@ -29,24 +30,28 @@ public:
     if (it0 == it->second.end())
       return false;
     debug << "really dispatching!\n";
-    it0->second(cp, rb0, rb1, con0, con1);
+    for (auto hook : it0->second)
+      hook(cp, rb0, rb1, con0, con1);
     return true;
   }
 
-  template <typename T0, typename T1>
-  static void set(Hook<T, T> hook) {
-    size_t h0 = typeid(T0).hash_code(),
-      h1 = typeid(T1).hash_code();
+  static void add(const std::type_info &t0,
+                  const std::type_info &t1,
+                  Hook<T, T> hook,
+                  bool both = true) {
+    size_t h0 = t0.hash_code(),
+      h1 = t1.hash_code();
     
-    table_[h0][h1] = hook;
-    table_[h1][h0] = [hook](btManifoldPoint &cp,
-                            btRigidBody *const rb1,
-                            btRigidBody *rb0,
-                            T *const t1, T *const t0) -> void {
-      hook(cp, rb0, rb1, t0, t1);
-    };
+    table_[h0][h1].push_back(hook);
+    if (both && h0 != h1)
+      table_[h1][h0].push_back([hook](btManifoldPoint &cp,
+                                      btRigidBody *const rb1,
+                                      btRigidBody *rb0,
+                                      T *const t1, T *const t0) -> void {
+                                 hook(cp, rb0, rb1, t0, t1);
+                               });
   }
 };
 
 template <typename T>
-std::unordered_map<size_t, std::unordered_map<size_t, typename ContactHandler<T>::template Hook<T, T> > > ContactHandler<T>::table_;
+std::unordered_map<size_t, std::unordered_map<size_t, std::list<typename ContactHandler<T>::template Hook<T, T> > > > ContactHandler<T>::table_;

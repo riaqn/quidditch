@@ -91,25 +91,13 @@ int main(int argc, char *argv[]) {
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
-  View view(glm::vec3(0, 2, 2), glm::vec2(-glm::pi<float>(), -1.0));
+  View view(glm::vec3(0, 1.5, 0), glm::vec2(-glm::pi<float>(), -1.0));
   Projection projection(45, 4.0f/3, 0.1, 100);
   scene = new Scene(view, projection);
   
-  sf::SoundBuffer buffer0;
-  if (!buffer0.loadFromFile("res/ball-wall.wav")) {
-    return -1;
-  }
-  sf::Sound sound0(buffer0);
-
-  sf::SoundBuffer buffer1;
-  if (!buffer1.loadFromFile("res/ball-ball.wav")) {
-    return -1;
-  }
-  sf::Sound sound1(buffer1);
-
   Light::Spec spec;
   spec.position = glm::fvec4(0, 1, 1, 1);
-  spec.intensities = glm::fvec3(1, 1, 1);
+  spec.intensities = glm::fvec3(2, 2, 2);
   spec.attenuation = 1;
   spec.ambientCoefficient = 0.05f;
   spec.coneAngle = 45.0f;
@@ -120,7 +108,7 @@ int main(int argc, char *argv[]) {
   
   Light::Spec spec2;
   spec2.position = glm::fvec4(0, 1, -1, 1);
-  spec2.intensities = glm::fvec3(1, 1, 1);
+  spec2.intensities = glm::fvec3(2, 2, 2);
   spec2.attenuation = 1;
   spec2.ambientCoefficient = 0.05f;
   spec2.coneAngle = 45.0f;
@@ -198,10 +186,10 @@ int main(int argc, char *argv[]) {
     });
 
   gContactProcessedCallback = ContactHandler<Controller>::handle;
-  ContactHandler<Controller>::set<CueBall, GhostBall>([](btManifoldPoint &cp,
-                                                         btRigidBody *const rb0,
-                                                         btRigidBody *const rb1,
-                                                         Controller *const b0, Controller *const b1) -> void {
+  ContactHandler<Controller>::add(typeid(CueBall), typeid(GhostBall), [](btManifoldPoint &cp,
+                                                                         btRigidBody *const rb0,
+                                                                         btRigidBody *const rb1,
+                                                                         Controller *const b0, Controller *const b1) -> void {
       static int ParticleFilter = 64;
 
       auto colors = new std::vector<glm::vec4>();
@@ -235,7 +223,60 @@ int main(int argc, char *argv[]) {
         });
       arena->add(pc);
       scene->add(particle);
-    });
+                                  });
+
+  const std::type_info *ti_ball[] = {
+    &typeid(SnitchBall),
+    &typeid(WanderBall),
+    &typeid(GhostBall),
+    &typeid(CueBall),
+  };
+  
+  const std::type_info *ti_wall[] = {
+    //&typeid(Ground),
+    &typeid(Wall)
+  };
+
+  sf::SoundBuffer buffer0;
+  if (!buffer0.loadFromFile("res/ball-wall.wav")) {
+    return -1;
+  }
+
+  for (auto i : ti_ball)
+    for (auto j : ti_wall)
+      ContactHandler<Controller>::add(*i, *j, [&buffer0](btManifoldPoint &cp,
+                                               btRigidBody *const rb0,
+                                               btRigidBody *const rb1,
+                                               Controller *const b0, Controller *const b1) {
+                                        debug << cp.getAppliedImpulse() << '\n';
+                                        auto sound = new sf::Sound(buffer0);
+                                        sound->setPosition(convert<sf::Vector3f>(cp.getPositionWorldOnA()));
+                                        sound->setMinDistance(5.0f);
+                                        sound->setAttenuation(10.f);
+                                        sound->setVolume(cp.getAppliedImpulse() * 10000);
+                                        sound->play();
+                                      });
+
+  sf::SoundBuffer buffer1;
+  if (!buffer1.loadFromFile("res/ball-ball.wav")) {
+    return -1;
+  }
+
+  for (auto i : ti_ball)
+    for (auto j : ti_ball)
+      ContactHandler<Controller>::add(*i, *j, [&buffer1](btManifoldPoint &cp,
+                                               btRigidBody *const rb0,
+                                               btRigidBody *const rb1,
+                                               Controller *const b0, Controller *const b1) {
+                                        debug << "ball - ball\n";
+                                        auto sound = new sf::Sound(buffer1);
+                                        sound->setPosition(convert<sf::Vector3f>(cp.getPositionWorldOnA()));
+                                        sound->setMinDistance(5.0f);
+                                        sound->setAttenuation(10.f);
+                                        sound->setVolume(cp.getAppliedImpulse() * 10000);
+                                        sound->play();
+                                      }, false);
+
   
   /*
     PerlinNoise noise;
@@ -307,15 +348,18 @@ int main(int argc, char *argv[]) {
 
     cue->dir = btVector3();
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-      cue->dir += convert(view.up);
+      cue->dir += convert<btVector3>(view.up);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-      cue->dir -= convert(view.up);
+      cue->dir -= convert<btVector3>(view.up);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-      cue->dir += convert(view.right);
+      cue->dir += convert<btVector3>(view.right);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-      cue->dir -= convert(view.right);
+      cue->dir -= convert<btVector3>(view.right);
     
     arena->step(elapsed.asSeconds());
+    sf::Listener::setPosition(convert<sf::Vector3f>(view.eye));
+    sf::Listener::setDirection(convert<sf::Vector3f>(view.direction));
+    sf::Listener::setUpVector(convert<sf::Vector3f>(view.up));
     scene->render();
 
     window.pushGLStates();

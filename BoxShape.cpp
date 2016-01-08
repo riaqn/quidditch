@@ -4,6 +4,6 @@
 
 void BoxShape::render(Render::ModelSetter ms) const {
   cube_.render([this, ms](const glm::mat4 &mat) {
-      ms(glm::scale(glm::mat4(), convert(this->shape_.getHalfExtentsWithMargin())) * mat);
+      ms(glm::scale(glm::mat4(), convert<glm::vec3>(this->shape_.getHalfExtentsWithMargin())) * mat);
     });
 }

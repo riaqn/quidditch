@@ -14,7 +14,7 @@ public:
     Spec spec = light_();
     btTransform tf;
     motionState_->getWorldTransform(tf);
-    spec.coneDirection = convert(tf.getOrigin()) - glm::vec3(spec.position);
+    spec.coneDirection = convert<glm::vec3>(tf.getOrigin()) - glm::vec3(spec.position);
     return spec;
   }
 };

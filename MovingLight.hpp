@@ -13,7 +13,7 @@ public:
     Spec spec = light_();
     btTransform tf;
     motionState_->getWorldTransform(tf);
-    spec.position = glm::vec4(convert(tf.getOrigin()), 1);
+    spec.position = glm::vec4(convert<glm::vec3>(tf.getOrigin()), 1);
     return spec;
   }
 };
