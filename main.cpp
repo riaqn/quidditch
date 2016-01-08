@@ -193,7 +193,7 @@ int main(int argc, char *argv[]) {
       static int ParticleFilter = 64;
 
       auto colors = new std::vector<glm::vec4>();
-      static Particle::Material material_spark{0, glm::vec3(0, 0, 0)};
+      static Particle::Material material_spark{0, glm::vec3(0, 0, 0), 1};
 
       auto pc = new ParticleController (1);
       for (auto i = 0; i < (rb0->getLinearVelocity() - rb1->getLinearVelocity()).length2(); ++i) {
@@ -213,7 +213,7 @@ int main(int argc, char *argv[]) {
 
         rb->setLinearVelocity(btVector3(dist(gen), dist(gen), dist(gen)));
         pc->add(rb);
-        colors->push_back(glm::fvec4(255, 215, 0, 256) / 256.0f);
+        colors->push_back(glm::vec4(255, 215, 0, 256) / 256.0f);
       }
       auto particle = new BulletParticle(pc->getGroup(), *colors, material_spark);
       pc->setDestroyCallback([particle, colors]() -> void {

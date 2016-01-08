@@ -16,21 +16,21 @@ BulletParticle::BulletParticle(const GroupController::Group  &particles,
   float phi = 1 / sqrt(2);
 
   std::vector<glm::vec3> v({
-      glm::vec3(0, 1, phi),
-        glm::vec3(0, -1, phi),
-        glm::vec3(1, 0, -phi),
-        glm::vec3(-1, 0, -phi),
-        glm::vec3(0, 1, phi),
-        glm::vec3(0, -1, phi)
+      glm::vec3(0, 1, phi), //1
+        glm::vec3(0, -1, phi), //2
+        glm::vec3(1, 0, -phi), //3
+        glm::vec3(-1, 0, -phi), //4
+        glm::vec3(0, 1, phi),//5
+        glm::vec3(0, -1, phi)//6
         });
 
   glGenBuffers(1, &vert_);
   glBindBuffer(GL_ARRAY_BUFFER, vert_);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(v), &v[0].x, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(v), &v[0], GL_STATIC_DRAW);
   
   glGenBuffers(1, &vertNormal_);
   glBindBuffer(GL_ARRAY_BUFFER, vertNormal_);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(v), &v[0].x, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(v), &v[0], GL_STATIC_DRAW);
 
   glGenBuffers(1, &vertOffset_);
   glBindBuffer(GL_ARRAY_BUFFER, vertOffset_);
@@ -103,6 +103,11 @@ void BulletParticle::render(MaterialSetter ts) const {
   glVertexAttribDivisor(3, 1);
 
   glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 6, vertOffset.size());
+  glVertexAttribDivisor(0, 0);
+  glVertexAttribDivisor(1, 0);
+  glVertexAttribDivisor(2, 0);
+  glVertexAttribDivisor(3, 0);
+
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

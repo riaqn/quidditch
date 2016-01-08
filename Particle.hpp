@@ -11,6 +11,7 @@ public:
   struct Material {
     float shininess;
     glm::vec3 specularColor;
+    float brightness;
   };
   typedef std::function<void (const Material &)> MaterialSetter;
   virtual void render(MaterialSetter ts) const = 0;

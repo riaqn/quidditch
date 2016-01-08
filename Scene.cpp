@@ -80,6 +80,7 @@ void Scene::render() {
     p->render([&program_particle](const Particle::Material &m) -> void {
         program_particle.uniform1f("materialShininess", m.shininess);
         program_particle.uniform3fv("materialSpecularColor", m.specularColor);
+        program_particle.uniform1f("materialBrightness", m.brightness);
       });
 
   glDisableVertexAttribArray(0);
