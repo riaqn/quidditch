@@ -6,7 +6,7 @@ bool SmokeController::control(const float elapsed) {
   btVector3 pmin, pmax;
   rb_.getAabb(pmin, pmax);
   for (auto i = 0; i < elapsed * rate_; ++i) {
-    glm::vec4 offset(convert<glm::vec3>(random(pmin, pmax)), 0.002f);
+    glm::vec4 offset(convert<glm::vec3>(random(pmin, pmax)), 0.01f);
     if (off_ == vertOffset_.size()) {
       vertOffset_.push_back(offset);
       vertColor_.push_back(color_);

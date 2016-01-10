@@ -3,10 +3,10 @@
 Particle::Particle(const size_t n)
   :n_(n) {
   glm::vec3 vert[] = {
-    glm::vec3(-0.5, -0.5, 0),
-    glm::vec3(0.5, -0.5, 0),
-    glm::vec3(-0.5, 0.5, 0),
-    glm::vec3(0.5, 0.5, 0)
+    glm::vec3(-1, -1, 0),
+    glm::vec3(1, -1, 0),
+    glm::vec3(-1, 1, 0),
+    glm::vec3(1, 1, 0)
   };
 
   glGenBuffers(1, &vert_);
@@ -54,7 +54,9 @@ void Particle::renderHelper(const std::vector<glm::vec4> &vertOffset,
   glVertexAttribDivisor(1, 1);
   glVertexAttribDivisor(2, 1);
 
+  glDepthMask(GL_FALSE);
   glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, vertOffset.size());
+  glDepthMask(GL_TRUE);
   
   glVertexAttribDivisor(0, 0);
   glVertexAttribDivisor(1, 0);

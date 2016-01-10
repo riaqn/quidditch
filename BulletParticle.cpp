@@ -28,7 +28,7 @@ void BulletParticle::render(MaterialSetter ts) const {
       btTransform tf;
       rb->getMotionState()->getWorldTransform(tf);
       btVector3 pos = tf.getOrigin();
-      vertOffset.push_back(glm::vec4(pos.x(), pos.y(), pos.z(), 0.005f));
+      vertOffset.push_back(glm::vec4(pos.x(), pos.y(), pos.z(), 0.01f));
       vertColor.push_back(colors_[i]);
     }
   }

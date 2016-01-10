@@ -10,13 +10,16 @@ in vec4 vertOffset;
 in vec4 vertColor;
 
 out vec3 fragPos;
+out vec3 centerPos;
 out vec3 fragNormal;
 out vec4 fragColor;
+out float size;
 
 void main() {
-  float size = vertOffset.w;
+  centerPos = vertOffset.xyz;
+  size = vertOffset.w;
 
-  fragPos = vertOffset.xyz
+  fragPos = centerPos
     + cameraRight * vert.x * size
     + cameraUp * vert.y * size;
 

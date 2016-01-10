@@ -17,9 +17,11 @@ uniform struct Light {
   vec3 coneDirection;
 } allLights[MAX_LIGHTS];
 
-in vec3 fragNormal;
 in vec3 fragPos;
+in vec3 centerPos;
+in vec3 fragNormal;
 in vec4 fragColor;
+in float size;
 
 out vec4 finalColor;
 
@@ -66,6 +68,7 @@ void main() {
   vec3 normal = fragNormal;
   vec3 surfacePos = fragPos;
   vec4 surfaceColor = fragColor;
+  surfaceColor.a *= 1 - distance(fragPos, centerPos) / size;
   vec3 surfaceToCamera = normalize(cameraPosition - surfacePos);
 
   vec3 linearColor = surfaceColor.rgb * materialBrightness;
