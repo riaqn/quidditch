@@ -3,7 +3,7 @@
 
 #include "Noise.hpp"
 
-class PerlinNoise : public Noise<float, glm::fvec2> {
+class PerlinNoise : public Noise<float, glm::fvec2>, public Noise<float, glm::fvec3> {
   // The permutation vector
   std::vector<unsigned char> p;
 public:

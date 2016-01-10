@@ -42,6 +42,8 @@
 #include "BulletShapeRender.hpp"
 
 #include "BulletParticle.hpp"
+#include "SmokeController.hpp"
+#include "SmokeParticle.hpp"
 
 #include "ParticleController.hpp"
 
@@ -170,6 +172,18 @@ int main(int argc, char *argv[]) {
           spec->coneDirection = glm::vec3(0, -1, 0);
           auto light = new SimpleLight(*spec);
           scene->add(new MovingLight(rb.getMotionState(), *light));
+        } else if (auto b0 = dynamic_cast<FantasyBall *>(b)) {
+          auto color = new glm::vec4(0.0, 1, 0.0, 0.5);
+          auto noise = new PerlinNoise();
+          auto sc = new SmokeController(rb, 10000, 2000, *noise);
+          auto m = new Particle::Material{0, glm::vec3(0, 0, 0), 0};
+          auto sp = new SmokeParticle(sc->getNum(), sc->getVertOffset(), *color, *m);
+          arena->add(sc);
+          sc->setDestroyCallback([sp]() {
+              scene->remove(sp);
+              delete sp;
+            });
+          scene->add(sp);
         }
       } else if (auto b = dynamic_cast<Ground *>(con)) {
         const btTriangleMeshShape *tms = dynamic_cast<const btTriangleMeshShape *>(cs);

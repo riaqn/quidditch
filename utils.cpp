@@ -39,4 +39,18 @@ std::istream &operator >>(std::istream &is, btVector3 &vec) {
   return is;
 }
 
+std::random_device dev;
+std::default_random_engine eng;
+std::uniform_real_distribution<float> dist_float(0, 1);
 
+template<>
+float random(const float &a, const float &b) {
+  return dist_float(eng) * (b - a) + a;
+}
+
+template<>
+btVector3 random(const btVector3 &a, const btVector3 &b) {
+  return btVector3(random(a.x(), b.x()),
+                   random(a.y(), b.y()),
+                   random(a.z(), b.z()));
+}

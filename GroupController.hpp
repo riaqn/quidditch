@@ -1,20 +1,18 @@
 #pragma once
 #include <list>
 #include <BulletDynamics/Dynamics/btRigidBody.h>
-#include "Controller.hpp"
+#include "Arena.hpp"
 
 class GroupController : public Controller {
 public:
-  typedef std::list<btRigidBody *> Group;
+  typedef std::vector<btRigidBody *> Group;
 protected:
   Group group_;
 public:
-  virtual bool control(const float elapsed,
-                       RemoveCallback cb) = 0;
-
-  virtual void init(AddCallback cb) {
+  virtual void init(WorldProxy &world) {
+    world_ = &world;
     for (auto rb : group_)
-      cb(rb, btBroadphaseProxy::AllFilter, btBroadphaseProxy::AllFilter);
+      world.add(rb);
   }
   
   void add(btRigidBody *const rb) {

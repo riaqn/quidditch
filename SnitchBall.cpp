@@ -2,8 +2,7 @@
 
 #include "Log.hpp"
 
-bool SnitchBall::control(const float elapsed,
-                         RemoveCallback cb) {
+bool SnitchBall::control(const float elapsed) {
   if (active_) {
     countdown_ -= elapsed;
     if (countdown_ < 0) {

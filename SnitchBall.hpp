@@ -32,5 +32,5 @@ public:
      active_(false),
      countdown_(time_dormant) {}
 
-  virtual bool control(const float elapsed, RemoveCallback cb);
+  virtual bool control(const float elapsed);
 };

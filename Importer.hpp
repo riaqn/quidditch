@@ -2,7 +2,6 @@
 #include <boost/filesystem.hpp>
 #include <functional>
 #include <exception>
-#include "Controller.hpp"
 #include "Arena.hpp"
 
 class Importer {

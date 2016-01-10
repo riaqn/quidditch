@@ -1,19 +1,23 @@
 #pragma once
 #include <functional>
-#include <BulletDynamics/Dynamics/btRigidBody.h>
+#include "Arena.hpp"
+#include "WorldProxy.hpp"
 
 class Controller {
 public:
-  typedef std::function<void (btRigidBody *const, short group, short mask)> AddCallback;
-  typedef std::function<void (btRigidBody *const)> RemoveCallback;
   typedef std::function<void ()> DestroyCallback;
+
 private:
   DestroyCallback cb_;
+protected:
+  WorldProxy *world_;
 
 public:
-  virtual void init(AddCallback cb) = 0;
-  virtual bool control(const float elapsed,
-                       RemoveCallback cb) {
+  virtual void init(WorldProxy &world) {
+    world_ = &world;
+  }
+  
+  virtual bool control(const float elapsed) {
     return false;
   }
   

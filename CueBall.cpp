@@ -1,9 +1,7 @@
 #include "CueBall.hpp"
 #include "Log.hpp"
 
-bool CueBall::control(const float elapsed,
-                      RemoveCallback cb) {
-    
+bool CueBall::control(const float elapsed) {
   btVector3 v = rb_->getLinearVelocity();
   float v0 = v.dot(dir);
 

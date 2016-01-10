@@ -17,6 +17,5 @@ public:
     fantasy_ = fantasy;
   }
   
-  virtual bool control(const float elapsed,
-                       RemoveCallback cb);
+  virtual bool control(const float elapsed);
 };

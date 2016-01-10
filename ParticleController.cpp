@@ -1,25 +1,25 @@
 #include "ParticleController.hpp"
 #include <glm/glm.hpp>
 
-void ParticleController::init(AddCallback cb) {
+
+void ParticleController::init(WorldProxy &world) {
+  world_ = &world;
   for (auto rb : group_) {
-    cb(rb, particleFilter, ~particleFilter);
+    world.add(rb, particleFilter, ~particleFilter);
   }
 }
   
-bool ParticleController::control(const float elapsed,
-                                 RemoveCallback cb) {
+bool ParticleController::control(const float elapsed) {
   float survive = glm::pow(0.5, elapsed / halflife_);
 
   auto it = group_.begin();
   
   while (it != group_.end()) {
-    if (dist_(eng_) > survive) {
-      auto it0 = next(it);
+    if (random<float>(0, 1) > survive) {
+      world_->remove(*it);
       delete *it;
-      group_.remove(*it);
-      cb(*it);
-      it = it0;
+      *it = group_.back();
+      group_.resize(group_.size() - 1);
     } else
       ++it;
   }
@@ -28,7 +28,3 @@ bool ParticleController::control(const float elapsed,
   else
     return false;
 }
-
-std::random_device ParticleController::dev_;
-std::default_random_engine ParticleController::eng_(dev_());
-std::uniform_real_distribution<float> ParticleController::dist_(0, 1);

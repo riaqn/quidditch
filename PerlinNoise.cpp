@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include "PerlinNoise.hpp"
 #include "Log.hpp"
+#include <stdexcept>
 
 PerlinNoise::PerlinNoise() {
   p = {
@@ -41,24 +42,35 @@ float PerlinNoise::noise(const glm::vec2 &vec) const {
 }
 
 float PerlinNoise::noise(const glm::vec3 &vec) const {
-  glm::vec3 vec_ = vec * (float)256;
-  unsigned char x = ((unsigned)floor(vec_.x)) & 255;
-  unsigned char y = ((unsigned)floor(vec_.y)) & 255;
-  unsigned char z = ((unsigned)floor(vec_.z)) & 255;
-
-  glm::vec3 fvec = vec_ - glm::vec3(x, y, z);
+  glm::vec3 dummy;
+  auto vec1 = glm::abs(glm::modf(vec, dummy));
+  glm::vec3 vec256 = vec1 * (float)256;
+  glm::vec3 vec_f = glm::floor(vec256);
+  
+  unsigned x = ((unsigned)vec_f.x) & 255,
+    y = ((unsigned)vec_f.y)  & 255,
+    z = ((unsigned)vec_f.z) & 255;
+  
+  glm::vec3 fvec = vec256 - vec_f;
 
   glm::fvec3 f = fade(fvec);
 
-  float c00 = lerp(f.x, grad(glm::uvec3(x, y, z), vec_), grad(glm::uvec3(x+1, y, z), vec_));
-  float c01 = lerp(f.x, grad(glm::uvec3(x, y, z+1), vec_), grad(glm::uvec3(x+1, y, z+1), vec_));
-  float c10 = lerp(f.x, grad(glm::uvec3(x, y+1, z), vec_), grad(glm::uvec3(x+1, y+1, z), vec_));
-  float c11 = lerp(f.x, grad(glm::uvec3(x, y+1, z+1), vec_), grad(glm::uvec3(x+1, y+1, z+1), vec_));
+  /*
+  debug << "vec = " << vec << '\n';
+  debug << "fvec =" << fvec << '\n';
+  debug << "f = " << f << '\n';
+  */
+
+  float c00 = lerp(f.x, grad(glm::uvec3(x, y, z), vec256), grad(glm::uvec3(x+1, y, z), vec256));
+  float c01 = lerp(f.x, grad(glm::uvec3(x, y, z+1), vec256), grad(glm::uvec3(x+1, y, z+1), vec256));
+  float c10 = lerp(f.x, grad(glm::uvec3(x, y+1, z), vec256), grad(glm::uvec3(x+1, y+1, z), vec256));
+  float c11 = lerp(f.x, grad(glm::uvec3(x, y+1, z+1), vec256), grad(glm::uvec3(x+1, y+1, z+1), vec256));
   
   float c0 = lerp(f.y, c00, c10);
   float c1 = lerp(f.y, c01, c11);
 
   float c = lerp(f.z, c0, c1);
+  //debug << "noise = " << c << '\n';
   return c;
 }
 

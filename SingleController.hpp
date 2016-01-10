@@ -1,5 +1,5 @@
 #pragma once
-#include "Controller.hpp"
+#include "Arena.hpp"
 #include <memory>
 
 class SingleController : public Controller {
@@ -14,8 +14,8 @@ public:
     rb_->setUserPointer(this);
   }
   
-  void init(AddCallback cb) {
-    cb(rb_.get(), btBroadphaseProxy::AllFilter, btBroadphaseProxy::AllFilter);
+  void init(WorldProxy &world) {
+    world.add(rb_.get());
   }
   
   const btRigidBody &getBody() {

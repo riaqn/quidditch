@@ -1,12 +1,12 @@
 #include "WanderBall.hpp"
 #include "Log.hpp"
+#include "utils.hpp"
 
-bool WanderBall::control(const float elapsed,
-                         RemoveCallback cb) {
+bool WanderBall::control(const float elapsed) {
   btVector3 v = rb_->getLinearVelocity();
   btScalar vl = v.length();
   if (vl == 0)
-    v = btVector3(uniform_dist(eng), uniform_dist(eng), uniform_dist(eng));
+    v = btVector3(random<float>(0, 1), random<float>(0, 1), random<float>(0, 1));
       
   rb_->clearForces();
   btVector3 f1 = v.normalize() * (v0_ - vl) * mu_;
@@ -14,7 +14,3 @@ bool WanderBall::control(const float elapsed,
   rb_->applyCentralForce(f1);
   return false;
 }
-
-std::random_device WanderBall::rd;
-std::default_random_engine WanderBall::eng;
-std::uniform_real_distribution<> WanderBall::uniform_dist(0, 1);

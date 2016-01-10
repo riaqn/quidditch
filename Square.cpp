@@ -21,7 +21,7 @@ Square::Square() {
         });
 
   std::vector<Vertex> vert;
-  for (auto i = 0; i < 8; ++i)
+  for (auto i = 0; i < 4; ++i)
     vert.push_back(Vertex{position[i], uv[i], glm::vec3(0, 1, 0)});
 
   load(vert, faces);

@@ -1,7 +1,7 @@
 include(FindPkgConfig)
 cmake_minimum_required (VERSION 3.3)
 project (Quidditch)
-add_executable(quidditch main.cpp Projection.cpp View.cpp Scene.cpp Sphere.cpp Texture.cpp Log.cpp  SphereShape.cpp  Wave.cpp Flag.cpp Translate.cpp Scale.cpp Bezier.cpp NoiseTexture.cpp Texture.cpp FileTexture.cpp PerlinNoise.cpp PrimitiveShape.cpp Program.cpp Importer.cpp utils.cpp  FileMesh.cpp TriangleMeshShape.cpp BoxShape.cpp WanderBall.cpp CueBall.cpp SnitchBall.cpp MaterialImporter.cpp Arena.cpp BulletParticle.cpp ParticleController.cpp Cube.cpp Square.cpp Shape.cpp)
+add_executable(quidditch main.cpp Projection.cpp View.cpp Scene.cpp Sphere.cpp Texture.cpp Log.cpp  SphereShape.cpp  Wave.cpp Flag.cpp Translate.cpp Scale.cpp Bezier.cpp NoiseTexture.cpp Texture.cpp FileTexture.cpp PerlinNoise.cpp PrimitiveShape.cpp Program.cpp Importer.cpp utils.cpp  FileMesh.cpp TriangleMeshShape.cpp BoxShape.cpp WanderBall.cpp CueBall.cpp SnitchBall.cpp MaterialImporter.cpp Arena.cpp BulletParticle.cpp ParticleController.cpp Cube.cpp Square.cpp Shape.cpp Particle.cpp SmokeController.cpp)
 
 
 pkg_check_modules(BULLET REQUIRED bullet)
@@ -23,5 +23,5 @@ string(REPLACE "\n" " " GM_CXX_FLAGS "${GM_CXX_FLAGS}")
 string(REPLACE "\n" " " GM_LINKER_FLAGS "${GM_LINKER_FLAGS}")
 
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g3 -ggdb -O0 ${GM_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g3 -ggdb -O2 ${GM_CXX_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lGL -lsfml-window -lsfml-system -lsfml-graphics -lsfml-audio -lGLEW ${GM_LINKER_FLAGS}")

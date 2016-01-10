@@ -5,7 +5,7 @@ void Arena::step(const float elapsed) {
   auto it = controllers_.begin(); 
   while (it != controllers_.end()) {
     auto con = *it;
-    if (con->control(elapsed, remove_)) {
+    if (con->control(elapsed)) {
       it = controllers_.erase(it);
       delete con;
     } else
