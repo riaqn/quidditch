@@ -64,15 +64,15 @@ void Scene::render() {
   program_particle_.use();
 
   program_particle_.uniform3fv("cameraPosition", view_.eye);
-
   program_particle_.uniformMatrix4fv("camera", projection_.matrix() * view_.matrix());
+  program_particle_.uniform3fv("cameraRight", view_.right);
+  program_particle_.uniform3fv("cameraUp", view_.up);
 
   setLight(program_particle_);
 
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
-  glEnableVertexAttribArray(3);
   
 
   const Program &program_particle = program_particle_;
@@ -86,5 +86,4 @@ void Scene::render() {
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
   glDisableVertexAttribArray(2);
-  glDisableVertexAttribArray(3);
 }

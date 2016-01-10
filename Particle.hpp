@@ -10,9 +10,7 @@
  */
 class Particle {
   GLuint vert_;
-  GLuint index_;
   GLuint vertOffset_;
-  GLuint vertNormal_;
   GLuint vertColor_;
 
   const size_t n_;
@@ -26,7 +24,6 @@ public:
   Particle(const size_t n);
   ~Particle() {
     glDeleteBuffers(1, &vert_);
-    glDeleteBuffers(1, &vertNormal_);
     glDeleteBuffers(1, &vertOffset_);
     glDeleteBuffers(1, &vertColor_);
   }

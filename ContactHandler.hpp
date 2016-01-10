@@ -29,7 +29,6 @@ public:
     auto it0 = it->second.find(typeid(*con1).hash_code());
     if (it0 == it->second.end())
       return false;
-    debug << "really dispatching!\n";
     for (auto hook : it0->second)
       hook(cp, rb0, rb1, con0, con1);
     return true;

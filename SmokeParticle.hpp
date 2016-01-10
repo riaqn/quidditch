@@ -2,16 +2,16 @@
 
 class SmokeParticle : public Particle {
   const std::vector<glm::vec4> &vertOffset_;
-  const std::vector<glm::vec4> vertColor_;
+  const std::vector<glm::vec4> &vertColor_;
   const Material &material_;
 public:
   SmokeParticle(const size_t num,
                 const std::vector<glm::vec4> &vertOffset,
-                const glm::vec4 &color,
+                const std::vector<glm::vec4> &vertColor,
                 const Material &material)
     :Particle(num),
      vertOffset_(vertOffset),
-     vertColor_(num, color),
+     vertColor_(vertColor),
      material_(material) {}
   
   virtual void render(MaterialSetter ms) const {

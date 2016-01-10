@@ -96,6 +96,9 @@ int main(int argc, char *argv[]) {
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
+  
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   View view(glm::vec3(0, 1.5, 0), glm::vec2(-glm::pi<float>(), -1.0));
   Projection projection(45, 4.0f/3, 0.1, 100);
@@ -173,11 +176,11 @@ int main(int argc, char *argv[]) {
           auto light = new SimpleLight(*spec);
           scene->add(new MovingLight(rb.getMotionState(), *light));
         } else if (auto b0 = dynamic_cast<FantasyBall *>(b)) {
-          auto color = new glm::vec4(0.0, 1, 0.0, 0.5);
+          auto color = new glm::vec4(0.11, 0.16, 0.0, 1);
           auto noise = new PerlinNoise();
-          auto sc = new SmokeController(rb, 10000, 2000, *noise);
+          auto sc = new SmokeController(rb, 20000, 10000, *color, *noise);
           auto m = new Particle::Material{0, glm::vec3(0, 0, 0), 0};
-          auto sp = new SmokeParticle(sc->getNum(), sc->getVertOffset(), *color, *m);
+          auto sp = new SmokeParticle(sc->getNum(), sc->getVertOffset(), sc->getVertColor(), *m);
           arena->add(sc);
           sc->setDestroyCallback([sp]() {
               scene->remove(sp);
@@ -204,7 +207,7 @@ int main(int argc, char *argv[]) {
     });
 
   gContactProcessedCallback = ContactHandler<Controller>::handle;
-  ContactHandler<Controller>::add(typeid(CueBall), typeid(GhostBall),
+  ContactHandler<Controller>::add(typeid(CueBall), typeid(SnitchBall),
                                   [](btManifoldPoint &cp,
                                      btRigidBody *const rb0,
                                      btRigidBody *const rb1,
@@ -215,7 +218,7 @@ int main(int argc, char *argv[]) {
                                     static Particle::Material material_spark{0, glm::vec3(0, 0, 0), 1};
 
                                     auto pc = new ParticleController (1);
-                                    for (auto i = 0; i < cp.getAppliedImpulse() * 1000; ++i) {
+                                    for (auto i = 0; i < cp.getAppliedImpulse() * 10000; ++i) {
                                       static btBoxShape *shape = new btBoxShape(btVector3(0.001, 0.001, 0.001));
                                       static btQuaternion quaternion(0, 0, 0, 1);
                                       static const btScalar mass = 0.000001;
@@ -251,7 +254,7 @@ int main(int argc, char *argv[]) {
                                      Controller *const b0, Controller *const b1) -> void {
                                     CueBall *cue = dynamic_cast<CueBall *>(b0);
                                     FantasyBall *f = dynamic_cast<FantasyBall *>(b1);
-                                    cue->setFantasy(f->getDuration());
+                                    //cue->setFantasy(f->getDuration());
                                   });
 
   const std::type_info *ti_ball[] = {
@@ -301,7 +304,6 @@ int main(int argc, char *argv[]) {
                                                               btRigidBody *const rb0,
                                                               btRigidBody *const rb1,
                                                               Controller *const b0, Controller *const b1) {
-                                        debug << "ball - ball\n";
                                         auto sound = sp.pop();
                                         sound->setPosition(convert<sf::Vector3f>(cp.getPositionWorldOnA()));
                                         sound->setMinDistance(5.0f);
