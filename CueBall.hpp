@@ -11,7 +11,7 @@ public:
   CueBall(Ball &&ball,
           const float userPower,
           const float maxForce)
-    :Ball(std::move(ball)), userPower_(userPower), maxForce_(maxForce) {};
+    :Ball(std::move(ball)), userPower_(userPower), maxForce_(maxForce), fantasy_(-1) {};
 
   void setFantasy(const float fantasy) {
     fantasy_ = fantasy;

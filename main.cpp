@@ -178,7 +178,7 @@ int main(int argc, char *argv[]) {
         } else if (auto b0 = dynamic_cast<FantasyBall *>(b)) {
           auto color = new glm::vec4(0.11, 0.16, 0.0, 1);
           auto noise = new PerlinNoise();
-          auto sc = new SmokeController(rb, 10000, 10000, *color, *noise);
+          auto sc = new SmokeController(rb, 20000, 20000, *color, *noise);
           auto m = new Particle::Material{0, glm::vec3(0, 0, 0), 0};
           auto sp = new SmokeParticle(sc->getNum(), sc->getVertOffset(), sc->getVertColor(), *m);
           arena->add(sc);
@@ -283,7 +283,6 @@ int main(int argc, char *argv[]) {
                                                               btRigidBody *const rb0,
                                                               btRigidBody *const rb1,
                                                               Controller *const b0, Controller *const b1) {
-                                        debug << cp.getAppliedImpulse() << '\n';
                                         auto sound = sp.pop();
                                         sound->setPosition(convert<sf::Vector3f>(cp.getPositionWorldOnA()));
                                         sound->setMinDistance(5.0f);
