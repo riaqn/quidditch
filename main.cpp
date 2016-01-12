@@ -189,7 +189,17 @@ int main(int argc, char *argv[]) {
         } else if (auto b0 = dynamic_cast<FantasyBall *>(b)) {
           auto color = new glm::vec4(0.11, 0.16, 0.0, 1);
           auto noise = new PerlinNoise();
-          auto sc = new Smoke(rb, 20000, 20000, *color, *noise);
+          float radius = dynamic_cast<const btSphereShape *>(rb.getCollisionShape())->getRadius();
+          float pi = glm::pi<float>();
+          auto sc = new Smoke([&rb, radius, pi]() -> glm::vec4 {
+              auto center = convert<glm::vec3>(rb.getWorldTransform().getOrigin());
+              float u = random<float>(0, 1), v = random<float>(-1, 1);
+              float phi = 2 * pi * u;
+              float theta = glm::acos(v);
+              return glm::vec4(center + glm::vec3(sin(theta) * sin(phi),
+                                                  cos(theta),
+                                                  sin(theta) * cos(phi)) * radius, 0.007);
+            }, 20000, 20000, *color, *noise);
           auto m = new Particle::Material{0, glm::vec3(0, 0, 0), 0};
           auto sp = new SmokeParticle(sc->getNum(), sc->getVertOffset(), sc->getVertColor(), *m);
           arena->add(sc);
