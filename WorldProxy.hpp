@@ -1,22 +1,30 @@
 #pragma once
-#include <BulletDynamics/Dynamics/btDynamicsWorld.h>
+#include <BulletSoftBody/btSoftRigidDynamicsWorld.h>
 
 class WorldProxy {
-  btDynamicsWorld &world_;
+  btSoftRigidDynamicsWorld &world_;
 public:
-  WorldProxy(btDynamicsWorld &world)
+  WorldProxy(btSoftRigidDynamicsWorld &world)
     :world_(world) {}
     
-  void add(btRigidBody *body) {
+  void add(btRigidBody *const body) {
     world_.addRigidBody(body);
   }
 
-  void add(btRigidBody *body, short group, short mask) {
+  void add(btSoftBody *const body) {
+    world_.addSoftBody(body);
+  }
+
+  void add(btRigidBody *const body, short group, short mask) {
     world_.addRigidBody(body, group, mask);
   }
 
-  void remove(btRigidBody *body) {
+  void remove(btRigidBody *const body) {
     world_.removeRigidBody(body);
+  }
+
+  void remove(btSoftBody *const body) {
+    world_.removeSoftBody(body);
   }
 };
 

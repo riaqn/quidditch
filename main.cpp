@@ -19,6 +19,8 @@
 #include "CueBall.hpp"
 #include "SnitchBall.hpp"
 #include "FantasyBall.hpp"
+#include "Smoke.hpp"
+#include "Cloth.hpp"
 
 #include "Ground.hpp"
 #include "Wall.hpp"
@@ -33,21 +35,23 @@
 #include "SphereShape.hpp"
 #include "TriangleMeshShape.hpp"
 #include "BoxShape.hpp"
+#include "SoftBodyShape.hpp"
 
 #include "Log.hpp"
 
 #include "Importer.hpp"
 #include "MaterialImporter.hpp"
 
-#include "BulletShapeRender.hpp"
+#include "RigidBodyRender.hpp"
+#include "SoftBodyRender.hpp"
 
 #include "BulletParticle.hpp"
-#include "SmokeController.hpp"
 #include "SmokeParticle.hpp"
 
 #include "ParticleController.hpp"
 
 #include <btBulletDynamicsCommon.h>
+#include <BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h>
 
 #include <boost/filesystem.hpp>
 
@@ -100,7 +104,7 @@ int main(int argc, char *argv[]) {
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  View view(glm::vec3(0, 1.5, 0), glm::vec2(-glm::pi<float>(), -1.0));
+  View view(glm::vec3(0, 1.5, 1.5), glm::vec2(-glm::pi<float>(), -1.0));
   Projection projection(45, 4.0f/3, 0.1, 100);
   scene = new Scene(view, projection);
   
@@ -125,13 +129,20 @@ int main(int argc, char *argv[]) {
   SimpleLight light2(spec2);
   scene->add(&light2);
 
+  const btVector3 gravity(0, -9.8, 0);
+
+  btVector3 worldAabbMin(-10, -10, -10);
+  btVector3 worldAabbMax(10, 10, 10);
+  
+  //btAxisSweep3 broadphase(worldAabbMin, worldAabbMax, 1024);
   btDbvtBroadphase broadphase;
   btDefaultCollisionConfiguration collisionConfiguration;
   btCollisionDispatcher dispatcher(&collisionConfiguration);
   btSequentialImpulseConstraintSolver solver;
-  btDiscreteDynamicsWorld dynamicsWorld(&dispatcher, &broadphase, &solver, &collisionConfiguration);
+  btSoftRigidDynamicsWorld world(&dispatcher, &broadphase, &solver, &collisionConfiguration);
+  world.setGravity(gravity);
 
-  arena = new Arena(dynamicsWorld);
+  arena = new Arena(world);
 
   std::map<btRigidBody *, Render *> bodies;
   CueBall *cue;
@@ -178,7 +189,7 @@ int main(int argc, char *argv[]) {
         } else if (auto b0 = dynamic_cast<FantasyBall *>(b)) {
           auto color = new glm::vec4(0.11, 0.16, 0.0, 1);
           auto noise = new PerlinNoise();
-          auto sc = new SmokeController(rb, 20000, 20000, *color, *noise);
+          auto sc = new Smoke(rb, 20000, 20000, *color, *noise);
           auto m = new Particle::Material{0, glm::vec3(0, 0, 0), 0};
           auto sp = new SmokeParticle(sc->getNum(), sc->getVertOffset(), sc->getVertColor(), *m);
           arena->add(sc);
@@ -198,13 +209,41 @@ int main(int argc, char *argv[]) {
         shape = new BoxShape(*dynamic_cast<const btBoxShape *>(cs));
       } else
         throw std::runtime_error("unrecognized controller. WTF?");
-      auto render = new BulletShapeRender(shape, rb.getMotionState(), m);
+      auto render = new RigidBodyRender(shape, rb.getMotionState(), m);
       scene->add(render);
       con->setDestroyCallback([render]() -> void {
           scene->remove(render);
           delete render;
         });
     });
+
+  btSoftBodyWorldInfo worldinfo;
+  worldinfo.m_broadphase = &broadphase;
+  worldinfo.m_dispatcher = &dispatcher;
+  worldinfo.m_sparsesdf.Initialize();
+  worldinfo.m_gravity = gravity;
+  worldinfo.air_density = 1.2f;
+  worldinfo.water_density = 0;
+  worldinfo.water_offset = 0;
+  worldinfo.water_normal = btVector3(0, 0, 0);
+  std::vector<glm::vec2> uv;
+  std::vector<glm::ivec3> faces;
+  Cloth::getRectangle(50, 50, uv, faces);
+  auto cloth = new Cloth(worldinfo, uv, faces,
+                         glm::vec3(-0.5, 1.5, -0.5),
+                         glm::vec3(0, 0, 1),
+                         glm::vec3(1, 0, 0));
+
+  auto sbs = new SoftBodyShape(cloth->getBody(), uv);
+  Render::Material m_flag{FileTexture::get(GL_TEXTURE0, "res/flag1.png"),
+      50, glm::vec3(0, 0, 0), 0};
+  auto sbr = new SoftBodyRender(sbs, m_flag);
+  scene->add(sbr);
+  cloth->setDestroyCallback([sbr]() {
+      scene->remove(sbr);
+      delete sbr;
+    });
+  arena->add(cloth);
 
   gContactProcessedCallback = ContactHandler<Controller>::handle;
   ContactHandler<Controller>::add(typeid(CueBall), typeid(SnitchBall),
@@ -264,7 +303,7 @@ int main(int argc, char *argv[]) {
     &typeid(CueBall),
     &typeid(FantasyBall)
   };
-  
+
   const std::type_info *ti_wall[] = {
     //&typeid(Ground),
     &typeid(Wall)

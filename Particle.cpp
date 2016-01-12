@@ -24,9 +24,8 @@ Particle::Particle(const size_t n)
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-
-void Particle::renderHelper(const std::vector<glm::vec4> &vertOffset,
-                            const std::vector<glm::vec4> &vertColor) const {
+void Particle::render(const std::vector<glm::vec4> &vertOffset,
+                      const std::vector<glm::vec4> &vertColor) const {
   if (vertOffset.size() > n_ || vertColor.size() > n_)
     throw std::runtime_error("particles.size() increased");
 

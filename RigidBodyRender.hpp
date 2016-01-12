@@ -8,14 +8,13 @@
 
 #include "Log.hpp"
 
-
-class BulletShapeRender : public Render {
+class RigidBodyRender : public Render {
 private:
   const Shape *shape_;
   const btMotionState *const motionState_;
   const Material material_;
 public:
-  BulletShapeRender(const Shape *const shape, const btMotionState *const motionState, const Material &material)
+  RigidBodyRender(const Shape *const shape, const btMotionState *const motionState, const Material &material)
     :shape_(shape), motionState_(motionState), material_(material) {}
 
   const Shape *getShape() {

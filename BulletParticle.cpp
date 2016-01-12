@@ -34,5 +34,5 @@ void BulletParticle::render(MaterialSetter ts) const {
   }
 
   ts(material_);
-  renderHelper(vertOffset, vertColor);
+  Particle::render(vertOffset, vertColor);
 }

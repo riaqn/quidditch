@@ -1,6 +1,5 @@
 #pragma once
 #include <functional>
-#include "Arena.hpp"
 #include "WorldProxy.hpp"
 
 class Controller {

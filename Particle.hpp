@@ -30,6 +30,6 @@ public:
   
   typedef std::function<void (const Material &)> MaterialSetter;
   virtual void render(MaterialSetter ts) const = 0;
-  void renderHelper(const std::vector<glm::vec4> &vertOffset,
-                    const std::vector<glm::vec4> &vertColor) const;
+  void render(const std::vector<glm::vec4> &vertOffset,
+              const std::vector<glm::vec4> &vertColor) const;
 };

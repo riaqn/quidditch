@@ -16,6 +16,6 @@ public:
   
   virtual void render(MaterialSetter ms) const {
     ms(material_);
-    renderHelper(vertOffset_, vertColor_);
+    Particle::render(vertOffset_, vertColor_);
   }
 };

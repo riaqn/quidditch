@@ -7,10 +7,8 @@ bool WanderBall::control(const float elapsed) {
   btScalar vl = v.length();
   if (vl == 0)
     v = btVector3(random<float>(0, 1), random<float>(0, 1), random<float>(0, 1));
+  vl += (v0_ - vl) * mu_ * elapsed;
       
-  rb_->clearForces();
-  btVector3 f1 = v.normalize() * (v0_ - vl) * mu_;
-
-  rb_->applyCentralForce(f1);
+  rb_->setLinearVelocity(vl * v.normalize());
   return false;
 }

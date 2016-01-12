@@ -8,12 +8,12 @@ Square::Square() {
     glm::vec3(1, 0, 1)
   };
 
-  glm::vec2 uv[] = {
+  std::vector<glm::vec2> uv({
     glm::vec2(0, 0),
     glm::vec2(1, 0),
     glm::vec2(0, 1),
     glm::vec2(1, 1)
-  };
+      });
 
   std::vector<glm::uvec3> faces({
       glm::uvec3(0, 3, 1),
@@ -21,8 +21,11 @@ Square::Square() {
         });
 
   std::vector<Vertex> vert;
-  for (auto i = 0; i < 4; ++i)
-    vert.push_back(Vertex{position[i], uv[i], glm::vec3(0, 1, 0)});
+  for (auto i = 0; i < 4; ++i) {
+    vert.push_back(Vertex{position[i], glm::vec3(0, 1, 0)});
+  }
 
-  load(vert, faces);
+  load(vert);
+  load(uv);
+  load(faces);
 }

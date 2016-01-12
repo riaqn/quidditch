@@ -23,6 +23,7 @@ public:
   btMotionState *loadMotionState(std::istream &is);
   btCollisionShape *loadCollisionShape(const boost::filesystem::path &path);
   btSphereShape *loadSphereShape(std::istream &is);
+  btTriangleMeshShape *loadNoiseGround(std::istream &is);
   btTriangleMeshShape *loadTriangleMeshShape(std::istream &is);
   btBoxShape *loadBoxShape(std::istream &is);
   btTriangleIndexVertexArray *loadTriangleIndexVertexArray(std::istream &is);

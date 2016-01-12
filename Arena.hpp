@@ -10,14 +10,13 @@
 
 class Arena {
 private:
-  btDynamicsWorld &world_;
+  btSoftRigidDynamicsWorld &world_;
   WorldProxy proxy_;
   std::list<Controller *> controllers_;
   
 public:
-  Arena(btDynamicsWorld &world)
-    :world_(world),
-     proxy_(world)
+  Arena(btSoftRigidDynamicsWorld &world)
+    :world_(world), proxy_(world)
   {}
 
   void step(const float elapsed);

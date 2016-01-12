@@ -7,8 +7,6 @@
 #include "utils.hpp"
 
 TriangleMeshShape::TriangleMeshShape(const btTriangleMeshShape *const shape, const int i) {
-  std::vector<Vertex> vert;
-  std::vector<Face> face;
   const btStridingMeshInterface *interface = shape->getMeshInterface();
   
   const unsigned char *v;
@@ -27,11 +25,16 @@ TriangleMeshShape::TriangleMeshShape(const btTriangleMeshShape *const shape, con
   notice << "reading " << v_num << " vertices, " << t_num << " triangles\n";
   if (v_type != PHY_FLOAT || t_type != PHY_INTEGER)
     throw std::runtime_error("");
+  
+  std::vector<Vertex> vert;
+  std::vector<UV> uv;
+  std::vector<Triangle> face;
+
   for (auto j = 0; j < v_num; ++j) {
     glm::vec3 &pos = *(glm::vec3 *)&v[v_stride * j];
     vert.push_back(Vertex{pos,
-          glm::vec2(pos.x, pos.z),
           glm::vec3(0)});
+    uv.push_back(UV(pos.x, pos.z));
   }
   for (auto j = 0; j < t_num; ++j) {
     glm::ivec3 &tri = *(glm::ivec3 *)&t[t_stride * j];
@@ -45,10 +48,9 @@ TriangleMeshShape::TriangleMeshShape(const btTriangleMeshShape *const shape, con
   for (auto j = 0; j < v_num; ++j)
     vert[j].normal = glm::normalize(vert[j].normal);
 
-  for (auto v0 : vert)
-    debug << v0.position << v0.uv << v0.normal << '\n';
-  for (auto f0 : face)
-    debug << f0 << '\n';
-  load(vert, face);
+  load(vert);
+  load(uv);
+  load(face);
+
 }
 

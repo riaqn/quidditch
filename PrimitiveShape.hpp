@@ -7,21 +7,25 @@
   Shape has no texture
  */
 class PrimitiveShape : public virtual Shape {
-  GLuint VBO_;
-  GLuint IBO_;
-  unsigned faces_;
+  GLuint vertex_;
+  GLuint uv_;
+  GLuint triangle_;
+
+  mutable size_t faces_;
 public:
   struct Vertex {
     glm::vec3 position;
-    glm::vec2 uv;
     glm::vec3 normal;
   };
 
-  typedef glm::uvec3 Face;
+  typedef glm::vec2 UV;
+  typedef glm::uvec3 Triangle;
 
   PrimitiveShape();
   ~PrimitiveShape();
-  void load(const std::vector<Vertex> &vert, const std::vector<Face> &face);
+  void load(const std::vector<Vertex> &vert, GLenum usage = GL_STATIC_DRAW) const ;
+  void load(const std::vector<UV> &uv, GLenum usage = GL_STATIC_DRAW) const ;
+  void load(const std::vector<Triangle> &face, GLenum usage = GL_STATIC_DRAW) const ;
 
   //just draw the item at the origin point
   //the caller is resposible for setup matrix, texture, etc.

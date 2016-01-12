@@ -81,9 +81,11 @@ Sphere::Sphere() {
   for (auto k = 0; k < 4; ++k)
     evolve(v, i, uv);
 
-  vector<Vertex> vert;
-  for (auto k = 0; k < v.size(); ++k)
-    vert.push_back(Vertex{v[k], uv[k], v[k]});
+  std::vector<Vertex> vertex;
+  for (auto v_ : v)
+    vertex.push_back(Vertex{v_, v_});
 
-  load(vert, i);
+  load(vertex);
+  load(i);
+  load(uv);
 }

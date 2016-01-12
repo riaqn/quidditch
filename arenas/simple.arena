@@ -1,7 +1,7 @@
 GhostBall GhostBall0.RigidBody
 res/GhostBall.material
 
-WanderBall WanderBall0.RigidBody 1 0.2
+WanderBall WanderBall0.RigidBody 1 1
 res/WanderBall.material
 
 Ground Ground.RigidBody

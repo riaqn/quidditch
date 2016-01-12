@@ -6,6 +6,7 @@
 #include "utils.hpp"
 #include "Log.hpp"
 #include "FileMesh.hpp"
+#include "NoiseGround.hpp"
 
 #include "GhostBall.hpp"
 #include "WanderBall.hpp"
@@ -15,6 +16,10 @@
 
 #include "Ground.hpp"
 #include "Wall.hpp"
+
+#include "PerlinNoise.hpp"
+
+
 
 using namespace std;
 using namespace boost::filesystem;
@@ -130,6 +135,8 @@ btCollisionShape *Importer::loadCollisionShape(const path &p) {
     return loadTriangleMeshShape(is);
   } else if (type == "Box") {
     return loadBoxShape(is);
+  } else if (type == "NoiseGround") {
+    return loadNoiseGround(is);
   } else
     throw ParseException();
 }
@@ -139,6 +146,17 @@ btSphereShape *Importer::loadSphereShape(std::istream &is) {
   is >> radius;
   checkStream(is);
   return new btSphereShape(radius);
+}
+
+btTriangleMeshShape *Importer::loadNoiseGround(std::istream &is) {
+  glm::vec3 base, x, y;
+  unsigned nx, ny;
+  float height;
+  is >> base >> x >> y >> nx >> ny >> height;
+
+  PerlinNoise noise;
+  auto *ng = new NoiseGround(noise, base, x, y, nx, ny, height);
+  return new btBvhTriangleMeshShape(ng, true);
 }
 
 btTriangleMeshShape *Importer::loadTriangleMeshShape(std::istream &is) {
