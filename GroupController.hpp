@@ -16,8 +16,8 @@ public:
   }
   
   void add(btRigidBody *const rb) {
-  group_.push_back(rb);
-}
+    group_.push_back(rb);
+  }
 
   const Group &getGroup() {
     return group_;

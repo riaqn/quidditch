@@ -4,6 +4,7 @@
 #include <BulletCollision/CollisionShapes/btStridingMeshInterface.h>
 #include <LinearMath/btVector3.h>
 #include <glm/glm.hpp>
+#include "Log.hpp"
 
 class SimpleMesh : public btStridingMeshInterface {
 protected:

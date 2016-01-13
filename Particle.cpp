@@ -28,6 +28,8 @@ void Particle::render(const std::vector<glm::vec4> &vertOffset,
                       const std::vector<glm::vec4> &vertColor) const {
   if (vertOffset.size() > n_ || vertColor.size() > n_)
     throw std::runtime_error("particles.size() increased");
+  if (vertOffset.size() != vertColor.size())
+    throw std::runtime_error("vertOffset and vertColor size not match?");
 
   glBindBuffer(GL_ARRAY_BUFFER, vertOffset_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * n_, NULL, GL_STREAM_DRAW);

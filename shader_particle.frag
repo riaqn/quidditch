@@ -68,6 +68,8 @@ void main() {
   vec3 normal = fragNormal;
   vec3 surfacePos = fragPos;
   vec4 surfaceColor = fragColor;
+  if (surfaceColor.a < 0)
+    surfaceColor.a = 0;
   surfaceColor.a *= 1 - distance(fragPos, centerPos) / size;
   vec3 surfaceToCamera = normalize(cameraPosition - surfacePos);
 

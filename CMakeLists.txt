@@ -1,7 +1,7 @@
 include(FindPkgConfig)
 cmake_minimum_required (VERSION 3.3)
 project (Quidditch)
-add_executable(quidditch Projection.cpp View.cpp Scene.cpp Sphere.cpp Texture.cpp Log.cpp  SphereShape.cpp  Wave.cpp Flag.cpp Translate.cpp Scale.cpp Bezier.cpp NoiseTexture.cpp Texture.cpp FileTexture.cpp PerlinNoise.cpp PrimitiveShape.cpp Program.cpp utils.cpp  FileMesh.cpp TriangleMeshShape.cpp BoxShape.cpp WanderBall.cpp CueBall.cpp SnitchBall.cpp MaterialImporter.cpp Arena.cpp BulletParticle.cpp ParticleController.cpp Cube.cpp Square.cpp Shape.cpp Particle.cpp Smoke.cpp SoftBodyShape.cpp Cloth.cpp Importer.cpp main.cpp)
+add_executable(quidditch Projection.cpp View.cpp Scene.cpp Sphere.cpp Texture.cpp Log.cpp  SphereShape.cpp  Wave.cpp Flag.cpp Translate.cpp Scale.cpp Bezier.cpp NoiseTexture.cpp Texture.cpp FileTexture.cpp PerlinNoise.cpp PrimitiveShape.cpp Program.cpp utils.cpp  FileMesh.cpp TriangleMeshShape.cpp BoxShape.cpp WanderBall.cpp CueBall.cpp SnitchBall.cpp MaterialImporter.cpp Arena.cpp  Spark.cpp Cube.cpp Square.cpp Shape.cpp Particle.cpp Smoke.cpp SoftBodyShape.cpp Cloth.cpp Importer.cpp main.cpp BulletParticle.cpp)
 
 
 pkg_check_modules(BULLET REQUIRED bullet)

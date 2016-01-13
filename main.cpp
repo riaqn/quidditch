@@ -20,6 +20,7 @@
 #include "SnitchBall.hpp"
 #include "FantasyBall.hpp"
 #include "Smoke.hpp"
+#include "Spark.hpp"
 #include "Cloth.hpp"
 
 #include "Ground.hpp"
@@ -45,8 +46,8 @@
 #include "RigidBodyRender.hpp"
 #include "SoftBodyRender.hpp"
 
+#include "SimpleParticle.hpp"
 #include "BulletParticle.hpp"
-#include "SmokeParticle.hpp"
 
 #include "ParticleController.hpp"
 
@@ -134,9 +135,9 @@ int main(int argc, char *argv[]) {
   btVector3 worldAabbMin(-10, -10, -10);
   btVector3 worldAabbMax(10, 10, 10);
   
-  //btAxisSweep3 broadphase(worldAabbMin, worldAabbMax, 1024);
   btDbvtBroadphase broadphase;
-  btDefaultCollisionConfiguration collisionConfiguration;
+  //btAxisSweep3 broadphase(worldAabbMin, worldAabbMax, 1024);
+  btSoftBodyRigidBodyCollisionConfiguration collisionConfiguration;
   btCollisionDispatcher dispatcher(&collisionConfiguration);
   btSequentialImpulseConstraintSolver solver;
   btSoftRigidDynamicsWorld world(&dispatcher, &broadphase, &solver, &collisionConfiguration);
@@ -201,7 +202,7 @@ int main(int argc, char *argv[]) {
                                                   sin(theta) * cos(phi)) * radius, 0.007);
             }, 20000, 20000, *color, *noise);
           auto m = new Particle::Material{0, glm::vec3(0, 0, 0), 0};
-          auto sp = new SmokeParticle(sc->getNum(), sc->getVertOffset(), sc->getVertColor(), *m);
+          auto sp = new SimpleParticle(sc->getNum(), sc->getVertOffset(), sc->getVertColor(), *m);
           arena->add(sc);
           sc->setDestroyCallback([sp]() {
               scene->remove(sp);
@@ -227,6 +228,7 @@ int main(int argc, char *argv[]) {
         });
     });
 
+  /*
   btSoftBodyWorldInfo worldinfo;
   worldinfo.m_broadphase = &broadphase;
   worldinfo.m_dispatcher = &dispatcher;
@@ -238,11 +240,11 @@ int main(int argc, char *argv[]) {
   worldinfo.water_normal = btVector3(0, 0, 0);
   std::vector<glm::vec2> uv;
   std::vector<glm::ivec3> faces;
-  Cloth::getRectangle(50, 50, uv, faces);
+  Cloth::getRectangle(10, 10, uv, faces);
   auto cloth = new Cloth(worldinfo, uv, faces,
-                         glm::vec3(-0.5, 1.5, -0.5),
-                         glm::vec3(0, 0, 1),
-                         glm::vec3(1, 0, 0));
+                         glm::vec3(-0.5, 0.8, -0.5),
+                         glm::vec3(1, 0, 0),
+                         glm::vec3(0, 0, 1));
 
   auto sbs = new SoftBodyShape(cloth->getBody(), uv);
   Render::Material m_flag{FileTexture::get(GL_TEXTURE0, "res/flag1.png"),
@@ -254,46 +256,31 @@ int main(int argc, char *argv[]) {
       delete sbr;
     });
   arena->add(cloth);
+  */
 
+  const size_t spark_num = 1024;
+  const float spark_radius = 0.01;
+  btBoxShape spark_shape(btVector3(spark_radius, spark_radius, spark_radius));
+  Particle::Material spark_material{100, glm::vec3(0, 0, 0), 1};
+  auto spark = new Spark(spark_num, 1, &spark_shape,
+                         btQuaternion(0, 0, 0, 1), 0.000001, 64, glm::vec4(215, 255, 0, 256) / 256.0f);
+  auto spark_particle = new BulletParticle(spark_num, spark->getGroup(), spark->getVertColor(), spark_material, spark_radius);
+  spark->setDestroyCallback([&spark_particle]() {
+      scene->remove(spark_particle);
+      delete spark_particle;
+    });
+  arena->add(spark);
+  scene->add(spark_particle);
+  
   gContactProcessedCallback = ContactHandler<Controller>::handle;
   ContactHandler<Controller>::add(typeid(CueBall), typeid(SnitchBall),
-                                  [](btManifoldPoint &cp,
+                                  [spark, spark_num](btManifoldPoint &cp,
                                      btRigidBody *const rb0,
                                      btRigidBody *const rb1,
                                      Controller *const b0, Controller *const b1) -> void {
-                                    static int ParticleFilter = 64;
-
-                                    auto colors = new std::vector<glm::vec4>();
-                                    static Particle::Material material_spark{0, glm::vec3(0, 0, 0), 1};
-
-                                    auto pc = new ParticleController (1);
-                                    for (auto i = 0; i < cp.getAppliedImpulse() * 10000; ++i) {
-                                      static btBoxShape *shape = new btBoxShape(btVector3(0.001, 0.001, 0.001));
-                                      static btQuaternion quaternion(0, 0, 0, 1);
-                                      static const btScalar mass = 0.000001;
-                                      static const int ParticleFilter = 64;
-      
-                                      btVector3 localInertia;
-                                      shape->calculateLocalInertia(mass, localInertia);
-      
-                                      btMotionState *ms = new btDefaultMotionState(btTransform(quaternion, cp.getPositionWorldOnA()));
-                                      btRigidBody *rb = new btRigidBody(mass, ms, shape, localInertia);
-
-                                      static std::default_random_engine gen;
-                                      static std::uniform_real_distribution<float> dist(-2, 2);
-
-                                      rb->setLinearVelocity(btVector3(dist(gen), dist(gen), dist(gen)));
-                                      pc->add(rb);
-                                      colors->push_back(glm::vec4(255, 215, 0, 256) / 256.0f);
-                                    }
-                                    auto particle = new BulletParticle(pc->getGroup(), *colors, material_spark);
-                                    pc->setDestroyCallback([particle, colors]() -> void {
-                                        scene->remove(particle);
-                                        delete particle;
-                                        delete colors;
-                                      });
-                                    arena->add(pc);
-                                    scene->add(particle);
+                                    auto count = min((size_t)(cp.getAppliedImpulse() * 10000), spark_num);
+                                    for (auto i = 0; i < count; ++i)
+                                      spark->add(cp.getPositionWorldOnA(), 2);
                                   });
 
   ContactHandler<Controller>::add(typeid(CueBall), typeid(FantasyBall),

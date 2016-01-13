@@ -4,35 +4,24 @@
 #include <glm/glm.hpp>
 #include "Log.hpp"
 
-BulletParticle::BulletParticle(const GroupController::Group  &particles,
-                               const std::vector<glm::vec4> &colors,
-                               const Material &material)
-  :Particle(particles.size()),
-   particles_(particles),
-   colors_(colors),
-   material_(material) {
-  if (colors.size() != particles.size())
-    throw std::runtime_error("particles and colors number not match");
-}
-
 void BulletParticle::render(MaterialSetter ts) const {
   std::vector<glm::vec4> vertOffset;
-  std::vector<glm::vec4> vertColor;
 
   size_t i = 0;
   for (auto it = particles_.begin();
        it != particles_.end();
        ++it, ++i) {
-    btRigidBody *rb = *it;
-    if (rb != NULL) {
-      btTransform tf;
-      rb->getMotionState()->getWorldTransform(tf);
-      btVector3 pos = tf.getOrigin();
-      vertOffset.push_back(glm::vec4(pos.x(), pos.y(), pos.z(), 0.01f));
-      vertColor.push_back(colors_[i]);
-    }
+    auto rb = *it;
+    btTransform tf;
+    rb->getMotionState()->getWorldTransform(tf);
+    btVector3 pos = tf.getOrigin();
+    vertOffset.push_back(glm::vec4(pos.x(), pos.y(), pos.z(), size_));
+    /*
+    debug << vertOffset.back() << '\n';
+    debug << vertColor_[i] << '\n';
+    */
   }
 
   ts(material_);
-  Particle::render(vertOffset, vertColor);
+  Particle::render(vertOffset, vertColor_);
 }
