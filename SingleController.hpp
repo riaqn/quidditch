@@ -9,6 +9,7 @@ public:
     rb_->setUserPointer(this);
   }
 
+
   SingleController(SingleController &&sc)
     :rb_(std::move(sc.rb_)) {
     rb_->setUserPointer(this);
@@ -18,7 +19,7 @@ public:
     world.add(rb_.get());
   }
   
-  const btRigidBody &getBody() {
+  btRigidBody &getBody() {
     return *rb_;
   }
   
@@ -27,4 +28,5 @@ public:
     
 protected:
   std::unique_ptr<btRigidBody> rb_;
+  SingleController() {}
 };

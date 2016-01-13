@@ -19,7 +19,7 @@ NoiseTexture::NoiseTexture(const GLenum unit,
                      (float)j/height/10);
 
       unsigned base = (i * height + j) * 4;
-      float noise = noise_.noise(xy);
+      float noise = (noise_.noise(xy) + 1) / 2;
       for (unsigned k = 0; k < 4; ++k)
       data_[base + k] = a[k] + noise * (b[k] - a[k]);
     }

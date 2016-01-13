@@ -22,6 +22,7 @@
 #include "Smoke.hpp"
 #include "Spark.hpp"
 #include "Cloth.hpp"
+#include "Anchor.hpp"
 
 #include "Ground.hpp"
 #include "Wall.hpp"
@@ -228,7 +229,6 @@ int main(int argc, char *argv[]) {
         });
     });
 
-  /*
   btSoftBodyWorldInfo worldinfo;
   worldinfo.m_broadphase = &broadphase;
   worldinfo.m_dispatcher = &dispatcher;
@@ -242,10 +242,11 @@ int main(int argc, char *argv[]) {
   std::vector<glm::ivec3> faces;
   Cloth::getRectangle(10, 10, uv, faces);
   auto cloth = new Cloth(worldinfo, uv, faces,
-                         glm::vec3(-0.5, 0.8, -0.5),
-                         glm::vec3(1, 0, 0),
-                         glm::vec3(0, 0, 1));
+                         glm::vec3(-0.5, 1.0, -0.5),
+                         glm::vec3(0.4, 0, 0),
+                         glm::vec3(0, 0, 0.6));
 
+  btSoftBody &cloth_body = cloth->getBody();
   auto sbs = new SoftBodyShape(cloth->getBody(), uv);
   Render::Material m_flag{FileTexture::get(GL_TEXTURE0, "res/flag1.png"),
       50, glm::vec3(0, 0, 0), 0};
@@ -256,7 +257,12 @@ int main(int argc, char *argv[]) {
       delete sbr;
     });
   arena->add(cloth);
-  */
+
+  auto anchor0 = new Anchor(btVector3(-0.5, 1.0, 0));
+  auto anchor1 = new Anchor(btVector3(0, 1.0, 0));
+  cloth_body.appendAnchor(0, &anchor0->getBody());
+  cloth_body.appendAnchor(10, &anchor1->getBody());
+  cloth_body.setWindVelocity(btVector3(1, 0, 1));
 
   const size_t spark_num = 1024;
   const float spark_radius = 0.01;
@@ -348,15 +354,12 @@ int main(int argc, char *argv[]) {
                                         sp.push(sound);
                                       }, false);
 
-  
+
   /*
-    PerlinNoise noise;
-    NoiseTexture texRed(noise, 800, 800, glm::fvec4(128, 0, 0, 255), glm::fvec4(255, 0, 0, 255));
-    NoiseTexture texWhite(noise, 800, 800, glm::fvec4(128, 128, 128, 255), glm::fvec4(255,255,255,255));
-    NoiseTexture texBlue(noise, 800, 800, glm::fvec4(0, 0, 128, 255), glm::fvec4(0, 0, 255,255));
-    NoiseTexture texGolden(noise, 800, 800, glm::fvec4(128, 128, 0, 255), glm::fvec4(255,255,0,255));
+  PerlinNoise noise;
+  NoiseTexture texGreen(GL_TEXTURE0, noise, 800, 800, glm::vec4(0, 0,
+  0, 255), glm::vec4(0.22, 0.32, 0.0, 1) * 256.0f);
   */
-  
 
   sf::Font font;
   if (!font.loadFromFile("/usr/share/fonts/wqy-zenhei/wqy-zenhei.ttc")) {

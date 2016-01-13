@@ -11,6 +11,7 @@ private:
   const size_t num_;
   size_t off_;
   const float rate_;
+  const float k_;
 
   float ts_;
   const glm::vec4 &color_;
@@ -26,7 +27,7 @@ public:
         const float rate,
         const glm::vec4 &color,
         const Noise<float, glm::vec3> &noise)
-    :cb_(cb), num_(num), off_(0), rate_(rate), color_(color), ts_(0), noise_(noise) {}
+    :cb_(cb), num_(num), off_(0), rate_(rate), color_(color), ts_(0), noise_(noise),k_(glm::pow(0.01, rate / num)) {}
   
   virtual bool control(const float elapsed);
 
