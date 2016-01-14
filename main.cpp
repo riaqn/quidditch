@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
   
   Light::Spec spec;
   spec.position = glm::fvec4(0, 1, 1, 1);
-  spec.intensities = glm::fvec3(2, 2, 2);
+  spec.intensities = glm::fvec3(1, 1, 1);
   spec.attenuation = 1;
   spec.ambientCoefficient = 0.05f;
   spec.coneAngle = 45.0f;
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
   
   Light::Spec spec2;
   spec2.position = glm::fvec4(0, 1, -1, 1);
-  spec2.intensities = glm::fvec3(2, 2, 2);
+  spec2.intensities = glm::fvec3(1, 1, 1);
   spec2.attenuation = 1;
   spec2.ambientCoefficient = 0.05f;
   spec2.coneAngle = 45.0f;
@@ -242,9 +242,9 @@ int main(int argc, char *argv[]) {
   std::vector<glm::ivec3> faces;
   Cloth::getRectangle(10, 10, uv, faces);
   auto cloth = new Cloth(worldinfo, uv, faces,
-                         glm::vec3(-0.5, 1.0, -0.5),
-                         glm::vec3(0.4, 0, 0),
-                         glm::vec3(0, 0, 0.6));
+                         glm::vec3(-0.5, 2, 0),
+                         glm::vec3(0, -0.4, 0),
+                         glm::vec3(0.6, 0, 0));
 
   btSoftBody &cloth_body = cloth->getBody();
   auto sbs = new SoftBodyShape(cloth->getBody(), uv);
@@ -258,8 +258,8 @@ int main(int argc, char *argv[]) {
     });
   arena->add(cloth);
 
-  auto anchor0 = new Anchor(btVector3(-0.5, 1.0, 0));
-  auto anchor1 = new Anchor(btVector3(0, 1.0, 0));
+  auto anchor0 = new Anchor(btVector3(-0.5, 2, 0));
+  auto anchor1 = new Anchor(btVector3(0, 2, 0));
   cloth_body.appendAnchor(0, &anchor0->getBody());
   cloth_body.appendAnchor(10, &anchor1->getBody());
   cloth_body.setWindVelocity(btVector3(1, 0, 1));
@@ -269,7 +269,7 @@ int main(int argc, char *argv[]) {
   btBoxShape spark_shape(btVector3(spark_radius, spark_radius, spark_radius));
   Particle::Material spark_material{100, glm::vec3(0, 0, 0), 1};
   auto spark = new Spark(spark_num, 1, &spark_shape,
-                         btQuaternion(0, 0, 0, 1), 0.000001, 64, glm::vec4(215, 255, 0, 256) / 256.0f);
+                         btQuaternion(0, 0, 0, 1), 0.001, 64, glm::vec4(215, 255, 0, 256) / 256.0f);
   auto spark_particle = new BulletParticle(spark_num, spark->getGroup(), spark->getVertColor(), spark_material, spark_radius);
   spark->setDestroyCallback([&spark_particle]() {
       scene->remove(spark_particle);
@@ -325,11 +325,16 @@ int main(int argc, char *argv[]) {
                                                               btRigidBody *const rb0,
                                                               btRigidBody *const rb1,
                                                               Controller *const b0, Controller *const b1) {
+                                        const float vol = glm::pow(cp.getAppliedImpulse() * 200, 2);
+                                        if (vol < 1)
+                                          return ;
                                         auto sound = sp.pop();
+                                        sound->setBuffer(buffer0);
                                         sound->setPosition(convert<sf::Vector3f>(cp.getPositionWorldOnA()));
                                         sound->setMinDistance(5.0f);
                                         sound->setAttenuation(10.f);
-                                        sound->setVolume(cp.getAppliedImpulse() * 10000);
+                                        sound->setVolume(vol);
+
                                         sound->play();
                                         sp.push(sound);
                                       });
@@ -345,11 +350,15 @@ int main(int argc, char *argv[]) {
                                                               btRigidBody *const rb0,
                                                               btRigidBody *const rb1,
                                                               Controller *const b0, Controller *const b1) {
+                                        const float vol = glm::pow(cp.getAppliedImpulse() * 500, 2);
+                                        if (vol < 1)
+                                          return ;
                                         auto sound = sp.pop();
+                                        sound->setBuffer(buffer1);
                                         sound->setPosition(convert<sf::Vector3f>(cp.getPositionWorldOnA()));
                                         sound->setMinDistance(5.0f);
                                         sound->setAttenuation(10.f);
-                                        sound->setVolume(cp.getAppliedImpulse() * 10000);
+                                        sound->setVolume(vol);
                                         sound->play();
                                         sp.push(sound);
                                       }, false);

@@ -32,7 +32,8 @@ NoiseTexture::NoiseTexture(const GLenum unit,
 
   static int count = 0;
   image.write("noise" + std::to_string(count++) + ".png");
-  
+
+  bind();
   load(width, height, data_);
 }
 

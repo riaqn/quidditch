@@ -14,7 +14,8 @@ void SoftBodyShape::render(Render::ModelSetter ms) const {
   {
     std::vector<Vertex> vertex;
     for (auto i = 0; i < nodes.size(); ++i) {
-      vertex.push_back(Vertex{convert<glm::vec3>(nodes[i].m_x),
+      btVector3 x = nodes[i].m_x;
+      vertex.push_back(Vertex{convert<glm::vec3>(x),
             convert<glm::vec3>(nodes[i].m_n)
             });
       //debug << nodes[i].m_x << '\n';

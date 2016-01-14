@@ -1,7 +1,19 @@
 GhostBall GhostBall0.RigidBody
 res/GhostBall.material
 
-WanderBall WanderBall0.RigidBody 1 1
+GhostBall GhostBall1.RigidBody
+res/GhostBall.material
+
+GhostBall GhostBall2.RigidBody
+res/GhostBall.material
+
+WanderBall WanderBall0.RigidBody 2 1
+res/WanderBall.material
+
+WanderBall WanderBall1.RigidBody 2 1
+res/WanderBall.material
+
+WanderBall WanderBall2.RigidBody 2 1
 res/WanderBall.material
 
 Ground Ground.RigidBody
@@ -50,3 +62,5 @@ res/Floor.material
 Wall Wall+y.RigidBody
 res/Ceil.material
 
+Wall Ground-safe.RigidBody
+res/Cloth.material

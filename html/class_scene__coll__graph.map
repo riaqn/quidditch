@@ -1,4 +1,0 @@
-<map id="Scene" name="Scene">
-<area shape="rect" id="node2" href="$class_view.html" title="{View\n|+ eye_\l+ angle_\l+ direction_\l+ right_\l+ up_\l|+ View()\l+ up()\l+ right()\l+ turn()\l+ matrix()\l}" alt="" coords="5,5,107,200"/>
-<area shape="rect" id="node3" href="$class_projection.html" title="{Projection\n|&#45; fovy_\l&#45; aspect_\l&#45; zNear_\l&#45; zFar_\l|+ Projection()\l+ matrix()\l}" alt="" coords="131,35,243,171"/>
-</map>

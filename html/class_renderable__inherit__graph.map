@@ -1,5 +1,0 @@
-<map id="Renderable" name="Renderable">
-<area shape="rect" id="node2" href="$class_ball_wrapper.html" title="{BallWrapper\n|&#45; ball_\l&#45; sphere_\l&#45; texture_\l|+ BallWrapper()\l+ render()\l}" alt="" coords="5,153,132,274"/>
-<area shape="rect" id="node3" href="$class_sphere.html" title="{Sphere\n|&#45; VBO_\l&#45; IBO_\l&#45; UV_\l&#45; count_\l|+ Sphere()\l+ render()\l&#45; evolve()\l&#45; normalize()\l}" alt="" coords="157,131,263,296"/>
-<area shape="rect" id="node4" href="$class_table.html" title="{Table\n|&#45; vertex_\l&#45; uv_\l&#45; index_\l&#45; cloth_\l&#45; wood_\l&#45; box_\l|+ Table()\l+ render()\l}" alt="" coords="288,131,377,296"/>
-</map>

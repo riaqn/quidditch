@@ -38,6 +38,7 @@
   - 使用了 SFML 作为window system
   - 使用 glew 作为Extension Wrangler Library
   - 使用glm作为数学库
+  - 使用Bullet Physics作为物理引擎
   - 开发环境为Linux x86-64 + Mesa
 * 模块设计
 ** 用例图
@@ -89,8 +90,9 @@
      用来表示球和墙碰撞后的能量损失程度.
 *** 绘图模块
     绘图模块主要负责在屏幕上绘图.
-**** 可渲染物体(Renderable)
+**** 可渲染物体(Render)
      定义了一个通用接口, 调用后即会画出该物体. 
+**** 形状(Shape)
 **** 视角(View)
      表示用户的视角, 包括摄像头所在的位置, 观察的方向等等, 可以调用获
      取对应的View Matirx.

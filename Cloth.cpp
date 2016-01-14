@@ -33,6 +33,7 @@ Cloth::Cloth(btSoftBodyWorldInfo &worldinfo,
   sb_ = std::unique_ptr<btSoftBody>(btSoftBodyHelpers::CreateFromTriMesh(worldinfo, &nodes0[0].x, &faces[0].x, faces.size()));
   sb_->setUserPointer(this);
   btSoftBody::Config &c = sb_->m_cfg;
+  /*
   c.kDP = 0.0;// Damping coefficient [0,1]
   c.kDG = 0;
   c.kLF = 0;
@@ -40,23 +41,29 @@ Cloth::Cloth(btSoftBodyWorldInfo &worldinfo,
   c.kVC = 0;
   c.kDF = 0.2;// Dynamic friction coefficient [0,1]
   c.kMT = 0.01;// Pose matching coefficient [0,1]
+  */
   c.kCHR = 1.0;// Rigid contacts hardness [0,1]
   c.kKHR = 0.8;// Kinetic contacts hardness [0,1]
   c.kSHR = 1.0;// Soft contacts hardness [0,1]
   c.kAHR = 1.0;
+  /*
   c.piterations=2;
   sb_->m_materials[0]->m_kLST = 0.8;
   sb_->m_materials[0]->m_kAST = 0.8;
   sb_->m_materials[0]->m_kVST = 0.8;
   sb_->scale(btVector3(1,1,1));
   //        sb_->setPose(true, true);
-  sb_->generateBendingConstraints(2);
-  sb_->randomizeConstraints();
+  */
+  //sb_->generateBendingConstraints(2);
+  //sb_->randomizeConstraints();
+
   //c.collisions =  btSoftBody::fCollision::CL_SS+
   //btSoftBody::fCollision::CL_RS;
-  sb_->generateClusters(1);
+  //sb_->generateClusters(1);
+  /*
   sb_->m_clusters[0]->m_matching	=	0.01;
   sb_->m_clusters[0]->m_ndamping	=	0.01;
+  */
   sb_->setTotalMass(0.01,true);
   sb_->setPose(false,true);
 }
@@ -75,7 +82,7 @@ bool Cloth::control(const float elapsed) {
       throw std::runtime_error("fuck");
     
     //sb_->addAeroForceToNode(v * 500, i);
-    //sb_->addForce(v / 2000, i);
+    sb_->addForce(v / 2000, i);
     //    debug << v << '\n';
   }
   

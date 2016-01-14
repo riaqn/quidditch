@@ -10,3 +10,4 @@
 *.o
 /quidditch
 /compile_commands.json
+/html
