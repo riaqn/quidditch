@@ -79,7 +79,7 @@ bool Cloth::control(const float elapsed) {
     float n = v.length();
     //debug << n << '\n';
     if (glm::isnan(n) || n < 0 || n > 2)
-      throw std::runtime_error("fuck");
+      continue;
     
     //sb_->addAeroForceToNode(v * 500, i);
     sb_->addForce(v / 2000, i);

@@ -1,7 +1,7 @@
 #+TITLE: Quidditch桌球详细设计说明书
 #+AUTHOR: 钱泽森(5130379069)
 #+OPTIONS: toc:t num:t
-#+LATEX_header: \usepackage{framed}
+#+LATEX_header: \usepackage{framed} \usepackage{subcaption} \usepackage[section]{placeins} \usepackage{wrapfig}
 
 * 引言
 ** 编写目的和范围
@@ -24,11 +24,12 @@
    - OpenGL :: A cross-platform graphics system with an openly
                available specification.                             
 ** 参考资料
-   | 资料名称                   | 作者         | 文件编号/版本 | 资料存放地点                     |
-   | OpenGL Tutorial            | Unknown      | latest        | http://www.opengl-tutorial.org   |
-   | OpenGL step by step        | Unknown      | Latest        | http://ogldev.atspace.co.uk/     |
-   | OpenGL wiki                | collabrators | Latest        | https://www.opengl.org/wiki/     |
-   | OpenGL 3.3 Reference Pages | SGI          | 3.3           | https://www.opengl.org/sdk/docs/ |
+   | 资料名称                   | 作者         | 文件编号/版本 | 资料存放地点                                          |
+   | OpenGL Tutorial            | Unknown      | latest        | http://www.opengl-tutorial.org                        |
+   | OpenGL step by step        | Unknown      | Latest        | http://ogldev.atspace.co.uk/                          |
+   | OpenGL wiki                | collabrators | Latest        | https://www.opengl.org/wiki/                          |
+   | OpenGL 3.3 Reference Pages | SGI          | 3.3           | https://www.opengl.org/sdk/docs/                      |
+   | Bullet Physics Doc         | Bullet       | 2.83          | http://bulletphysics.org/Bullet/BulletFull/index.html |
 
 ** 使用的文字处理和绘图工具
    - 文字处理软件 ::  Emacs, Org Mode
@@ -41,167 +42,265 @@
   - 使用Bullet Physics作为物理引擎
   - 开发环境为Linux x86-64 + Mesa
 * 模块设计
-** 用例图
-   \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{usecase.png}
-    \caption{用例图}
-    \label{fig:usecase}
-    \end{figure}
-** 功能设计说明
-*** 物理模块
-    物理模块主要由沙盒(Arena)和各个物理元件(SnitchBall, GhostBall,
-    CueBall, WanderBall, Wall)构成. 
-**** 沙盒(Arena)
-     沙盒模块负责对物理世界进行仿真模拟, 它负责的物理模拟主要有以下几
-     类:
-     - 滚动摩擦 :: 在桌面上的小球在不受到其他外力的情况下, 会收到桌布
-                   的滚动摩擦力, 因此速度会越来越小. 
-     - 小球间碰撞 :: 小球之间会产生非弹性碰撞, 碰撞后两球的速度和方向
-                     都会发生变化, 此过程会有能量损失.
-     - 小球和桌面以及墙面的碰撞 :: 小球和桌面以及墙面也会产生非弹性碰
-          撞.
-      
-     沙盒每次都往前演绎一段时间, 并且不断修改球桌上元件的物理属性, 来
-     反映物理世界的规律.
-**** 球(Ball)
-     所有球类的父类, 主要记录球的质量/半径/位置/速度. Ball的继承关系请
-     见 \ref{fig:ball_inherit}.
+** 控制模块
+*** 沙盒(=Arena=)
+     沙盒模块负责对物理世界进行仿真模拟. 由于本软件已经使用Bullet
+     Physics作为物理引擎, 因此本软件的着重点在于将Bullet Physics应用到
+     程序中. =Arena= 实际上是对Bullet的一个包装. 我们定义了如下几个类.
+*** 控制器(=Controller=)
+     这是一个抽象类, 用来控制游戏世界中的一个(=SingleController=)或者多个
+     (=GroupController=)实体. 本类中定义了一个虚方法:
+
+     #+begin_src cpp
+     virtual bool control(const float elapsed);
+     #+end_src
+
+     所有继承类都要实现这个虚方法. 在每个时间片的开始, =Arena= 都会调用这
+     个方法, elapsed表示距离上次调用已经过去了多少时间. Controller需要
+     根据自己的用途, 来控制自己所代表的刚体. 这个控制, 既可以是来自用户的(=CueBall=), 也可以是来自自身的
+     (=WanderBall=). 下面对 =Controller= 最主要的几个子类进行解释.
+     继承关系请见图\ref{fig:controller_inherit}.
+
      \begin{figure}[h]
      \centering
-     \includegraphics[width=0.8\textwidth]{html/struct_ball__inherit__graph.png}
-     \caption{Ball的继承关系}
-     \label{fig:ball_inherit}
+     \includegraphics[width=\textwidth]{html/inherit_graph_3.png}
+     \caption{Controller的继承关系}
+     \label{fig:controller_inherit}
      \end{figure}
-**** 幽灵球(GhostBall)
-     普通球, 直接继承自Ball, 没有额外的属性. 
-**** 母球(CueBall)
-     用户可以操作的球, 继承自GhostBall, 没有额外的属性.
-**** 游走球(WanderBall)
-     自主随机游走的球, 继承自Ball. 额外属性: v0表示理想速度, mu表示趋
-     近速度. 在当前速度不等于理想速度时, 本球会以mu的速率逐渐趋近于v0.
-**** 金色飞贼(SnitchBall)
-     会飞的球. 继承自Ball, 需要额外记录当前状态下剩余的时间(以秒表示),
-     以及理想的飞行速度.
+*** 球(=Ball=)
+     所有球类的父类. 主要用于归类, 没有特殊用途.
+*** 幽灵球(=GhostBall=)
+     普通球, 没有任何行为,因此他的 =control= 方法什么也不做.
+*** 母球(=CueBall=)
+     受用户控制, 每个时间片都会读取用户的键盘输入, 并且对所控制的刚体
+     球施加一个力.
+*** 游走球(=WanderBall=)
+     自主随机游走的球, 每个时间片都会检查当前的速度和理想速度, 并且
+     逐渐趋近这个理想速度.
+*** 金色飞贼(=SnitchBall=)
+     会飞的球, 每隔一段时间都会离地飞行, 一段时间后又会落回地面.
 
-**** 墙(Wall)
-     表示沙盒的边缘, 既可以用来表示垂直的墙, 也可以表示地面或者天花板.
-     属性有: 一次方程的一组参数, 用来表示墙的平面. 以及一个弹性系数,
-     用来表示球和墙碰撞后的能量损失程度.
-*** 绘图模块
-    绘图模块主要负责在屏幕上绘图.
-**** 可渲染物体(Render)
-     定义了一个通用接口, 调用后即会画出该物体. 
-**** 形状(Shape)
-**** 视角(View)
+*** 迷球(=FantasyBall=)
+    我为了增加游戏性, 特意增加的一种球, 作为一种惩罚措施. 母球碰到该球
+    后, 之后一段时间的操作都会被反向地执行.
+*** 桌面(=Ground=)
+    指的是小球运动的桌面. 凹凸不平的地面是由Perlin函数生成的.
+** 粒子系统
+   <<sec:particle>>
+   为了增加真实性, 我对粒子系统做了如下处理:
+   - 每个粒子都是一个正方形的billboard, 也就是说, 我们通过一些计算,
+     使得该正方形的面始终正对摄像机镜头. 这样做有几个好处: 
+     - 减少了一半绘画的面数(否则至少需要一个四面体来保证从各个方向都能看到微粒)
+     - 效果更加真实(四面体的微粒不真实).
+     #+begin_src cpp
+       fragPos = centerPos
+         + cameraRight * vert.x * size
+         + cameraUp * vert.y * size;
+     #+end_src 
+   - 锋利的边缘让微粒看起来很不真实, 因此我在Fragment Shader中做了处
+     理: 对于同一个微粒, 正中央的alpha最高, 边缘的alpha为零, 中间平
+     滑过度. 这样子的微粒才有朦胧的感觉. 效果对比请见图\ref{fig:smooth}.
+     #+begin_src cpp
+       surfaceColor.a *= 1 - distance(fragPos, centerPos) / size;
+     #+end_src 
+
+     \begin{figure}[h]
+     \centering
+
+     \begin{subfigure}[b]{0.4\textwidth}
+     \includegraphics[width=\textwidth]{without-smooth.png}
+     \caption{Without smooth}
+     \label{fig:without-smooth}
+     \end{subfigure}
+     ~
+     \begin{subfigure}[b]{0.4\textwidth}
+     \includegraphics[width=\textwidth]{with-smooth.png}
+     \caption{With smooth}
+     \label{fig:with-smooth}
+     \end{subfigure}
+
+     \caption{开启平滑前后对比} \label{fig:smooth}
+     \end{figure}
+   为了提高性能, 我做了如下优化:
+   - 使用了OpenGL提供的Instancing接口. 对于数万个微粒, 如果对于每个
+     微粒都调用一次OpenGL的绘图函数, Overhead太大, 无法进行实时的流
+     畅绘画. 因此我采用了OpenGL的Instancing, 对于数万个微粒, 只需要
+     提供单个微粒的样板(如上所说, 是一个正方形)和每个微粒的位置, 只
+     需要一次OpenGL的函数调用, 就可以画出数万个微粒, 极大地提高了性能.
+     #+begin_src cpp
+       glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, vertOffset.size());
+     #+end_src 
+
+*** 火花(=Spark=)
+     在白色母球和金色飞贼碰撞时触发. 包含数千个微粒, 在这里我使用了Bullet
+     来模拟火花的行为, 理由如下:
+     - 火花会收到重力的影响, 应该放到物理系统里模拟.
+     - 火花会和别的物体碰撞, 这一点也应该放到物理系统来模拟. 一个意外
+       的收获是, 只要每个火花的质量不太小, 火花能够对周围的物体产生可
+       见的影响, 我利用这一点, 使得白色母球和金色飞贼在碰撞后会像触电
+       一样弹开.
+
+     另外我做了一个小细节, 使得每个时间周期都会对每个火花的颜色做调整(逐渐变暗), 使得火花
+     在整个生命周期中显现出一种"逐渐熄灭"的感觉. 
+*** 烟雾(=Smoke=)
+    从迷球表面散发, 用来警告用户. 包含数万个微粒.
+
+    为了追求真实性, 在离子系统的通用优化的基础上, 我进一步做了如下处理:
+     - 每个微粒都有一个生命周期, 在这个生命周期内, 他的alpha(不透明度
+       )会逐渐减小直到变成零, 然后被删除.  这种做法比较好的模拟了烟雾逐
+       渐消散的过程. 效果对比请见图\ref{fig:fadeout}.
+
+     \begin{figure}[h]
+     \centering
+
+     \begin{subfigure}[b]{0.4\textwidth}
+     \includegraphics[width=\textwidth]{without-fadeout.png}
+     \caption{Without Fadeout}
+     \label{fig:without-fadeout}
+     \end{subfigure}
+     ~
+     \begin{subfigure}[b]{0.4\textwidth}
+     \includegraphics[width=\textwidth]{with-fadeout.png}
+     \caption{With fadeout}
+     \label{fig:with-fadeout}
+     \end{subfigure}
+
+     \caption{开启渐变前后对比} \label{fig:fadeout}
+     \end{figure}
+
+     为了提高性能, 在粒子系统的通用优化的基础上, 我做了如下优化:
+     - 不使用Bullet Physics的物理系统来模拟微粒的运动, 而使用噪声函数
+       来仿真. 为了真实性, 我们的微粒数量应该尽可能多, 以数万为最佳. 经过测试, Bullet在这种数
+       量级的物体下, 无法进行实时的流畅模拟. 因此我放弃了纯物理的方式,
+       转而投向了噪声函数模拟. 在这里我们复用了Perlin函数, 来生成每个
+       微粒在下一个时间片的速度. 噪声的参数是绝对时间和小球的绝对方位. 这
+       样可以保证烟雾在时间和空间上都保持连续, 但是都保持逐渐变化.
+** 软体系统
+*** 布料(=Cloth=)
+    本质上是一个长方形的Mesh, 包含数百个小三角形. 相邻的几个节点之间会
+    有link相连, 来限制他们的相对运动. 
+    关于风的模拟: 在每一个时间片中, 对于该软体的每个节点, 都从一个噪声
+    函数生成一个受力. 这个噪声函数的参数是该节点的绝对位置和当前绝对时
+    间. 这样既保证了受力在时间和空间上的连续性, 又保证了一定的变化.
+** 绘图模块
+*** 场景(=Scene=)
+     表示一个完整的场景, 包括一些 =Render=, =Light=, =Particle=.
+*** 可渲染物体(=Render=)
+    是一个抽象类, 只是定义了一个通用接口, 调用后即会画出该物体, 所有的
+    继承类都要实现该接口. 
+     #+begin_src cpp
+       virtual void render(ModelSetter ms, MaterialSetter ts) const = 0;
+     #+end_src
+     =ModelSetter= 是一个回调函数, 来设定这个物体在全局中位置.
+     =MaterialSetter= 也是一个回调函数, 来设定这个物体的材料. 材料的定
+     义包括:
+     - 纹理
+     - 反光度
+     - 反光的颜色
+     - 自发光亮度
+
+     继承关系请见图\ref{fig:render_inherit}.
+
+     \begin{figure}[h]
+     \begin{center}
+     \includegraphics[width=0.5\textwidth]{html/inherit_graph_20.png}
+     \end{center}
+     \caption{Render的继承关系}
+     \label{fig:render_inherit}
+     \end{figure}
+*** 形状(=Shape=)
+    也是一个抽象类, 定义了一个通用接口, 调用后即会画出该物体. 
+    #+begin_src cpp
+    virtual void render(Render::ModelSetter ms) const = 0;
+    #+end_src
+    其中 =ModelSetter= 是一个回调函数, 来设定这个物体在全局中位置.
+    继承关系请见图\ref{fig:shape_inherit}.
+    
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{html/inherit_graph_23.png}
+    \caption{Shape的继承关系}
+    \label{fig:shape_inherit}
+    \end{figure}
+
+    下面着重讲一下 =Sphere= (球)的实现方法.
+**** 球(Sphere)
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=0.50\textwidth]{gluSphere.png}
+    \caption{gluSphere的划分方式}
+    \label{fig:gluSphere}
+    \end{figure}
+
+     大多数人都会选择使用 =gluSphere= 函数(见图\ref{fig:gluSphere})来直接生成球体, 但是我认为这
+     种方法有如下缺陷:
+     - 划分不均匀, 在两极点的划分明显要比赤道的划分密得多. 为了达到某
+       个划分细度, 则必须要在赤道达到该密度, 则此时极点的密度是过高的,
+       造成了绘图资源的浪费.
+     - 难以复用. 对于每一个球体, 用户都需要调用 =gluSphere= 来绘出这一
+       个球体. 这至少造成了两方面的浪费. 一是每次调用都需要重新计算每
+       个节点的坐标, 造成了cpu资源的浪费. 二是每个球体都需要把节点坐标
+       传到GPU中, 造成了GPU带宽和GPU Memory的浪费.
+
+     \begin{figure}[h]
+     \centering
+     \includegraphics[width=0.48\textwidth]{sphere.png}
+     \caption{更好的划分方式}
+     \label{fig:sphere}
+     \end{figure}
+
+     由于这些原因, 我没有采用这种简单的办法, 而是用三角形剖分的方式来
+     生成球形(见图\ref{fig:sphere}). 方法如下:
+     1. 首先生成一个正四面体. 
+     2. 对于四面体的每个三角面, 均匀分成四个三角面.
+     3. 将新生成的节点, 延长到球体的表面上.
+     4. 重复2,3步骤, 直到足够的精度为止.
+
+     实际使用过程中, 我大概需要迭代3次, 也就是说, 大约256个面的球
+     体, 已经非常细腻了. 这一方法完美解决了上面提到的问题.
+*** 光照(=Light=)
+    在Phong的光照模型上, 做了几个改进:
+    - 加了自发光系数, 来保证发光物体看起来是亮的.
+    - 加了衰减系数, 使得较远的物体看起来较暗.
+    - 加了光照方向, 来支持聚光灯.
+    #+begin_src cpp
+      struct Spec {
+        glm::vec4 position; //光源位置
+        glm::vec3 intensities; //光色
+        float attenuation; //衰减系数
+        float ambientCoefficient; //环境光照系数
+        glm::vec3 coneDirection; //光照方向
+        float coneAngle; //方向角宽
+      };
+    #+end_src 
+    继承关系请见图\ref{fig:light_inherit}.
+    
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=0.48\textwidth]{html/inherit_graph_8.png}
+    \caption{Light的继承关系}
+    \label{fig:light_inherit}
+    \end{figure}
+    - FollowSpotlight :: 也就是聚光灯, 会跟随某个物体移动.
+    - MovingLight :: 依附在某个物体上的灯, 主要用来支持自发光物体, 比
+                     如金色飞贼
+    - SimpleLight :: 最简单的的灯, 所有系数都是固定的.
+    - ToggleLight :: 支持开关的灯.
+*** 粒子系统(=Particle=)
+    请见[[sec:particle]].
+*** 视角(=View=)
      表示用户的视角, 包括摄像头所在的位置, 观察的方向等等, 可以调用获
      取对应的View Matirx.
-**** 投影(Projection)
+
+*** 投影(=Projection=)
      表示摄像头的投影, 包括横向的和纵向的视角, 最近的切点和最远处的切
      点, 可以调用获取对应的Projection Matrix.
-**** 场景(Scene)
-     表示一个完整的场景, 包括一些Renderable, 一个View, 一个Projection.
-     调用后即会画出整个场景.
-**** 形状(Shape)
-     表示一个固定的形状, 比如, 处在原点且半径为1的球, 或者处在原点且边
-     长为1的立方体, 等等. 
-**** 旗帜(Flag)
-     =Flag= 实际上是 =Wave= 的一个包装, 后者才是真正的飘动动画.
-     Wave用了两种实现， 一种是三角函数(=WAVE_TRIANGLE=), 一种是Bezier函
-     数(=WAVE_BEZIER=). 
 
-     =WAVE_TRIANGLE= 的实现比较简单, 主要的难点在于旗帜的前后波动. 对于一个旗帜
-     上的一个点, 这个点的深度就是一个三角函数函数, 其参数与下列因素有
-     关:
-     - 这个点在旗帜上的位置(横向, 纵向)
-     - 当前的时间
-     
-     根据这些算法就能实现旗帜飘动的效果. 
-     
-     =WAVE_BEZIER= 的实现相对比较复杂, 首先写了一个类 =Bezier=, 用来进
-     行Bezier曲线相关的计算. 计算步骤如下:
-     1. 对于每个control point, 生成一个随机的频率f. 这个频率这个Wave的
-        生命周期中不会改变.
-     2. 对于每一帧画面, 用 $sin(f*t)$ 作为这个control point的深度.
-     3. 根据这些control point, 生成整个曲面. 
-        
-     按照这种思路, 实际运行的时候发现有些卡顿, 为此我针对我的游戏实际
-     的需求, 对曲面计算做了一些优化:
-     1. 对于Bezier曲线公式中的组合运算, 开启一块cache, 这样对于同样的
-        $n$ 和 $m$, $C(n, m)$ 只需要计算一次.
-     2. 考虑到曲线计算的采样点实际上是固定的, 因此先用这组固定的采样点
-        计算好Bezier公式中的一大部分, 以后的每次调用只需要O(nm)的复杂
-        度. 而不是$O(nmWH)$的复杂度.
-
-     加了上述两个简单的优化后, 动画基本没有卡顿了.
-
-     =Flag= 再在此基础上加上纹理(也就是旗帜图案). 这样, 一面冉冉飘动的旗帜就做好了.
-
-     目前的缺点在于, 对于每一帧动画, 都需要重新传入顶点数据, 可能对性
-     能会有一定影响(虽然实际中没有遇到卡顿). 目前正在寻找更好的方案.
-*** 接口模块
-    接口模块主要用来衔接物理模块和绘图模块.
-****  BallWrapper
-      一个包装类, 是Renderable的子类. 主要用来将Ball的物理属性, 转化为Renderable的绘图属性.
-      比如, 如果Ball的x属性是(1, 0, 0), 则生成的Renderable会在(1, 0,
-      0)处画一个球.
-**** Table
-     一个包装类, 是Renderable的子类. 主要用来将Arena的物理属性, 转化为
-     renderable的绘图属性.
-*** 控制模块
-    负责读取用户的输入并且修改对应的游戏状态. 比如鼠标移动, 则修改
-    View的相关属性, 等等.
-* 接口设计
-** 内部接口
-*** Shape
-
-    =virtual void draw() const=
-
-    调用即绘出这个形状.
-
-
-*** Renderable
-
-    =virtual void render(const GLuint WVP, const glm::mat4 &mat) const=
-    - WVP :: World-View-Projection矩阵所对应的Uniform Variable编号
-    - mat :: 已经算出的View-Projection矩阵
-
-    调用后, Renderable会计算出最终的WVP并且绑定, 最终绘出该物体.
-
-*** Arena
-
-    =void deduce(const float t)=
-    - t :: 距离上次调用逝去的时间,单位为秒
-    调用后, Arena会推算物体运动并且修改响应的物体的状态.
-
-
-
-    =void attach(Ball *ball)=
-    - ball :: 需要添加的球
-
-             
-
-    =void attach(Wall *wall)=
-    - wall :: 需要添加的墙
-
-*** Scene
-
-    =Scene(const View &view, const Projection &projection)=
-    - view :: 观察该场景的视角
-    - projection :: 观察该场景的投影
-
-
-    =void render()=
-
-    调用即绘出这个场景.
-
-    =void attach(Renderable * renderable)=
-    - renderable :: 需要添加的物体
-* 系统性能设计
-  为了性能考虑, 本软件使用OpenGL 3.3 Core API, 避免了大量的
-  =glBegin()= 和 =glEnd()= 调用, 极大地提高了性能.  
-* 系统出错处理
-  本系统可能遇到的错误有以下几类
-  - 载入纹理错误 :: 致命错误, 程序直接退出
-  - 载入音效错误 :: 致命错误, 程序直接退出
-  - 其他错误 :: 输出到终端, 不影响程序运行
+** 音效系统
+   我实现了一个立体声的音效系统, 实现方法如下:
+   - 维护一个向量来表示玩家视角当前的位置, 一个向量表示玩家当前的朝向.
+   - 对于场景中产生的某次碰撞或其他事件, 根据多个因素,来决定双声道中音量的大小. 总的来说, 具体的音效播放与下列因素均有关系:
+     - 玩家所在的位置, 和面对的方向
+     - 音效所在的位置
+     - 该事件的烈度, 比如碰撞时产生的弹力大小
+   目前我对球与球之间的碰撞, 以及球与挡板之间的碰撞, 均做了碰撞的音效.

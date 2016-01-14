@@ -28,8 +28,10 @@ bool Smoke::control(const float elapsed) {
     /*if (isnanf(offset.x) || isnanf(offset.y) || isnanf(offset.z))
       throw std::runtime_error("NaN detected");*/
 
-    //vertColor_[i].w -= color_.w / (num_ / rate_) * elapsed;
-    vertColor_[i].w *= glm::pow(k_, elapsed / (num_ / rate_));
+    vertColor_[i].w -= color_.w / (num_ / rate_) * elapsed;
+
+    //vertColor_[i].w *= glm::pow(k_, elapsed / (num_ / rate_));
+
   }
 
   return false;

@@ -246,6 +246,7 @@ int main(int argc, char *argv[]) {
                          glm::vec3(0, -0.4, 0),
                          glm::vec3(0.6, 0, 0));
 
+
   btSoftBody &cloth_body = cloth->getBody();
   auto sbs = new SoftBodyShape(cloth->getBody(), uv);
   Render::Material m_flag{FileTexture::get(GL_TEXTURE0, "res/flag1.png"),
@@ -259,7 +260,7 @@ int main(int argc, char *argv[]) {
   arena->add(cloth);
 
   auto anchor0 = new Anchor(btVector3(-0.5, 2, 0));
-  auto anchor1 = new Anchor(btVector3(0, 2, 0));
+  auto anchor1 = new Anchor(btVector3(0.1, 2, 0));
   cloth_body.appendAnchor(0, &anchor0->getBody());
   cloth_body.appendAnchor(10, &anchor1->getBody());
   cloth_body.setWindVelocity(btVector3(1, 0, 1));
@@ -413,7 +414,7 @@ int main(int argc, char *argv[]) {
         view.turn(glm::vec2(size.x / 2.0 - event.mouseMove.x,
                             size.y / 2.0 - event.mouseMove.y) * turnSpeed);
       } else if (event.type == sf::Event::MouseWheelScrolled) {
-        view.zoom(event.mouseWheelScroll.delta);
+        view.zoom(event.mouseWheelScroll.delta * 0.1);
       } else if (event.type == sf::Event::KeyReleased) {
         if (event.key.code == sf::Keyboard::H)
           tl->toggle();

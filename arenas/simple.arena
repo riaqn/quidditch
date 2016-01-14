@@ -25,11 +25,11 @@ res/CueBall.material
 FantacyBall FantacyBall.RigidBody 10
 res/FantacyBall.material
 
-SnitchBall SnitchBall.RigidBody 10 20
+SnitchBall SnitchBall.RigidBody 1 30
 -0.8 0.5 -0.8
 0.8 0.8 0.8
 0.2 0.2 0.2
-0.2
+1
 res/SnitchBall.material
 
 Wall Wood+z.RigidBody
@@ -62,5 +62,3 @@ res/Floor.material
 Wall Wall+y.RigidBody
 res/Ceil.material
 
-Wall Ground-safe.RigidBody
-res/Cloth.material

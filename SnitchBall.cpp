@@ -12,7 +12,7 @@ bool SnitchBall::control(const float elapsed) {
     }
     
     const btVector3 &p = rb_->getWorldTransform().getOrigin();
-    
+    //v = rb_->getLinearVelocity();
     if (p.x() < zone_min_.x())
       v_ += btVector3(1, 0, 0) * mu_ * elapsed;
     else if (p.x() > zone_max_.x())
