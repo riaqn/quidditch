@@ -1,0 +1,4 @@
+<map id="Particle" name="Particle">
+<area shape="rect" id="node2" href="$class_bullet_particle.html" title="{BulletParticle\n|&#45; particles_\l&#45; vertColor_\l&#45; material_\l&#45; size_\l|+ BulletParticle()\l+ render()\l}" alt="" coords="5,219,124,355"/>
+<area shape="rect" id="node3" href="$class_simple_particle.html" title="{SimpleParticle\n|&#45; vertOffset_\l&#45; vertColor_\l&#45; material_\l|+ SimpleParticle()\l+ render()\l}" alt="" coords="148,226,275,347"/>
+</map>

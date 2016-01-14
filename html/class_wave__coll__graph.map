@@ -1,0 +1,4 @@
+<map id="Wave" name="Wave">
+<area shape="rect" id="node2" href="$class_shape.html" title="{Shape\n||+ render()\l}" alt="" coords="5,49,84,127"/>
+<area shape="rect" id="node3" href="$class_bezier.html" title="{Bezier\n|&#45; n_\l&#45; m_\l&#45; b_\l&#45; k_\l|+ Bezier()\l+ get()\l+ set()\l&#45; B()\l}" alt="" coords="108,5,187,171"/>
+</map>

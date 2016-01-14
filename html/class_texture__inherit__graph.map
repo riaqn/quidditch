@@ -1,0 +1,5 @@
+<map id="Texture" name="Texture">
+<area shape="rect" id="node2" href="$class_cubemap_texture.html" title="{CubemapTexture\n||+ CubemapTexture()\l}" alt="" coords="5,226,145,303"/>
+<area shape="rect" id="node3" href="$class_file_texture.html" title="{FileTexture\n|&#45; map_\l|+ get()\l&#45; FileTexture()\l}" alt="" coords="169,219,272,311"/>
+<area shape="rect" id="node4" href="$class_noise_texture.html" title="{NoiseTexture\n|&#45; data_\l|+ NoiseTexture()\l+ ~NoiseTexture()\l}" alt="" coords="296,219,423,311"/>
+</map>

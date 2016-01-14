@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$class_particle.html" title="Particle" alt="" coords="5,31,72,57"/>
+<area shape="rect" id="node2" href="$class_bullet_particle.html" title="BulletParticle" alt="" coords="124,5,223,32"/>
+<area shape="rect" id="node3" href="$class_simple_particle.html" title="SimpleParticle" alt="" coords="120,56,227,83"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="Ball" name="Ball">
+<area shape="rect" id="node4" href="$class_cue_ball.html" title="{CueBall\n|+ dir\l&#45; userPower_\l&#45; maxForce_\l&#45; fantasy_\l|+ CueBall()\l+ setFantasy()\l+ control()\l}" alt="" coords="5,557,112,708"/>
+<area shape="rect" id="node5" href="$class_fantasy_ball.html" title="{FantasyBall\n|&#45; duration_\l|+ FantasyBall()\l+ getDuration()\l}" alt="" coords="137,587,247,679"/>
+<area shape="rect" id="node6" href="$class_ghost_ball.html" title="{GhostBall\n||+ GhostBall()\l}" alt="" coords="272,594,371,671"/>
+<area shape="rect" id="node7" href="$class_snitch_ball.html" title="{SnitchBall\n|&#45; countdown_\l&#45; time_dormant_\l&#45; time_active_\l&#45; active_\l&#45; zone_min_\l&#45; zone_max_\l&#45; mu_\l&#45; v0_\l&#45; v_\l|+ SnitchBall()\l+ control()\l}" alt="" coords="395,528,511,737"/>
+<area shape="rect" id="node8" href="$class_wander_ball.html" title="{WanderBall\n|&#45; v0_\l&#45; mu_\l|+ WanderBall()\l+ control()\l}" alt="" coords="535,579,643,686"/>
+<area shape="rect" id="node2" href="$class_single_controller.html" title="{SingleController\n|# rb_\l|+ SingleController()\l+ SingleController()\l+ init()\l+ getBody()\l+ ~SingleController()\l# SingleController()\l}" alt="" coords="251,204,392,355"/>
+<area shape="rect" id="node3" href="$class_controller.html" title="{Controller\n|# world_\l&#45; cb_\l|+ init()\l+ control()\l+ ~Controller()\l+ setDestroyCallback()\l+ getDestroyCallback()\l}" alt="" coords="244,5,399,156"/>
+</map>

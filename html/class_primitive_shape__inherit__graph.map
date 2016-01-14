@@ -1,0 +1,7 @@
+<map id="PrimitiveShape" name="PrimitiveShape">
+<area shape="rect" id="node3" href="$class_soft_body_shape.html" title="{SoftBodyShape\n|&#45; sb_\l|+ SoftBodyShape()\l+ render()\l}" alt="" coords="5,395,139,487"/>
+<area shape="rect" id="node4" href="$class_sphere.html" title="{Sphere\n||+ Sphere()\l&#45; evolve()\l&#45; normalize()\l}" alt="" coords="163,388,258,495"/>
+<area shape="rect" id="node5" href="$class_square.html" title="{Square\n||+ Square()\l}" alt="" coords="283,403,365,480"/>
+<area shape="rect" id="node6" href="$class_triangle_mesh_shape.html" title="{TriangleMeshShape\n||+ TriangleMeshShape()\l}" alt="" coords="389,403,547,480"/>
+<area shape="rect" id="node2" href="$class_shape.html" title="{Shape\n||+ render()\l}" alt="" coords="227,5,306,83"/>
+</map>

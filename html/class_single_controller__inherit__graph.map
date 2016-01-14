@@ -1,0 +1,12 @@
+<map id="SingleController" name="SingleController">
+<area shape="rect" id="node3" href="$class_anchor.html" title="{Anchor\n|&#45; shape_\l&#45; ms_\l&#45; localInertia\l|+ Anchor()\l}" alt="" coords="172,403,265,509"/>
+<area shape="rect" id="node4" href="$class_ball.html" title="{Ball\n||+ Ball()\l}" alt="" coords="289,417,353,495"/>
+<area shape="rect" id="node10" href="$class_ground.html" title="{Ground\n||+ Ground()\l}" alt="" coords="378,417,462,495"/>
+<area shape="rect" id="node11" href="$class_wall.html" title="{Wall\n||+ Wall()\l}" alt="" coords="487,417,553,495"/>
+<area shape="rect" id="node2" href="$class_controller.html" title="{Controller\n|# world_\l&#45; cb_\l|+ init()\l+ control()\l+ ~Controller()\l+ setDestroyCallback()\l+ getDestroyCallback()\l}" alt="" coords="293,5,448,156"/>
+<area shape="rect" id="node5" href="$class_cue_ball.html" title="{CueBall\n|+ dir\l&#45; userPower_\l&#45; maxForce_\l&#45; fantasy_\l|+ CueBall()\l+ setFantasy()\l+ control()\l}" alt="" coords="5,587,112,737"/>
+<area shape="rect" id="node6" href="$class_fantasy_ball.html" title="{FantasyBall\n|&#45; duration_\l|+ FantasyBall()\l+ getDuration()\l}" alt="" coords="137,616,247,708"/>
+<area shape="rect" id="node7" href="$class_ghost_ball.html" title="{GhostBall\n||+ GhostBall()\l}" alt="" coords="272,623,371,701"/>
+<area shape="rect" id="node8" href="$class_snitch_ball.html" title="{SnitchBall\n|&#45; countdown_\l&#45; time_dormant_\l&#45; time_active_\l&#45; active_\l&#45; zone_min_\l&#45; zone_max_\l&#45; mu_\l&#45; v0_\l&#45; v_\l|+ SnitchBall()\l+ control()\l}" alt="" coords="395,557,511,767"/>
+<area shape="rect" id="node9" href="$class_wander_ball.html" title="{WanderBall\n|&#45; v0_\l&#45; mu_\l|+ WanderBall()\l+ control()\l}" alt="" coords="535,609,643,715"/>
+</map>

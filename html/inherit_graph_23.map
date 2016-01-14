@@ -1,0 +1,13 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$class_shape.html" title="Shape" alt="" coords="5,183,64,209"/>
+<area shape="rect" id="node2" href="$class_bullet_shape.html" title="BulletShape" alt="" coords="121,107,213,133"/>
+<area shape="rect" id="node7" href="$class_cube.html" title="Cube" alt="" coords="141,208,193,235"/>
+<area shape="rect" id="node8" href="$class_primitive_shape.html" title="PrimitiveShape" alt="" coords="112,157,223,184"/>
+<area shape="rect" id="node11" href="$class_wave.html" title="Wave" alt="" coords="140,259,195,285"/>
+<area shape="rect" id="node3" href="$class_box_shape.html" title="BoxShape" alt="" coords="298,5,381,32"/>
+<area shape="rect" id="node4" href="$class_soft_body_shape.html" title="SoftBodyShape" alt="" coords="283,107,396,133"/>
+<area shape="rect" id="node5" href="$class_sphere_shape.html" title="SphereShape" alt="" coords="289,56,389,83"/>
+<area shape="rect" id="node6" href="$class_triangle_mesh_shape.html" title="TriangleMeshShape" alt="" coords="271,157,408,184"/>
+<area shape="rect" id="node9" href="$class_sphere.html" title="Sphere" alt="" coords="308,208,371,235"/>
+<area shape="rect" id="node10" href="$class_square.html" title="Square" alt="" coords="308,259,371,285"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="TestWrapper" name="TestWrapper">
+<area shape="rect" id="node2" href="$class_render.html" title="{Render\n||+ render()\l}" alt="" coords="5,405,84,483"/>
+<area shape="rect" id="node3" href="$class_file_texture.html" title="{FileTexture\n|&#45; map_\l|+ get()\l&#45; FileTexture()\l}" alt="" coords="108,398,211,490"/>
+<area shape="rect" id="node4" href="$class_texture.html" title="{Texture\n|+ target_\l+ unit_\l&#45; texture_\l|+ Texture()\l+ Texture()\l+ ~Texture()\l+ load()\l+ bind()\l}" alt="" coords="109,154,202,319"/>
+<area shape="rect" id="node5" href="$class_sphere.html" title="{Sphere\n||+ Sphere()\l&#45; evolve()\l&#45; normalize()\l}" alt="" coords="237,391,332,497"/>
+<area shape="rect" id="node6" href="$class_primitive_shape.html" title="{PrimitiveShape\n|&#45; vertex_\l&#45; uv_\l&#45; triangle_\l&#45; faces_\l|+ PrimitiveShape()\l+ ~PrimitiveShape()\l+ load()\l+ load()\l+ load()\l+ render()\l+ render()\l}" alt="" coords="226,132,365,341"/>
+<area shape="rect" id="node7" href="$class_shape.html" title="{Shape\n||+ render()\l}" alt="" coords="256,5,335,83"/>
+</map>

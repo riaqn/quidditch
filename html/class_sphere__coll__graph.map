@@ -1,0 +1,4 @@
+<map id="Sphere" name="Sphere">
+<area shape="rect" id="node2" href="$class_primitive_shape.html" title="{PrimitiveShape\n|&#45; vertex_\l&#45; uv_\l&#45; triangle_\l&#45; faces_\l|+ PrimitiveShape()\l+ ~PrimitiveShape()\l+ load()\l+ load()\l+ load()\l+ render()\l+ render()\l}" alt="" coords="5,131,144,340"/>
+<area shape="rect" id="node3" href="$class_shape.html" title="{Shape\n||+ render()\l}" alt="" coords="35,5,114,83"/>
+</map>

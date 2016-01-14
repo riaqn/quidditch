@@ -1,0 +1,5 @@
+<map id="Table" name="Table">
+<area shape="rect" id="node2" href="$class_render.html" title="{Render\n||+ render()\l}" alt="" coords="5,227,84,305"/>
+<area shape="rect" id="node3" href="$class_file_texture.html" title="{FileTexture\n|&#45; map_\l|+ get()\l&#45; FileTexture()\l}" alt="" coords="108,220,211,312"/>
+<area shape="rect" id="node4" href="$class_texture.html" title="{Texture\n|+ target_\l+ unit_\l&#45; texture_\l|+ Texture()\l+ Texture()\l+ ~Texture()\l+ load()\l+ bind()\l}" alt="" coords="113,5,206,171"/>
+</map>

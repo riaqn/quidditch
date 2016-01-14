@@ -1,0 +1,5 @@
+<map id="GroupController" name="GroupController">
+<area shape="rect" id="node3" href="$class_particle_controller.html" title="{ParticleController\n|&#45; halflife_\l&#45; particleFilter\l|+ ParticleController()\l+ control()\l+ init()\l}" alt="" coords="5,425,147,546"/>
+<area shape="rect" id="node4" href="$class_spark.html" title="{Spark\n|&#45; shape_\l&#45; quaternion_\l&#45; mass_\l&#45; filter_\l&#45; localInertia_\l&#45; num_\l&#45; lifetime_\l&#45; off_\l&#45; vertColor_\l&#45; color_\l|+ Spark()\l+ add()\l+ control()\l+ getVertColor()\l}" alt="" coords="171,359,285,612"/>
+<area shape="rect" id="node2" href="$class_controller.html" title="{Controller\n|# world_\l&#45; cb_\l|+ init()\l+ control()\l+ ~Controller()\l+ setDestroyCallback()\l+ getDestroyCallback()\l}" alt="" coords="75,5,229,156"/>
+</map>

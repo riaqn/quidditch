@@ -1,0 +1,7 @@
+<map id="Flag" name="Flag">
+<area shape="rect" id="node2" href="$class_render.html" title="{Render\n||+ render()\l}" alt="" coords="5,307,84,384"/>
+<area shape="rect" id="node3" href="$class_texture.html" title="{Texture\n|+ target_\l+ unit_\l&#45; texture_\l|+ Texture()\l+ Texture()\l+ ~Texture()\l+ load()\l+ bind()\l}" alt="" coords="109,263,202,428"/>
+<area shape="rect" id="node4" href="$class_wave.html" title="{Wave\n|&#45; n\l&#45; m\l&#45; v_\l&#45; uv_\l&#45; i_\l&#45; wSample\l&#45; hSample\l&#45; base\l&#45; type_\l&#45; t_\l|+ Wave()\l+ draw()\l}" alt="" coords="226,233,309,457"/>
+<area shape="rect" id="node5" href="$class_shape.html" title="{Shape\n||+ render()\l}" alt="" coords="176,49,255,127"/>
+<area shape="rect" id="node6" href="$class_bezier.html" title="{Bezier\n|&#45; n_\l&#45; m_\l&#45; b_\l&#45; k_\l|+ Bezier()\l+ get()\l+ set()\l&#45; B()\l}" alt="" coords="279,5,357,171"/>
+</map>

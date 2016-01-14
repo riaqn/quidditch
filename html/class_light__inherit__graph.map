@@ -1,0 +1,6 @@
+<map id="Light" name="Light">
+<area shape="rect" id="node2" href="$class_follow_spot_light.html" title="{FollowSpotLight\n|&#45; motionState_\l&#45; light_\l|+ FollowSpotLight()\l+ operator()()\l}" alt="" coords="5,138,140,245"/>
+<area shape="rect" id="node3" href="$class_moving_light.html" title="{MovingLight\n|&#45; motionState_\l&#45; light_\l|+ MovingLight()\l+ operator()()\l}" alt="" coords="165,138,277,245"/>
+<area shape="rect" id="node4" href="$class_simple_light.html" title="{SimpleLight\n|&#45; spec_\l|+ SimpleLight()\l+ operator()()\l}" alt="" coords="301,145,412,237"/>
+<area shape="rect" id="node5" href="$class_toggle_light.html" title="{ToggleLight\n|&#45; light_\l&#45; switch_\l|+ ToggleLight()\l+ toggle()\l+ operator()()\l}" alt="" coords="436,131,544,252"/>
+</map>

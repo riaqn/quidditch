@@ -1,0 +1,4 @@
+<map id="Importer" name="Importer">
+<area shape="rect" id="node2" href="$class_arena.html" title="{Arena\n|&#45; world_\l&#45; controllers_\l|+ Arena()\l+ step()\l+ add()\l}" alt="" coords="63,219,160,340"/>
+<area shape="rect" id="node3" href="$class_world_proxy.html" title="{WorldProxy\n|&#45; world_\l|+ WorldProxy()\l+ add()\l+ add()\l+ add()\l+ remove()\l+ remove()\l}" alt="" coords="57,5,166,156"/>
+</map>

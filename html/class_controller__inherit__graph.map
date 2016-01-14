@@ -1,0 +1,17 @@
+<map id="Controller" name="Controller">
+<area shape="rect" id="node2" href="$class_cloth.html" title="{Cloth\n|&#45; sb_\l&#45; noise_\l&#45; ts_\l|+ Cloth()\l+ Cloth()\l+ getBody()\l+ getNode()\l+ init()\l+ control()\l+ getRectangle()\l}" alt="" coords="50,241,169,435"/>
+<area shape="rect" id="node3" href="$class_group_controller.html" title="{GroupController\n|# group_\l|+ init()\l+ add()\l+ getGroup()\l}" alt="" coords="192,285,304,391"/>
+<area shape="rect" id="node6" href="$class_single_controller.html" title="{SingleController\n|# rb_\l|+ SingleController()\l+ SingleController()\l+ init()\l+ getBody()\l+ ~SingleController()\l# SingleController()\l}" alt="" coords="368,263,509,413"/>
+<area shape="rect" id="node16" href="$class_smoke.html" title="{Smoke\n|&#45; cb_\l&#45; num_\l&#45; off_\l&#45; rate_\l&#45; k_\l&#45; ts_\l&#45; color_\l&#45; vertOffset_\l&#45; vertColor_\l&#45; noise_\l|+ Smoke()\l+ control()\l+ getVertOffset()\l+ getVertColor()\l+ getNum()\l}" alt="" coords="533,204,651,472"/>
+<area shape="rect" id="node4" href="$class_particle_controller.html" title="{ParticleController\n|&#45; halflife_\l&#45; particleFilter\l|+ ParticleController()\l+ control()\l+ init()\l}" alt="" coords="5,586,147,707"/>
+<area shape="rect" id="node5" href="$class_spark.html" title="{Spark\n|&#45; shape_\l&#45; quaternion_\l&#45; mass_\l&#45; filter_\l&#45; localInertia_\l&#45; num_\l&#45; lifetime_\l&#45; off_\l&#45; vertColor_\l&#45; color_\l|+ Spark()\l+ add()\l+ control()\l+ getVertColor()\l}" alt="" coords="171,520,285,773"/>
+<area shape="rect" id="node7" href="$class_anchor.html" title="{Anchor\n|&#45; shape_\l&#45; ms_\l&#45; localInertia\l|+ Anchor()\l}" alt="" coords="309,593,403,700"/>
+<area shape="rect" id="node8" href="$class_ball.html" title="{Ball\n||+ Ball()\l}" alt="" coords="427,608,491,685"/>
+<area shape="rect" id="node14" href="$class_ground.html" title="{Ground\n||+ Ground()\l}" alt="" coords="515,608,599,685"/>
+<area shape="rect" id="node15" href="$class_wall.html" title="{Wall\n||+ Wall()\l}" alt="" coords="624,608,691,685"/>
+<area shape="rect" id="node9" href="$class_cue_ball.html" title="{CueBall\n|+ dir\l&#45; userPower_\l&#45; maxForce_\l&#45; fantasy_\l|+ CueBall()\l+ setFantasy()\l+ control()\l}" alt="" coords="143,851,249,1001"/>
+<area shape="rect" id="node10" href="$class_fantasy_ball.html" title="{FantasyBall\n|&#45; duration_\l|+ FantasyBall()\l+ getDuration()\l}" alt="" coords="274,880,385,972"/>
+<area shape="rect" id="node11" href="$class_ghost_ball.html" title="{GhostBall\n||+ GhostBall()\l}" alt="" coords="409,887,508,965"/>
+<area shape="rect" id="node12" href="$class_snitch_ball.html" title="{SnitchBall\n|&#45; countdown_\l&#45; time_dormant_\l&#45; time_active_\l&#45; active_\l&#45; zone_min_\l&#45; zone_max_\l&#45; mu_\l&#45; v0_\l&#45; v_\l|+ SnitchBall()\l+ control()\l}" alt="" coords="533,821,649,1031"/>
+<area shape="rect" id="node13" href="$class_wander_ball.html" title="{WanderBall\n|&#45; v0_\l&#45; mu_\l|+ WanderBall()\l+ control()\l}" alt="" coords="673,873,781,979"/>
+</map>

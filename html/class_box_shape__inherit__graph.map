@@ -1,0 +1,4 @@
+<map id="BoxShape" name="BoxShape">
+<area shape="rect" id="node2" href="$class_bullet_shape.html" title="{BulletShape\n||}" alt="" coords="11,131,103,208"/>
+<area shape="rect" id="node3" href="$class_shape.html" title="{Shape\n||+ render()\l}" alt="" coords="17,5,96,83"/>
+</map>

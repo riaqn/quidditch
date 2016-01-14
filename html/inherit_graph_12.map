@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$class_noise.html" title="Noise\&lt; float, glm::\lfvec2 \&gt;" alt="" coords="5,5,135,47"/>
+<area shape="rect" id="node2" href="$class_perlin_noise.html" title="PerlinNoise" alt="" coords="183,46,271,73"/>
+<area shape="rect" id="node3" href="$class_noise.html" title="Noise\&lt; float, glm::\lfvec3 \&gt;" alt="" coords="5,71,135,112"/>
+</map>
